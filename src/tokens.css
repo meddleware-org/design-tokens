@@ -1,0 +1,217 @@
+/*
+ * @meddleware/design-tokens — tokens.css
+ * ═══════════════════════════════════════════════════════════════════════════════
+ * Oxblood / Indigo palette — CSS custom properties (the canonical source of truth).
+ *
+ * COLOUR STRATEGY
+ *   Primary:   Oxblood (#5e1622) — dominant brand hue.
+ *   Accent:    Antique-gold (#b08d2a) — highlights and call-to-action.
+ *   Subtle:    Indigo (#26346b) — secondary navigation and subtle highlights.
+ *   Secondary: Pine, Plum, Copper — depth and contrast on specific surfaces.
+ *   Neutrals:  Warm, Vue-like steps; intentionally warm-toned to complement the
+ *              oxblood/indigo brand palette.
+ *
+ * THEMING
+ *   Light is the default. Add `data-theme="dark"` to <html> for dark mode.
+ *   The semantic tokens (--bg, --surface, …) swap per theme. The brand ramps
+ *   (--mw-oxblood-*, --mw-indigo-*, …) are fixed and theme-independent.
+ *
+ * PANEL VARIANTS
+ *   Component variants (AppHeader / AppSidebar / AppFooter with light | dark |
+ *   transparent variant) use the --mw-panel-{dark,light}-* tokens so that a dark
+ *   header renders correctly regardless of the page theme.
+ *
+ * TOKEN LAYERS
+ *   1. Brand ramps        --mw-oxblood-*, --mw-indigo-*, --mw-gold-*
+ *   2. Secondary palette  --mw-pine-*, --mw-plum-*, --mw-copper-*
+ *   3. Warm neutrals      --mw-neutral-*
+ *   4. Status hues        --mw-danger-*, --mw-ok-*
+ *   5. Panel palettes     --mw-panel-{dark,light}-*  (theme-independent)
+ *   6. Shape / Type       --mw-radius*, --mw-font-*, --mw-header-height, --mw-sidebar-width
+ *   7. Semantic tokens    --bg, --surface, --lift, --border, --text, --muted,
+ *                         --accent, --accent-contrast, --primary, --primary-contrast,
+ *                         --secondary, --secondary-contrast, --gold, --danger, --ok, --radius
+ *
+ * USAGE
+ *   Import once at app entry:   import '@meddleware/design-tokens/tokens.css'
+ *   Use in styles:              background: var(--bg); color: var(--text);
+ */
+
+:root {
+  /* ─────────────────────────────────────────────────────────────────────────
+   * BRAND RAMPS — fixed, theme-independent.
+   *
+   * Use these when a specific lightness stop is needed (illustrations, data-vis,
+   * colour swatches). In components prefer the semantic tokens below.
+   * ───────────────────────────────────────────────────────────────────────── */
+
+  /* Oxblood — dominant brand hue, deep wine-red. */
+  --mw-oxblood-050: #f6eaec; /* near-white tint, subtle hover / highlight backgrounds */
+  --mw-oxblood-100: #e9c9cf; /* light fill, badge backgrounds                        */
+  --mw-oxblood-300: #c36674; /* mid tint, disabled-state accents                     */
+  --mw-oxblood-400: #a5384a; /* hover state for primary actions                      */
+  --mw-oxblood-500: #5e1622; /* PRIMARY — the canonical brand colour                 */
+  --mw-oxblood-600: #4e121c; /* pressed / active state                               */
+  --mw-oxblood-700: #3a0d15; /* deepest stop — borders on coloured surfaces          */
+
+  /* Indigo — subtle blue-violet for secondary elements and navigation. */
+  --mw-indigo-300: #6e82c8; /* light stop — dark-mode secondary alias               */
+  --mw-indigo-400: #3d4f92; /* mid stop — secondary hover                           */
+  --mw-indigo-500: #26346b; /* canonical secondary colour (light mode)              */
+  --mw-indigo-600: #1d2851; /* pressed / active state                               */
+
+  /* Gold — antique-gold accent for highlights, badges, and CTAs. */
+  --mw-gold-400: #c9a94e; /* light stop — dark-mode gold alias                     */
+  --mw-gold-500: #b08d2a; /* canonical accent (light mode)                         */
+  --mw-gold-600: #8a6e1f; /* pressed / active state                                */
+
+  /* ─────────────────────────────────────────────────────────────────────────
+   * SECONDARY PALETTE — depth and contrast on specific surfaces.
+   *
+   * Use for illustrations, status badges, or surfaces that need a hue distinct
+   * from the primary oxblood/indigo. Do not use as the dominant page colour.
+   * ───────────────────────────────────────────────────────────────────────── */
+
+  --mw-pine-500:   #1c5e4a; /* deep green — success / ok indicators                */
+  --mw-plum-500:   #4b2a55; /* deep purple — alternative accent surface            */
+  --mw-copper-500: #a65e2e; /* warm copper — warning / caution indicators          */
+
+  /* ─────────────────────────────────────────────────────────────────────────
+   * WARM NEUTRALS — intentionally warm-toned to complement oxblood/indigo.
+   *
+   * Steps 000–950 cover white through near-black. Use the semantic tokens
+   * (--text, --muted, --bg, --surface, --border) in components; reach for
+   * these only when you need a specific step (shadows, illustrations).
+   * ───────────────────────────────────────────────────────────────────────── */
+
+  --mw-neutral-000: #ffffff; /* pure white                                          */
+  --mw-neutral-050: #f7f4f1; /* page background (light)                            */
+  --mw-neutral-100: #efeae6; /* lifted surface / subtle hover                      */
+  --mw-neutral-200: #ded6cf; /* border / divider                                   */
+  --mw-neutral-300: #c4b8ae; /* disabled text / placeholder                        */
+  --mw-neutral-500: #6e635c; /* muted / secondary text                             */
+  --mw-neutral-700: #332c29; /* high-contrast text on light                        */
+  --mw-neutral-800: #201b19; /* body text (light mode)                             */
+  --mw-neutral-900: #120e10; /* page background (dark)                             */
+  --mw-neutral-950: #0b0809; /* deepest dark — not used as a bg stop               */
+
+  /* ─────────────────────────────────────────────────────────────────────────
+   * STATUS HUES — kept visually distinct from oxblood so errors read as errors.
+   *
+   * Maps to semantic tokens --danger / --ok which swap lightness in dark mode.
+   * ───────────────────────────────────────────────────────────────────────── */
+
+  --mw-danger-500: #b3261e; /* error / destructive (light mode)                   */
+  --mw-danger-300: #f08a7e; /* error / destructive (dark mode — lighter for legibility) */
+  --mw-ok-500:     #1c5e4a; /* success / healthy (light mode)                     */
+  --mw-ok-300:     #5bb392; /* success / healthy (dark mode — lighter for legibility)  */
+
+  /* ─────────────────────────────────────────────────────────────────────────
+   * PANEL PALETTES — theme-independent.
+   *
+   * Used by AppHeader / AppSidebar / AppFooter when the variant="dark" or
+   * variant="light" prop is set. Because these tokens are outside the
+   * [data-theme="dark"] block, a dark panel renders correctly on a light page
+   * and vice-versa, regardless of the global theme.
+   * ───────────────────────────────────────────────────────────────────────── */
+
+  /* Dark panel (used by AppHeader variant="dark", AppSidebar default) */
+  --mw-panel-dark-bg:      #16110f; /* panel background                           */
+  --mw-panel-dark-surface: #1f1719; /* elevated surface within the panel          */
+  --mw-panel-dark-text:    #f2eae6; /* primary text on dark panel                 */
+  --mw-panel-dark-muted:   #b7a9a3; /* secondary / helper text on dark panel      */
+  --mw-panel-dark-border:  #372b2e; /* dividers and borders within the panel      */
+
+  /* Light panel (used by AppHeader variant="light", minimal footer, etc.) */
+  --mw-panel-light-bg:      #ffffff; /* panel background                          */
+  --mw-panel-light-surface: #f7f4f1; /* elevated surface within the panel         */
+  --mw-panel-light-text:    #201b19; /* primary text on light panel               */
+  --mw-panel-light-muted:   #6e635c; /* secondary / helper text on light panel    */
+  --mw-panel-light-border:  #ded6cf; /* dividers and borders within the panel     */
+
+  /* ─────────────────────────────────────────────────────────────────────────
+   * SHAPE / TYPE / MOTION — layout and typographic constants.
+   * ───────────────────────────────────────────────────────────────────────── */
+
+  --mw-radius:        10px;  /* default border-radius for cards, modals, inputs   */
+  --mw-radius-sm:      6px;  /* small elements: tags, badges, small buttons        */
+  --mw-radius-lg:     16px;  /* large cards, bottom-sheet, hero images             */
+
+  --mw-font-sans:  system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mw-font-mono:  ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+
+  --mw-header-height:  56px; /* AppHeader height — for layout offset calculations  */
+  --mw-sidebar-width: 240px; /* AppSidebar collapsed width                         */
+
+  /* ─────────────────────────────────────────────────────────────────────────
+   * SEMANTIC TOKENS — LIGHT (default).
+   *
+   * These are the tokens components should use. They resolve to the correct
+   * brand/neutral stop for the active theme. They swap values in the dark block
+   * below without requiring any component changes.
+   *
+   * --bg             Page / window background.
+   * --surface        Card, modal, or elevated panel background.
+   * --lift           Hover state / slightly raised surface (above --surface).
+   * --border         Dividers, input outlines, card borders.
+   * --text           Primary body text.
+   * --muted          Secondary / helper text, placeholders.
+   * --accent         Primary interactive colour (links, focused inputs, badges).
+   * --accent-contrast Text that sits on top of --accent.
+   * --primary        Alias for --accent; for explicit button / CTA semantics.
+   * --primary-contrast Text on --primary backgrounds.
+   * --secondary      Subtle secondary interactive colour.
+   * --secondary-contrast Text on --secondary backgrounds.
+   * --gold           Highlight / premium indicator colour.
+   * --danger         Error, destructive action, or alert colour.
+   * --ok             Success or healthy-state indicator colour.
+   * --radius         Default border-radius (alias for --mw-radius).
+   * ───────────────────────────────────────────────────────────────────────── */
+
+  --bg:                 var(--mw-neutral-050);
+  --surface:            var(--mw-neutral-000);
+  --lift:               var(--mw-neutral-100);
+  --border:             var(--mw-neutral-200);
+  --text:               var(--mw-neutral-800);
+  --muted:              var(--mw-neutral-500);
+  --accent:             var(--mw-oxblood-500);
+  --accent-contrast:    #ffffff;
+  --primary:            var(--mw-oxblood-500);
+  --primary-contrast:   #ffffff;
+  --secondary:          var(--mw-indigo-500);
+  --secondary-contrast: #ffffff;
+  --gold:               var(--mw-gold-500);
+  --danger:             var(--mw-danger-500);
+  --ok:                 var(--mw-ok-500);
+  --radius:             var(--mw-radius);
+
+  color-scheme: light;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ * SEMANTIC TOKENS — DARK.
+ *
+ * Activated by setting `data-theme="dark"` on the <html> element. All values
+ * use lighter stops from the brand ramps so they remain legible against dark
+ * backgrounds. Brand ramp tokens (--mw-*) are unchanged — only the semantic
+ * aliases swap.
+ * ───────────────────────────────────────────────────────────────────────────── */
+:root[data-theme="dark"] {
+  --bg:                 var(--mw-neutral-900);
+  --surface:            #1c1618; /* warm dark surface, slightly lighter than --bg */
+  --lift:               #241c1f; /* hover / raised surface                        */
+  --border:             #372b2e; /* visible but not harsh border                  */
+  --text:               #f2eae6; /* warm near-white body text                     */
+  --muted:              #b7a9a3; /* secondary text, still legible                 */
+  --accent:             #b0465a; /* oxblood lightened ~2.5 stops for dark legibility */
+  --accent-contrast:    #ffffff;
+  --primary:            #b0465a;
+  --primary-contrast:   #ffffff;
+  --secondary:          var(--mw-indigo-300); /* lighter indigo stop             */
+  --secondary-contrast: #0b0809;              /* near-black on lighter indigo     */
+  --gold:               var(--mw-gold-400);   /* lighter gold stop               */
+  --danger:             var(--mw-danger-300); /* lighter red for legibility       */
+  --ok:                 var(--mw-ok-300);     /* lighter green for legibility     */
+
+  color-scheme: dark;
+}

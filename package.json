@@ -1,0 +1,24 @@
+{
+  "name": "@meddleware/design-tokens",
+  "version": "0.1.1",
+  "description": "Framework-agnostic design tokens (Oxblood/Indigo palette) for @meddleware UIs — CSS custom properties + JS/JSON exports.",
+  "license": "0BSD",
+  "type": "module",
+  "sideEffects": [
+    "*.css"
+  ],
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./tokens.css": "./src/tokens.css",
+    "./tokens.json": "./src/tokens.json"
+  },
+  "files": [
+    "src"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}

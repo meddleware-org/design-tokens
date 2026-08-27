@@ -1,0 +1,38 @@
+name: Publish
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write  # required for OIDC (npmjs trusted publishing + JSR)
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Publish to npmjs
+        run: |
+          VERSION=$(node -p 'require("./package.json").version')
+          if npm view "@meddleware/design-tokens@${VERSION}" version 2>/dev/null; then
+            echo "v${VERSION} already published to npmjs — skipping"
+          else
+            npm publish --access public
+          fi
+
+      - name: Publish to JSR
+        run: |
+          VERSION=$(node -p 'require("./package.json").version')
+          if curl -sf "https://api.jsr.io/scopes/meddleware/packages/design-tokens/versions/${VERSION}" > /dev/null; then
+            echo "v${VERSION} already published to JSR — skipping"
+          else
+            npx jsr publish
+          fi
