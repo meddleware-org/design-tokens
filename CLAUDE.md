@@ -11,7 +11,12 @@ src/
   index.ts      TypeScript re-export of tokens.json with named exports and TSDoc
 ```
 
-There is no build step. The package ships `src/` directly; consumers' bundlers handle processing. This means `tokens.css`, `tokens.json`, and `index.ts` must always be kept in sync by hand.
+There is no build step. The package ships `src/` directly; consumers' bundlers handle processing.
+
+> **Known footgun — manual sync required.** `tokens.css`, `tokens.json`, and `index.ts` must
+> always be kept in sync by hand. There is no automated validator. A token added to `tokens.css`
+> but not to `tokens.json` will silently be absent from the JS API. Always update all three files
+> in the same commit, and verify by grepping the token name across all three files before pushing.
 
 ## Adding or changing a token
 
