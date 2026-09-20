@@ -12,12 +12,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7.0.1
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7.0.0
         with:
           node-version: 24
 
-      - run: npm install
+      - name: Install dependencies
+        run: npm ci
 
-      - run: npm run type-check
+      - name: Audit dependencies
+        run: npm audit --audit-level=high
+
+      - name: Token sync check (tokens.css ↔ tokens.json ↔ index.ts)
+        run: npm run check:sync
+
+      - name: Type-check
+        run: npm run type-check

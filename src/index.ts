@@ -91,6 +91,34 @@ export const semantic = tokens.semantic
 export const brand = tokens.brand
 
 /**
+ * Functional primary + rainbow colour ramps (`red`, `orange`, `yellow`, `green`, `blue`).
+ *
+ * These are the human-universal accents the semantic roles (`--accent`, `--warning`, `--ok`,
+ * `--info`, `--focus-ring`, …) resolve to. Prefer the semantic CSS roles in components; reach for
+ * a specific primary stop only for illustrations/data-vis. Values are derived and tunable.
+ *
+ * @example
+ * ```ts
+ * import { primary } from '@meddleware/design-tokens'
+ * primary.blue['500'] // '#1d6fe0'
+ * ```
+ */
+export const primary = tokens.primary
+
+/**
+ * Sacred-geometry ratios. `phi` (φ ≈ 1.618) is the structural ratio; `phiRoot` (√φ ≈ 1.272) is the
+ * finer type-scale step (two steps = one φ octave); `phiInv` is 1/φ. Mirrors the `--ratio-*` CSS
+ * custom properties — use these when computing layout ratios in JS/tooling.
+ */
+export const ratio = tokens.ratio
+
+/**
+ * Spacing scale — Fibonacci multiples of a 0.25rem unit (`3xs`…`3xl`). Mirrors the `--space-*` CSS
+ * custom properties. Prefer the CSS tokens in styles; these are for tooling/JS-driven layout.
+ */
+export const space = tokens.space
+
+/**
  * Warm neutral scale (theme-independent, fixed values).
  *
  * Steps: `000` (white) through `950` (near-black), intentionally warm-toned to

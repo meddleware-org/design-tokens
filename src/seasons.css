@@ -1,0 +1,87 @@
+/*
+ * @meddleware/design-tokens — seasons.css  (OPTIONAL)
+ * ═══════════════════════════════════════════════════════════════════════════════
+ * Seasonal variation with SILENT FALLBACK to the primary light/dark themes.
+ *
+ * HOW IT WORKS
+ *   The semantic roles in tokens.css read a seasonal override first, then fall back:
+ *       --accent: var(--season-accent, var(--mw-red-500));
+ *   This file defines the `--season-*` variables per season, scoped to a
+ *   `[data-season="…"]` attribute. Activate a season by setting the attribute on
+ *   any ancestor (usually <html>):  <html data-season="autumn">.
+ *
+ * OPT-IN / OPT-OUT
+ *   • Opt IN   — import this file AND set `data-season="spring|summer|autumn|winter"`.
+ *   • Opt OUT  — do neither. With no season active the `--season-*` vars are simply
+ *     undefined and every role uses its primary light/dark fallback — silently, with
+ *     no console errors and no broken layout. (We deliberately do NOT register these
+ *     with @property, so an undefined seasonal var fails silently.)
+ *   • A consumer may also skip this file entirely and define their own `--season-*`
+ *     vars — the fallback contract is all that tokens.css depends on.
+ *
+ * COMPOSES WITH DARK MODE
+ *   Seasons set only the ACCENT/STATUS roles; `data-theme="dark"` still owns the
+ *   neutral canvas. `<html data-theme="dark" data-season="winter">` = winter accents
+ *   on the dark canvas. Values are mid-tone ramp stops chosen to read on both
+ *   canvases; nudge to taste (they reference the tunable primary ramps).
+ *
+ * INVARIANT
+ *   Every season MUST define the SAME `--season-*` key set (enforced by
+ *   scripts/check-token-sync.mjs) so no role silently drops out under one season.
+ */
+
+/* ── Spring — renewal: fresh greens + yellows ──────────────────────────────── */
+:root[data-season="spring"] {
+  --season-accent:              var(--mw-green-500);
+  --season-accent-contrast:     #ffffff;
+  --season-secondary:           var(--mw-blue-500);
+  --season-secondary-contrast:  #ffffff;
+  --season-danger:              var(--mw-red-500);
+  --season-warning:             var(--mw-yellow-500);
+  --season-ok:                  var(--mw-green-500);
+  --season-info:                var(--mw-blue-500);
+  --season-highlight:           var(--mw-yellow-400);
+  --season-focus:               var(--mw-blue-500);
+}
+
+/* ── Summer — bright: primary blue + red warmth ────────────────────────────── */
+:root[data-season="summer"] {
+  --season-accent:              var(--mw-blue-500);
+  --season-accent-contrast:     #ffffff;
+  --season-secondary:           var(--mw-red-500);
+  --season-secondary-contrast:  #ffffff;
+  --season-danger:              var(--mw-red-600);
+  --season-warning:             var(--mw-yellow-500);
+  --season-ok:                  var(--mw-green-500);
+  --season-info:                var(--mw-blue-500);
+  --season-highlight:           var(--mw-yellow-300);
+  --season-focus:               var(--mw-red-500);
+}
+
+/* ── Autumn — warm: orange/amber ───────────────────────────────────────────── */
+:root[data-season="autumn"] {
+  --season-accent:              var(--mw-orange-500);
+  --season-accent-contrast:     #ffffff;
+  --season-secondary:           var(--mw-red-500);
+  --season-secondary-contrast:  #ffffff;
+  --season-danger:              var(--mw-red-500);
+  --season-warning:             var(--mw-yellow-500);
+  --season-ok:                  var(--mw-green-500);
+  --season-info:                var(--mw-blue-500);
+  --season-highlight:           var(--mw-orange-400);
+  --season-focus:               var(--mw-blue-500);
+}
+
+/* ── Winter — cool: deep blue + desaturated ────────────────────────────────── */
+:root[data-season="winter"] {
+  --season-accent:              var(--mw-blue-600);
+  --season-accent-contrast:     #ffffff;
+  --season-secondary:           var(--mw-green-600);
+  --season-secondary-contrast:  #ffffff;
+  --season-danger:              var(--mw-red-500);
+  --season-warning:             var(--mw-yellow-500);
+  --season-ok:                  var(--mw-green-500);
+  --season-info:                var(--mw-blue-300);
+  --season-highlight:           var(--mw-blue-300);
+  --season-focus:               var(--mw-blue-300);
+}
