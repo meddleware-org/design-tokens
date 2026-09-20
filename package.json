@@ -27,6 +27,6 @@
     "check:sync": "node scripts/check-token-sync.mjs"
   },
   "devDependencies": {
-    "typescript": "^5.7.3"
+    "typescript": "~6.0.0"
   }
 }
