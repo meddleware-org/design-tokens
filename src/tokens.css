@@ -74,6 +74,21 @@
   --mw-blue-500:   #1d6fe0; /* primary blue — secondary / info / focus (light)  */
   --mw-blue-600:   #1657b0; /* pressed / active                                 */
 
+  /* ── Naturalistic earth-derived triad (breaking the red/blue binary) ────────
+   * Terracotta (madder-inspired), Moss (forest green), Slate (dusty blue-violet).
+   * All three appear together in nature; carry no confrontational tension. */
+  --mw-terracotta-300: #e07850; /* dark-mode accent (warm fired earth)        */
+  --mw-terracotta-500: #b84527; /* light-mode accent (warm fired earth)       */
+  --mw-terracotta-600: #913519; /* pressed / active                           */
+
+  --mw-moss-300: #5aaa80;  /* dark-mode primary (warm forest green at night) */
+  --mw-moss-500: #2b7a56;  /* light-mode primary (warm forest green)         */
+  --mw-moss-600: #1f5c40;  /* pressed / active                              */
+
+  --mw-slate-300: #9ba8d4; /* dark-mode secondary (dusty twilight blue)     */
+  --mw-slate-500: #4e5f9e; /* light-mode secondary (dusty stone blue-violet)*/
+  --mw-slate-600: #3b4879; /* pressed / active                              */
+
   /* ── Legacy brand ramps — retained as available swatches (NOT used by roles).
    * Kept so nothing breaks and the palette stays rich; they are not referenced
    * by any semantic role per the design philosophy (no gold/purple as identity). */
@@ -216,11 +231,11 @@
   --muted:           var(--mw-neutral-500); /* secondary / helper text           */
 
   /* Interactive accents (seasonal-first, primary fallback). */
-  --accent:              var(--season-accent, var(--mw-red-500));
+  --accent:              var(--season-accent, var(--mw-terracotta-500));
   --accent-contrast:     var(--season-accent-contrast, #ffffff);
-  --primary:             var(--accent);          /* explicit button/CTA alias    */
-  --primary-contrast:    var(--accent-contrast);
-  --secondary:           var(--season-secondary, var(--mw-blue-500));
+  --primary:             var(--season-primary, var(--mw-moss-500));
+  --primary-contrast:    var(--season-primary-contrast, #ffffff);
+  --secondary:           var(--season-secondary, var(--mw-slate-500));
   --secondary-contrast:  var(--season-secondary-contrast, #ffffff);
 
   /* Status + emphasis (role-based; no colour in the name). */
@@ -232,8 +247,8 @@
   --warning-contrast:   #201b19;  /* dark text on yellow */
   --highlight-contrast: #201b19;
 
-  /* Focus — distinct, high-contrast, visible (blue, so it never reads as error). */
-  --focus-ring: var(--season-focus, var(--mw-blue-500));
+  /* Focus — distinct, high-contrast, visible (slate, so it never reads as error). */
+  --focus-ring: var(--season-focus, var(--mw-slate-500));
 
   /* Radius aliases (role-level). */
   --radius:    var(--mw-radius);
@@ -257,9 +272,11 @@
   --text:    #f2eae6; /* warm near-white body text                     */
   --muted:   #b7a9a3; /* secondary text, still legible                 */
 
-  --accent:             var(--season-accent, var(--mw-red-300));
+  --accent:             var(--season-accent, var(--mw-terracotta-300));
   --accent-contrast:    var(--season-accent-contrast, #201b19);
-  --secondary:          var(--season-secondary, var(--mw-blue-300));
+  --primary:            var(--season-primary, var(--mw-moss-300));
+  --primary-contrast:   var(--season-primary-contrast, #0b0809);
+  --secondary:          var(--season-secondary, var(--mw-slate-300));
   --secondary-contrast: var(--season-secondary-contrast, #0b0809);
 
   --danger:    var(--season-danger,  var(--mw-danger-300));
@@ -268,7 +285,7 @@
   --info:      var(--season-info,    var(--mw-blue-300));
   --highlight: var(--season-highlight, var(--mw-yellow-300));
 
-  --focus-ring: var(--season-focus, var(--mw-blue-300));
+  --focus-ring: var(--season-focus, var(--mw-slate-300));
 
   color-scheme: dark;
 }

@@ -34,6 +34,8 @@
 :root[data-season="spring"] {
   --season-accent:              var(--mw-green-500);
   --season-accent-contrast:     #ffffff;
+  --season-primary:             var(--mw-moss-500);
+  --season-primary-contrast:    #ffffff;
   --season-secondary:           var(--mw-blue-500);
   --season-secondary-contrast:  #ffffff;
   --season-danger:              var(--mw-red-500);
@@ -48,6 +50,8 @@
 :root[data-season="summer"] {
   --season-accent:              var(--mw-blue-500);
   --season-accent-contrast:     #ffffff;
+  --season-primary:             var(--mw-moss-500);
+  --season-primary-contrast:    #ffffff;
   --season-secondary:           var(--mw-red-500);
   --season-secondary-contrast:  #ffffff;
   --season-danger:              var(--mw-red-600);
@@ -62,6 +66,8 @@
 :root[data-season="autumn"] {
   --season-accent:              var(--mw-orange-500);
   --season-accent-contrast:     #ffffff;
+  --season-primary:             var(--mw-copper-500);
+  --season-primary-contrast:    #ffffff;
   --season-secondary:           var(--mw-red-500);
   --season-secondary-contrast:  #ffffff;
   --season-danger:              var(--mw-red-500);
@@ -76,6 +82,8 @@
 :root[data-season="winter"] {
   --season-accent:              var(--mw-blue-600);
   --season-accent-contrast:     #ffffff;
+  --season-primary:             var(--mw-slate-600);
+  --season-primary-contrast:    #ffffff;
   --season-secondary:           var(--mw-green-600);
   --season-secondary-contrast:  #ffffff;
   --season-danger:              var(--mw-red-500);
