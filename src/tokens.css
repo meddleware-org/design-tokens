@@ -264,7 +264,8 @@
  * stops; the seasonal-first fallback pattern is preserved so a season set on top
  * of dark still overrides the accents while dark keeps the neutral canvas.
  * ═════════════════════════════════════════════════════════════════════════════ */
-:root[data-theme="dark"] {
+:root[data-theme="dark"],
+.dark {
   --bg:      var(--mw-neutral-900);
   --surface: #1c1618; /* warm dark surface, slightly lighter than --bg */
   --lift:    #241c1f; /* hover / raised surface                        */
