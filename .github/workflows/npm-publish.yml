@@ -1,0 +1,64 @@
+name: Publish (npm)
+
+# Publishes @meddleware/design-tokens to npmjs AND JSR on a v* tag. Publication
+# is gated on a self-contained `verify` job (token sync + type-check) that
+# re-runs the checks against the exact tagged commit, so a broken tag never
+# ships. Both registries use OIDC — no long-lived secrets.
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Verify (token sync + type-check)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-node@v7.0.0
+        with:
+          node-version: '24'
+      - name: Install dependencies
+        run: npm ci
+      - name: Audit dependencies
+        run: npm audit --audit-level=high
+      - name: Token sync check (tokens.css ↔ tokens.json ↔ index.ts)
+        run: npm run check:sync
+      - name: Type-check
+        run: npm run type-check
+
+  publish-npm:
+    name: npmjs + JSR (@meddleware/design-tokens)
+    needs: verify
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write  # required for OIDC (npmjs trusted publishing + JSR)
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-node@v7.0.0
+        with:
+          node-version: '24'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Publish to npmjs (OIDC, idempotent)
+        run: |
+          VERSION=$(node -p 'require("./package.json").version')
+          if npm view "@meddleware/design-tokens@${VERSION}" version 2>/dev/null; then
+            echo "::notice::v${VERSION} already published to npmjs — skipping"
+          else
+            npm publish --access public
+          fi
+
+      - name: Publish to JSR (OIDC, idempotent)
+        run: |
+          VERSION=$(node -p 'require("./package.json").version')
+          if curl -sf "https://api.jsr.io/scopes/meddleware/packages/design-tokens/versions/${VERSION}" > /dev/null; then
+            echo "::notice::v${VERSION} already published to JSR — skipping"
+          else
+            npx jsr publish
+          fi
