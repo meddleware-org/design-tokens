@@ -1,6 +1,6 @@
 {
   "name": "@meddleware/design-tokens",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Framework-agnostic design tokens (Oxblood/Indigo palette) for @meddleware UIs \u2014 CSS custom properties + JS/JSON exports.",
   "license": "0BSD",
   "type": "module",
