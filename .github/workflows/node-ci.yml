@@ -29,3 +29,6 @@ jobs:
 
       - name: Type-check
         run: npm run type-check
+
+      - name: Lint CSS (stylelint)
+        run: npm run lint:css --if-present

@@ -1,7 +1,7 @@
 {
   "name": "@meddleware/design-tokens",
   "version": "0.1.6",
-  "description": "Framework-agnostic design tokens (Oxblood/Indigo palette) for @meddleware UIs \u2014 CSS custom properties + JS/JSON exports.",
+  "description": "Framework-agnostic design tokens (Oxblood/Indigo palette) for @meddleware UIs — CSS custom properties + JS/JSON exports.",
   "license": "0BSD",
   "type": "module",
   "sideEffects": [
@@ -24,9 +24,19 @@
   },
   "scripts": {
     "type-check": "tsc --noEmit",
-    "check:sync": "node scripts/check-token-sync.mjs"
+    "check:sync": "node scripts/check-token-sync.mjs",
+    "lint:css": "stylelint \"src/**/*.{css,vue}\"",
+    "lint": "npm run lint:css"
   },
   "devDependencies": {
+    "postcss": "^8.4.49",
+    "stylelint": "^17.15.0",
+    "stylelint-config-standard": "^40.0.0",
     "typescript": "~6.0.0"
-  }
+  },
+  "browserslist": [
+    "> 0.5%",
+    "last 2 versions",
+    "not dead"
+  ]
 }

@@ -33,11 +33,11 @@
 /* ── Spring — renewal: fresh greens + yellows ──────────────────────────────── */
 :root[data-season="spring"] {
   --season-accent:              var(--mw-green-500);
-  --season-accent-contrast:     #ffffff;
+  --season-accent-contrast:     #fff;
   --season-primary:             var(--mw-moss-500);
-  --season-primary-contrast:    #ffffff;
+  --season-primary-contrast:    #fff;
   --season-secondary:           var(--mw-blue-500);
-  --season-secondary-contrast:  #ffffff;
+  --season-secondary-contrast:  #fff;
   --season-danger:              var(--mw-red-500);
   --season-warning:             var(--mw-yellow-500);
   --season-ok:                  var(--mw-green-500);
@@ -49,11 +49,11 @@
 /* ── Summer — bright: primary blue + red warmth ────────────────────────────── */
 :root[data-season="summer"] {
   --season-accent:              var(--mw-blue-500);
-  --season-accent-contrast:     #ffffff;
+  --season-accent-contrast:     #fff;
   --season-primary:             var(--mw-moss-500);
-  --season-primary-contrast:    #ffffff;
+  --season-primary-contrast:    #fff;
   --season-secondary:           var(--mw-red-500);
-  --season-secondary-contrast:  #ffffff;
+  --season-secondary-contrast:  #fff;
   --season-danger:              var(--mw-red-600);
   --season-warning:             var(--mw-yellow-500);
   --season-ok:                  var(--mw-green-500);
@@ -65,11 +65,11 @@
 /* ── Autumn — warm: orange/amber ───────────────────────────────────────────── */
 :root[data-season="autumn"] {
   --season-accent:              var(--mw-orange-500);
-  --season-accent-contrast:     #ffffff;
+  --season-accent-contrast:     #fff;
   --season-primary:             var(--mw-copper-500);
-  --season-primary-contrast:    #ffffff;
+  --season-primary-contrast:    #fff;
   --season-secondary:           var(--mw-red-500);
-  --season-secondary-contrast:  #ffffff;
+  --season-secondary-contrast:  #fff;
   --season-danger:              var(--mw-red-500);
   --season-warning:             var(--mw-yellow-500);
   --season-ok:                  var(--mw-green-500);
@@ -81,11 +81,11 @@
 /* ── Winter — cool: deep blue + desaturated ────────────────────────────────── */
 :root[data-season="winter"] {
   --season-accent:              var(--mw-blue-600);
-  --season-accent-contrast:     #ffffff;
+  --season-accent-contrast:     #fff;
   --season-primary:             var(--mw-slate-600);
-  --season-primary-contrast:    #ffffff;
+  --season-primary-contrast:    #fff;
   --season-secondary:           var(--mw-green-600);
-  --season-secondary-contrast:  #ffffff;
+  --season-secondary-contrast:  #fff;
   --season-danger:              var(--mw-red-500);
   --season-warning:             var(--mw-yellow-500);
   --season-ok:                  var(--mw-green-500);

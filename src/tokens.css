@@ -86,7 +86,7 @@
   --mw-moss-600: #1f5c40;  /* pressed / active                              */
 
   --mw-slate-300: #9ba8d4; /* dark-mode secondary (dusty twilight blue)     */
-  --mw-slate-500: #4e5f9e; /* light-mode secondary (dusty stone blue-violet)*/
+  --mw-slate-500: #4e5f9e; /* light-mode secondary (dusty stone blue-violet) */
   --mw-slate-600: #3b4879; /* pressed / active                              */
 
   /* ── Legacy brand ramps — retained as available swatches (NOT used by roles).
@@ -114,7 +114,7 @@
   --mw-copper-500: #a65e2e;
 
   /* ── Warm neutrals — the canvas. Intentionally warm-toned. ───────────────── */
-  --mw-neutral-000: #ffffff; /* pure white                                       */
+  --mw-neutral-000: #fff; /* pure white                                       */
   --mw-neutral-050: #f7f4f1; /* page background (light)                          */
   --mw-neutral-100: #efeae6; /* lifted surface / subtle hover                    */
   --mw-neutral-200: #ded6cf; /* border / divider                                 */
@@ -138,7 +138,7 @@
   --mw-panel-dark-muted:   #b7a9a3;
   --mw-panel-dark-border:  #372b2e;
 
-  --mw-panel-light-bg:      #ffffff;
+  --mw-panel-light-bg:      #fff;
   --mw-panel-light-surface: #f7f4f1;
   --mw-panel-light-text:    #201b19;
   --mw-panel-light-muted:   #6e635c;
@@ -233,11 +233,11 @@
 
   /* Interactive accents (seasonal-first, primary fallback). */
   --accent:              var(--season-accent, var(--mw-terracotta-500));
-  --accent-contrast:     var(--season-accent-contrast, #ffffff);
+  --accent-contrast:     var(--season-accent-contrast, #fff);
   --primary:             var(--season-primary, var(--mw-moss-500));
-  --primary-contrast:    var(--season-primary-contrast, #ffffff);
+  --primary-contrast:    var(--season-primary-contrast, #fff);
   --secondary:           var(--season-secondary, var(--mw-slate-500));
-  --secondary-contrast:  var(--season-secondary-contrast, #ffffff);
+  --secondary-contrast:  var(--season-secondary-contrast, #fff);
 
   /* Status + emphasis (role-based; no colour in the name). */
   --danger:    var(--season-danger,  var(--mw-danger-500));
