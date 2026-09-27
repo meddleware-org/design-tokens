@@ -150,6 +150,7 @@
 
   --mw-header-height:  56px; /* AppHeader height — layout offset                 */
   --mw-sidebar-width: 240px; /* AppSidebar collapsed width                       */
+  --mw-tool-content-max: 45rem; /* Shared max-width for tool page content (~720px) */
 
   /* ═════════════════════════════════════════════════════════════════════════
    * SACRED GEOMETRY — invisible structure (colour-agnostic, calc-derived).
