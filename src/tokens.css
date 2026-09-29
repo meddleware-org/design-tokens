@@ -67,12 +67,12 @@
   --mw-yellow-600: #a87c00; /* pressed / active                                 */
 
   --mw-green-300:  #5bb392; /* light stop — dark-mode success                   */
-  --mw-green-500:  #1f9254; /* primary green — success (light mode)             */
-  --mw-green-600:  #16713f; /* pressed / active                                 */
+  --mw-green-500:  #1f9254; /* primary green                                    */
+  --mw-green-600:  #177542; /* success text on light canvases; pressed / active */
 
   --mw-blue-300:   #6ea8fe; /* light stop — dark-mode secondary/info/focus      */
-  --mw-blue-500:   #1d6fe0; /* primary blue — secondary / info / focus (light)  */
-  --mw-blue-600:   #1657b0; /* pressed / active                                 */
+  --mw-blue-500:   #1d6fe0; /* primary blue                                     */
+  --mw-blue-600:   #1558b5; /* info text on light canvases; pressed / active    */
 
   /* ── Naturalistic earth-derived triad (breaking the red/blue binary) ────────
    * Terracotta (madder-inspired), Moss (forest green), Slate (dusty blue-violet).
@@ -137,12 +137,18 @@
   --mw-panel-dark-text:    #f2eae6;
   --mw-panel-dark-muted:   #b7a9a3;
   --mw-panel-dark-border:  #372b2e;
+  --mw-panel-dark-ok:      var(--mw-green-300);
+  --mw-panel-dark-danger:  var(--mw-danger-300);
+  --mw-panel-dark-info:    var(--mw-blue-300);
 
   --mw-panel-light-bg:      #fff;
   --mw-panel-light-surface: #f7f4f1;
   --mw-panel-light-text:    #201b19;
   --mw-panel-light-muted:   #6e635c;
   --mw-panel-light-border:  #ded6cf;
+  --mw-panel-light-ok:      var(--mw-green-600);
+  --mw-panel-light-danger:  var(--mw-danger-500);
+  --mw-panel-light-info:    var(--mw-blue-600);
 
   /* ── Type family (humanist sans + mono — transparency, code-as-truth) ────── */
   --mw-font-sans:  system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
@@ -218,9 +224,10 @@
 
   /* ═════════════════════════════════════════════════════════════════════════
    * SEMANTIC / ROLE LAYER — LIGHT (default). Colour-agnostic names ONLY.
-   * Each interactive/status role reads a seasonal override first, then falls
-   * back silently to a functional primary. Structural neutrals do not vary by
-   * season (content-first canvas).
+   * Each interactive role reads a seasonal override first, then falls back
+   * silently to a functional primary. Structural neutrals and status roles do
+   * not vary by season: status colours are tuned per theme to stay legible
+   * (≥ 4.5:1) on both canvases.
    * ═════════════════════════════════════════════════════════════════════════ */
 
   /* Structural canvas. */
@@ -240,10 +247,10 @@
   --secondary-contrast:  var(--season-secondary-contrast, #fff);
 
   /* Status + emphasis (role-based; no colour in the name). */
-  --danger:    var(--season-danger,  var(--mw-danger-500));
-  --warning:   var(--season-warning, var(--mw-yellow-500));
-  --ok:        var(--season-ok,      var(--mw-green-500));
-  --info:      var(--season-info,    var(--mw-blue-500));
+  --danger:    var(--mw-danger-500);
+  --warning:   var(--mw-yellow-500);
+  --ok:        var(--mw-green-600);
+  --info:      var(--mw-blue-600);
   --highlight: var(--season-highlight, var(--mw-yellow-400)); /* emphasis         */
   --warning-contrast:   #201b19;  /* dark text on yellow */
   --highlight-contrast: #201b19;
@@ -281,10 +288,10 @@
   --secondary:          var(--season-secondary, var(--mw-slate-300));
   --secondary-contrast: var(--season-secondary-contrast, #0b0809);
 
-  --danger:    var(--season-danger,  var(--mw-danger-300));
-  --warning:   var(--season-warning, var(--mw-yellow-300));
-  --ok:        var(--season-ok,      var(--mw-green-300));
-  --info:      var(--season-info,    var(--mw-blue-300));
+  --danger:    var(--mw-danger-300);
+  --warning:   var(--mw-yellow-300);
+  --ok:        var(--mw-green-300);
+  --info:      var(--mw-blue-300);
   --highlight: var(--season-highlight, var(--mw-yellow-300));
 
   --focus-ring: var(--season-focus, var(--mw-slate-300));

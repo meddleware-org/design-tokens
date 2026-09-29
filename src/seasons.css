@@ -20,8 +20,8 @@
  *     vars — the fallback contract is all that tokens.css depends on.
  *
  * COMPOSES WITH DARK MODE
- *   Seasons set only the ACCENT/STATUS roles; `data-theme="dark"` still owns the
- *   neutral canvas. `<html data-theme="dark" data-season="winter">` = winter accents
+ *   Seasons set only the ACCENT roles; `data-theme="dark"` still owns the neutral
+ *   canvas and the status roles (tuned per theme for legibility). `<html data-theme="dark" data-season="winter">` = winter accents
  *   on the dark canvas. Values are mid-tone ramp stops chosen to read on both
  *   canvases; nudge to taste (they reference the tunable primary ramps).
  *
@@ -38,10 +38,6 @@
   --season-primary-contrast:    #fff;
   --season-secondary:           var(--mw-blue-500);
   --season-secondary-contrast:  #fff;
-  --season-danger:              var(--mw-red-500);
-  --season-warning:             var(--mw-yellow-500);
-  --season-ok:                  var(--mw-green-500);
-  --season-info:                var(--mw-blue-500);
   --season-highlight:           var(--mw-yellow-400);
   --season-focus:               var(--mw-blue-500);
 }
@@ -54,10 +50,6 @@
   --season-primary-contrast:    #fff;
   --season-secondary:           var(--mw-red-500);
   --season-secondary-contrast:  #fff;
-  --season-danger:              var(--mw-red-600);
-  --season-warning:             var(--mw-yellow-500);
-  --season-ok:                  var(--mw-green-500);
-  --season-info:                var(--mw-blue-500);
   --season-highlight:           var(--mw-yellow-300);
   --season-focus:               var(--mw-red-500);
 }
@@ -70,10 +62,6 @@
   --season-primary-contrast:    #fff;
   --season-secondary:           var(--mw-red-500);
   --season-secondary-contrast:  #fff;
-  --season-danger:              var(--mw-red-500);
-  --season-warning:             var(--mw-yellow-500);
-  --season-ok:                  var(--mw-green-500);
-  --season-info:                var(--mw-blue-500);
   --season-highlight:           var(--mw-orange-400);
   --season-focus:               var(--mw-blue-500);
 }
@@ -86,10 +74,6 @@
   --season-primary-contrast:    #fff;
   --season-secondary:           var(--mw-green-600);
   --season-secondary-contrast:  #fff;
-  --season-danger:              var(--mw-red-500);
-  --season-warning:             var(--mw-yellow-500);
-  --season-ok:                  var(--mw-green-500);
-  --season-info:                var(--mw-blue-300);
   --season-highlight:           var(--mw-blue-300);
   --season-focus:               var(--mw-blue-300);
 }

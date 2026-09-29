@@ -71,7 +71,7 @@ Primary light / dark tokens (required, always present)   data-theme="dark"
 Component-level overrides (in your components)
 ```
 
-Each interactive/status role reads a seasonal override first, then falls back silently:
+Each interactive role reads a seasonal override first, then falls back silently:
 
 ```css
 --accent: var(--season-accent, var(--mw-red-500));
@@ -97,7 +97,8 @@ Import `seasons.css` and set the attribute on `<html>` (or any ancestor):
 <html data-theme="dark" data-season="winter">  <!-- winter accents on the dark canvas -->
 ```
 
-Seasons set only the **accent/status** roles; `data-theme` still owns the neutral canvas, so the two
+Seasons set only the **accent** roles; `data-theme` still owns the neutral canvas and the status
+roles (`--danger`, `--warning`, `--ok`, `--info`), which are tuned per theme for legibility, so the two
 compose. Remove the attribute (or don't import `seasons.css`) to opt out — silently.
 
 ### 3. Override one token while keeping the seasonal fallback
@@ -136,8 +137,8 @@ Values swap automatically between light and dark, and are overridable per season
 | `--secondary-contrast` | `#ffffff` | `#0b0809` | Text on secondary |
 | `--danger` | `#b3261e` | `#f08a7e` | Error / destructive |
 | `--warning` | yellow `#e0a500` | yellow `#f4d84f` | Caution / degraded |
-| `--ok` | green `#1f9254` | green `#5bb392` | Success / healthy |
-| `--info` | blue `#1d6fe0` | blue `#6ea8fe` | Informational |
+| `--ok` | green `#177542` | green `#5bb392` | Success / healthy |
+| `--info` | blue `#1558b5` | blue `#6ea8fe` | Informational |
 | `--highlight` | yellow `#f2c744` | yellow `#f4d84f` | Emphasis (the old "premium" role) |
 | `--focus-ring` | blue `#1d6fe0` | blue `#6ea8fe` | Visible focus outline (distinct from accent) |
 | `--radius` / `--radius-sm` / `--radius-lg` | `10 / 6 / 16px` | — | Corner radius |
@@ -152,8 +153,8 @@ not change name when you do.
 | `--mw-red-*` | `300 #ef5a4c` · `500 #d92d20` · `600 #a81d13` |
 | `--mw-orange-*` | `400 #f08a3c` · `500 #e06d10` · `600 #b0530c` |
 | `--mw-yellow-*` | `300 #f4d84f` · `400 #f2c744` · `500 #e0a500` · `600 #a87c00` |
-| `--mw-green-*` | `300 #5bb392` · `500 #1f9254` · `600 #16713f` |
-| `--mw-blue-*` | `300 #6ea8fe` · `500 #1d6fe0` · `600 #1657b0` |
+| `--mw-green-*` | `300 #5bb392` · `500 #1f9254` · `600 #177542` |
+| `--mw-blue-*` | `300 #6ea8fe` · `500 #1d6fe0` · `600 #1558b5` |
 
 ### Sacred-geometry scales
 

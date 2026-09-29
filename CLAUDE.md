@@ -58,8 +58,10 @@ require them in JSON.
 
 ### Layer 2: Semantic / role tokens (`--bg`, `--accent`, `--warning`, `--focus-ring`, …)
 
-What components use. Defined in `:root` (light) and `:root[data-theme="dark"]`. Interactive/status
-roles use the seasonal-first fallback pattern. When adding a semantic token, add it to **both**
+What components use. Defined in `:root` (light) and `:root[data-theme="dark"]`. Interactive
+roles use the seasonal-first fallback pattern; status roles (`--danger`, `--warning`, `--ok`,
+`--info`) do not — they are per-theme only and must keep ≥ 4.5:1 on that theme's `--bg` and
+`--surface`. When adding a semantic token, add it to **both**
 theme blocks (and, if seasonal, to all four seasons).
 
 ### Layer 3: Sacred-geometry scales (`--ratio-*`, `--font-size-*`, `--leading-*`, `--tracking-*`, `--space-*`)
@@ -70,6 +72,8 @@ is a magic number. `@meddleware/ui` components consume these for all type/spacin
 ### Layer 4: Panel palettes (`--mw-panel-{dark,light}-*`)
 
 Theme-independent by design (for `variant`-aware shell components). Do not put inside `[data-theme="dark"]`.
+Each variant carries `bg/surface/text/muted/border` plus the status roles `ok/danger/info`, so status
+text inside a panel stays legible whatever the page theme.
 
 ### Layer 5: Chaos / motion (`--noise-*`, `--hero-offset`, `--gap-irregular`, `--transition-*`)
 
