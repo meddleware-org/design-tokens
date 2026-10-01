@@ -3,6 +3,10 @@
   "version": "0.1.8",
   "description": "Framework-agnostic design tokens (Oxblood/Indigo palette) for @meddleware UIs — CSS custom properties + JS/JSON exports.",
   "license": "0BSD",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/meddleware-org/design-tokens.git"
+  },
   "type": "module",
   "sideEffects": [
     "*.css"
