@@ -16,6 +16,7 @@ src/
   index.ts      TypeScript re-export of tokens.json with named exports and TSDoc
 scripts/
   check-token-sync.mjs   Validator (npm run check:sync) — CSS ↔ JSON ↔ index parity + season symmetry
+  check-versions.mjs     npm run check:versions — jsr.json version == package.json version
 ```
 
 There is no build step. The package ships `src/` directly; consumers' bundlers handle processing.
@@ -108,10 +109,10 @@ is opt-in; not importing it means every role uses its primary light/dark fallbac
 
 Published to both **npmjs** and **JSR** on `v*` git tags using OIDC — no long-lived secrets required.
 
-- **npmjs**: npm trusted publishing (`id-token: write`). One-time setup: configure a trusted publisher on npmjs.com pointing at this repo and `publish.yml`.
+- **npmjs**: npm trusted publishing (`id-token: write`). One-time setup: configure a trusted publisher on npmjs.com pointing at this repo and `npm-publish.yml`.
 - **JSR**: `npx jsr publish`, which auto-detects the GitHub Actions OIDC environment. One-time setup: link the GitHub repository to the JSR package in the JSR dashboard.
 
-To release: bump `version` in both `package.json` **and** `jsr.json` (they must match), add a CHANGELOG entry, commit, tag (`git tag v0.x.y`), push the tag.
+To release: bump `version` in both `package.json` **and** `jsr.json` (CI's `check:versions` fails when they differ — a stale `jsr.json` makes the JSR publish a silent no-op), add a CHANGELOG entry, commit, tag (`git tag v0.x.y`), push the tag.
 
 ## Relationship with `@meddleware/ui`
 

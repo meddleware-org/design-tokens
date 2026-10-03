@@ -26,6 +26,8 @@ jobs:
         run: npm ci
       - name: Audit dependencies
         run: node .github/audit-gate.mjs
+      - name: npm and JSR versions match
+        run: npm run check:versions
       - name: Token sync check (tokens.css ↔ tokens.json ↔ index.ts)
         run: npm run check:sync
       - name: Type-check
