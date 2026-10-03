@@ -25,7 +25,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Audit dependencies
-        run: npm audit --audit-level=high
+        run: node .github/audit-gate.mjs
       - name: Token sync check (tokens.css ↔ tokens.json ↔ index.ts)
         run: npm run check:sync
       - name: Type-check
