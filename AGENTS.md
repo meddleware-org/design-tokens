@@ -1,6 +1,6 @@
 # AGENTS.md — @meddleware/design-tokens
 
-Design token package for the `@meddleware` UI system. Delivers the Oxblood / Indigo palette as CSS custom properties and TypeScript/JSON exports.
+Design token package for the `@meddleware` UI system. Delivers a warm-neutral canvas with functional accents as CSS custom properties and TypeScript/JSON exports.
 
 ## Package structure
 
@@ -13,7 +13,7 @@ jsr.json        JSR registry configuration (name, version, exports, publish excl
 package.json    npm registry configuration
 ```
 
-There is no build step. The package ships `src/` directly; consumers' bundlers handle processing. This means `tokens.css`, `tokens.json`, and `index.ts` must always be kept in sync by hand.
+There is no build step. The package ships `src/` directly; consumers' bundlers handle processing. This means `tokens.css`, `tokens.json`, and `index.ts` must always be kept in sync; `npm run check` (`check:sync`, `check:contrast`, `check:css`) guards it.
 
 ## Adding or changing a token
 
@@ -33,7 +33,7 @@ Fixed, theme-independent stops. Used directly only in illustrations, data-vis, o
 
 ### Layer 2: Semantic tokens (`--bg`, `--surface`, `--text`, …)
 
-Thin aliases over the brand ramps. These are what components use. They are defined twice — once in `:root` (light) and once in `:root[data-theme="dark"]` — so they swap values without any component change. When adding a new semantic token, add it to **both** blocks.
+Thin aliases over the functional ramps. These are what components use. They are defined twice — once in `:root` (light) and once in `:root[data-theme="dark"]` — so they swap values without any component change. When adding a new semantic token, add it to **both** blocks.
 
 ### Layer 3: Panel palettes (`--mw-panel-{dark,light}-*`)
 
@@ -49,7 +49,7 @@ Light is the default (`:root`). Dark activates on `:root[data-theme="dark"]`. Th
 
 ## Exports
 
-Both `package.json` and `jsr.json` declare the same three entry points:
+Both `package.json` and `jsr.json` declare the same entry points (`.`, `tokens.css`, `seasons.css`, `tokens.json`):
 
 | Entry | File | Description |
 | --- | --- | --- |
@@ -63,9 +63,9 @@ Do not add a default/wildcard export path — consumers should import one of the
 
 ## Publishing
 
-Published to both **npmjs** and **JSR** on `v*` git tags via `.github/workflows/publish.yml` using OIDC — no long-lived secrets required.
+Published to both **npmjs** and **JSR** on `v*` git tags via `.github/workflows/npm-publish.yml` using OIDC — no long-lived secrets required.
 
-- **npmjs**: uses npm trusted publishing (`id-token: write`). One-time setup: configure a trusted publisher on npmjs.com pointing at this repo and `publish.yml`.
+- **npmjs**: uses npm trusted publishing (`id-token: write`). One-time setup: configure a trusted publisher on npmjs.com pointing at this repo and `npm-publish.yml`.
 - **JSR**: uses `npx jsr publish`, which auto-detects the GitHub Actions OIDC environment. One-time setup: link the GitHub repository to the JSR package in the JSR dashboard.
 
 To release: bump `version` in both `package.json` and `jsr.json`, add a CHANGELOG entry, commit, tag (`git tag v0.x.y`), push the tag.

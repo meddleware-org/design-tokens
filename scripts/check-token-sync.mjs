@@ -21,11 +21,13 @@
 import { existsSync, readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
+import { stripComments } from './lib/css.mjs'
 
 const here = dirname(fileURLToPath(import.meta.url))
 const srcDir = join(here, '..', 'src')
 
-const cssText = readFileSync(join(srcDir, 'tokens.css'), 'utf8')
+// Comments are removed first: a commented-out `--text: #ff00ff;` must not be read as a live declaration.
+const cssText = stripComments(readFileSync(join(srcDir, 'tokens.css'), 'utf8'))
 const tokens = JSON.parse(readFileSync(join(srcDir, 'tokens.json'), 'utf8'))
 const indexText = readFileSync(join(srcDir, 'index.ts'), 'utf8')
 const seasonsPath = join(srcDir, 'seasons.css')
@@ -198,7 +200,7 @@ for (const subtree of ['brand', 'semantic', 'neutral', 'primary', 'ratio', 'spac
 // 4. Seasonal symmetry (optional file): every [data-season="…"] block must define the SAME
 // --season-* key set, so no season silently omits a role (which would fall back inconsistently).
 if (existsSync(seasonsPath)) {
-  const seasonsText = readFileSync(seasonsPath, 'utf8')
+  const seasonsText = stripComments(readFileSync(seasonsPath, 'utf8'))
   const blockRe = /\[data-season="([a-z]+)"\]\s*\{([^{}]*)\}/gi
   const seasonKeys = {}
   let sm

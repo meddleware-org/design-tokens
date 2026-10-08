@@ -1,9 +1,11 @@
 name: Publish (npm)
 
 # Publishes @meddleware/design-tokens to npmjs AND JSR on a v* tag. Publication
-# is gated on a self-contained `verify` job (token sync + type-check) that
-# re-runs the checks against the exact tagged commit, so a broken tag never
-# ships. Both registries use OIDC — no long-lived secrets.
+# is gated on a self-contained `verify` job (the same checks as CI: audit, versions, token sync, contrast,
+# CSS contract, type-check, lint, package contents) that re-runs against the exact tagged commit, so a broken
+# tag never ships. Both registries use OIDC — no long-lived secrets. npm and JSR publish in SEPARATE jobs,
+# each with its own id-token, and the JSR CLI is the lockfile-pinned devDependency (never `npx jsr@latest`
+# with the npm publisher's OIDC token in scope).
 
 on:
   push:
@@ -15,31 +17,16 @@ permissions:
 
 jobs:
   verify:
-    name: Verify (token sync + type-check)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
-        with:
-          node-version: '24'
-      - name: Install dependencies
-        run: npm ci
-      - name: Audit dependencies
-        run: node .github/audit-gate.mjs
-      - name: npm and JSR versions match
-        run: npm run check:versions
-      - name: Token sync check (tokens.css ↔ tokens.json ↔ index.ts)
-        run: npm run check:sync
-      - name: Type-check
-        run: npm run type-check
+    name: Verify (CI checks)
+    uses: ./.github/workflows/node-ci.yml
 
   publish-npm:
-    name: npmjs + JSR (@meddleware/design-tokens)
+    name: npmjs (@meddleware/design-tokens)
     needs: verify
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      id-token: write  # required for OIDC (npmjs trusted publishing + JSR)
+      id-token: write  # npmjs trusted publishing (OIDC)
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
@@ -80,11 +67,25 @@ jobs:
             fi
           fi
 
+  publish-jsr:
+    name: JSR (@meddleware/design-tokens)
+    needs: verify
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write  # JSR OIDC
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '24'
+      - name: Install dependencies (the JSR CLI is a pinned devDependency)
+        run: npm ci
       - name: Publish to JSR (OIDC, idempotent)
         run: |
           VERSION=$(node -p 'require("./package.json").version')
           if curl -sf "https://api.jsr.io/scopes/meddleware/packages/design-tokens/versions/${VERSION}" > /dev/null; then
             echo "::notice::v${VERSION} already published to JSR — skipping"
           else
-            npx jsr publish
+            npx --no-install jsr publish
           fi

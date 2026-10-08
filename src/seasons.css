@@ -22,51 +22,90 @@
  * COMPOSES WITH DARK MODE
  *   Seasons set only the ACCENT roles; `data-theme="dark"` still owns the neutral
  *   canvas and the status roles (tuned per theme for legibility). `<html data-theme="dark" data-season="winter">` = winter accents
- *   on the dark canvas. Values are mid-tone ramp stops chosen to read on both
- *   canvases; nudge to taste (they reference the tunable primary ramps).
+ *   on the dark canvas. No single mid-tone reads at 4.5:1 on both a near-white and a near-black canvas,
+ *   so EACH season has two blocks: dark stops for light canvases (labels white) and light stops for
+ *   dark canvases (labels dark). `npm run check:contrast` measures every theme × season pairing and
+ *   fails the build below WCAG AA (4.5:1 text and labels, 3:1 focus ring, focus never red).
  *
  * INVARIANT
- *   Every season MUST define the SAME `--season-*` key set (enforced by
- *   scripts/check-token-sync.mjs) so no role silently drops out under one season.
+ *   Every season MUST define the SAME `--season-*` key set, in both its light and its dark block
+ *   (enforced by scripts/check-token-sync.mjs) so no role silently drops out under one season.
+ *   Selectors are limited to the forms below (enforced by scripts/check-css-contract.mjs).
  */
 
-/* ── Spring — renewal: fresh greens + yellows ──────────────────────────────── */
+/* ── Spring — renewal: fresh greens + yellows ────────────────────────────── */
 :root[data-season="spring"] {
-  --season-accent:              var(--mw-green-500);
+  --season-accent:              var(--mw-green-600);
   --season-accent-contrast:     #fff;
   --season-primary:             var(--mw-moss-500);
   --season-primary-contrast:    #fff;
-  --season-secondary:           var(--mw-blue-500);
+  --season-secondary:           var(--mw-blue-600);
   --season-secondary-contrast:  #fff;
   --season-highlight:           var(--mw-yellow-400);
-  --season-focus:               var(--mw-blue-500);
+  --season-focus:               var(--mw-blue-600);
 }
 
-/* ── Summer — bright: primary blue + red warmth ────────────────────────────── */
+:root[data-theme="dark"][data-season="spring"],
+:root.dark[data-season="spring"] {
+  --season-accent:              var(--mw-green-300);
+  --season-accent-contrast:     #201b19;
+  --season-primary:             var(--mw-moss-300);
+  --season-primary-contrast:    #0b0809;
+  --season-secondary:           var(--mw-blue-300);
+  --season-secondary-contrast:  #0b0809;
+  --season-highlight:           var(--mw-yellow-300);
+  --season-focus:               var(--mw-blue-300);
+}
+
+/* ── Summer — bright: primary blue + red warmth ──────────────────────────── */
 :root[data-season="summer"] {
-  --season-accent:              var(--mw-blue-500);
+  --season-accent:              var(--mw-blue-600);
   --season-accent-contrast:     #fff;
   --season-primary:             var(--mw-moss-500);
   --season-primary-contrast:    #fff;
-  --season-secondary:           var(--mw-red-500);
+  --season-secondary:           var(--mw-red-600);
   --season-secondary-contrast:  #fff;
   --season-highlight:           var(--mw-yellow-300);
-  --season-focus:               var(--mw-red-500);
+  --season-focus:               var(--mw-slate-500);
 }
 
-/* ── Autumn — warm: orange/amber ───────────────────────────────────────────── */
+:root[data-theme="dark"][data-season="summer"],
+:root.dark[data-season="summer"] {
+  --season-accent:              var(--mw-blue-300);
+  --season-accent-contrast:     #201b19;
+  --season-primary:             var(--mw-moss-300);
+  --season-primary-contrast:    #0b0809;
+  --season-secondary:           var(--mw-red-300);
+  --season-secondary-contrast:  #0b0809;
+  --season-highlight:           var(--mw-yellow-300);
+  --season-focus:               var(--mw-slate-300);
+}
+
+/* ── Autumn — warm: orange/amber ─────────────────────────────────────────── */
 :root[data-season="autumn"] {
-  --season-accent:              var(--mw-orange-500);
+  --season-accent:              var(--mw-orange-600);
   --season-accent-contrast:     #fff;
-  --season-primary:             var(--mw-copper-500);
+  --season-primary:             var(--mw-copper-600);
   --season-primary-contrast:    #fff;
-  --season-secondary:           var(--mw-red-500);
+  --season-secondary:           var(--mw-red-600);
   --season-secondary-contrast:  #fff;
   --season-highlight:           var(--mw-orange-400);
-  --season-focus:               var(--mw-blue-500);
+  --season-focus:               var(--mw-blue-600);
 }
 
-/* ── Winter — cool: deep blue + desaturated ────────────────────────────────── */
+:root[data-theme="dark"][data-season="autumn"],
+:root.dark[data-season="autumn"] {
+  --season-accent:              var(--mw-orange-400);
+  --season-accent-contrast:     #201b19;
+  --season-primary:             var(--mw-copper-400);
+  --season-primary-contrast:    #0b0809;
+  --season-secondary:           var(--mw-red-300);
+  --season-secondary-contrast:  #0b0809;
+  --season-highlight:           var(--mw-orange-400);
+  --season-focus:               var(--mw-blue-300);
+}
+
+/* ── Winter — cool: deep blue + desaturated ──────────────────────────────── */
 :root[data-season="winter"] {
   --season-accent:              var(--mw-blue-600);
   --season-accent-contrast:     #fff;
@@ -74,6 +113,18 @@
   --season-primary-contrast:    #fff;
   --season-secondary:           var(--mw-green-600);
   --season-secondary-contrast:  #fff;
+  --season-highlight:           var(--mw-blue-300);
+  --season-focus:               var(--mw-blue-600);
+}
+
+:root[data-theme="dark"][data-season="winter"],
+:root.dark[data-season="winter"] {
+  --season-accent:              var(--mw-blue-300);
+  --season-accent-contrast:     #201b19;
+  --season-primary:             var(--mw-slate-300);
+  --season-primary-contrast:    #0b0809;
+  --season-secondary:           var(--mw-green-300);
+  --season-secondary-contrast:  #0b0809;
   --season-highlight:           var(--mw-blue-300);
   --season-focus:               var(--mw-blue-300);
 }

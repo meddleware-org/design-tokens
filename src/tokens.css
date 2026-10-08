@@ -65,6 +65,7 @@
   --mw-yellow-400: #f2c744; /* highlight (emphasis)                             */
   --mw-yellow-500: #e0a500; /* primary amber-yellow — warning (light mode)      */
   --mw-yellow-600: #a87c00; /* pressed / active                                 */
+  --mw-yellow-700: #8a6500; /* text-safe amber — warning text on light canvases (4.86:1 on --bg) */
 
   --mw-green-300:  #5bb392; /* light stop — dark-mode success                   */
   --mw-green-500:  #1f9254; /* primary green                                    */
@@ -111,7 +112,9 @@
 
   --mw-pine-500:   #1c5e4a;
   --mw-plum-500:   #4b2a55;
+  --mw-copper-400: #cf8556; /* autumn primary on dark canvases                    */
   --mw-copper-500: #a65e2e;
+  --mw-copper-600: #8f4f25; /* autumn primary on light canvases (5.78:1 on --bg)  */
 
   /* ── Warm neutrals — the canvas. Intentionally warm-toned. ───────────────── */
   --mw-neutral-000: #fff; /* pure white                                       */
@@ -252,6 +255,7 @@
   --ok:        var(--mw-green-600);
   --info:      var(--mw-blue-600);
   --highlight: var(--season-highlight, var(--mw-yellow-400)); /* emphasis         */
+  --warning-text: var(--mw-yellow-700); /* warning as TEXT (--warning is the bright fill, 2.0:1 on light) */
   --warning-contrast:   #201b19;  /* dark text on yellow */
   --highlight-contrast: #201b19;
 
@@ -273,7 +277,7 @@
  * of dark still overrides the accents while dark keeps the neutral canvas.
  * ═════════════════════════════════════════════════════════════════════════════ */
 :root[data-theme="dark"],
-.dark {
+:root.dark {
   --bg:      var(--mw-neutral-900);
   --surface: #1c1618; /* warm dark surface, slightly lighter than --bg */
   --lift:    #241c1f; /* hover / raised surface                        */
@@ -293,6 +297,7 @@
   --ok:        var(--mw-green-300);
   --info:      var(--mw-blue-300);
   --highlight: var(--season-highlight, var(--mw-yellow-300));
+  --warning-text: var(--mw-yellow-300); /* the dark-canvas warning already reads as text */
 
   --focus-ring: var(--season-focus, var(--mw-slate-300));
 

@@ -16,7 +16,11 @@ src/
   index.ts      TypeScript re-export of tokens.json with named exports and TSDoc
 scripts/
   check-token-sync.mjs   Validator (npm run check:sync) — CSS ↔ JSON ↔ index parity + season symmetry
+  check-contrast.mjs     npm run check:contrast — WCAG AA for every role pairing in every theme × season
+  check-css-contract.mjs npm run check:css — the two CSS files hold custom properties only (see SECURITY.md)
   check-versions.mjs     npm run check:versions — jsr.json version == package.json version
+  lib/css.mjs            Shared CSS parsing, cascade evaluation and contrast maths
+tests/                   node:test cases for the checks (payload rejection, comment handling)
 ```
 
 There is no build step. The package ships `src/` directly; consumers' bundlers handle processing.
@@ -40,8 +44,10 @@ There is no build step. The package ships `src/` directly; consumers' bundlers h
 2. **`src/tokens.json`** — mirror ramp/scale/semantic values into the right subtree (`primary`,
    `brand`, `secondary`, `neutral`, `status`, `radius`, `ratio`, `space`, `semantic.light/dark`).
 3. **`src/index.ts`** — export any new subtree with TSDoc.
-4. **`src/seasons.css`** — if you add a seasonal role, add the `--season-*` var to ALL four seasons.
-5. Run `npm run check:sync`.
+4. **`src/seasons.css`** — if you add a seasonal role, add the `--season-*` var to ALL four seasons, in
+   BOTH the light and the dark block of each.
+5. Run `npm run check` (sync, contrast, CSS contract, tests). A new colour must pass the contrast gate in
+   every theme × season; status text uses `--warning-text`, never `--warning` (a fill).
 
 CSS vars absent from `tokens.json` (`--mw-panel-*`, `--mw-font-*`, `--noise-*`, `--transition-*`,
 `--font-size-*`, `--leading-*`, `--tracking-*`) are intentionally CSS-only; the validator does not
@@ -82,7 +88,7 @@ Controlled imperfection + human easing. Consumed by `@meddleware/ui` utilities (
 
 ## Colour mode
 
-Light is the default (`:root`). Dark activates on `:root[data-theme="dark"]`; seasons on
+Light is the default (`:root`). Dark activates on `:root[data-theme="dark"]` (or `:root.dark`, the root element only — a `.dark` class deeper in the tree no longer flips its subtree); seasons on
 `:root[data-season="…"]` (independent, composable). `@meddleware/ui`'s `useColorMode` manages the
 `data-theme` attribute + `localStorage`. No CSS `prefers-color-scheme` media query by design — the UI
 layer bridges OS preference so the attribute is always explicit.

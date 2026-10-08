@@ -1,7 +1,7 @@
 {
   "name": "@meddleware/design-tokens",
-  "version": "0.1.8",
-  "description": "Framework-agnostic design tokens (Oxblood/Indigo palette) for @meddleware UIs — CSS custom properties + JS/JSON exports.",
+  "version": "0.1.9",
+  "description": "Framework-agnostic design tokens (warm-neutral canvas, functional accents) for @meddleware UIs — CSS custom properties + JS/JSON exports.",
   "license": "0BSD",
   "repository": {
     "type": "git",
@@ -31,9 +31,14 @@
     "check:sync": "node scripts/check-token-sync.mjs",
     "check:versions": "node scripts/check-versions.mjs",
     "lint:css": "stylelint \"src/**/*.{css,vue}\"",
-    "lint": "npm run lint:css"
+    "lint": "npm run lint:css",
+    "check:contrast": "node scripts/check-contrast.mjs",
+    "check:css": "node scripts/check-css-contract.mjs",
+    "test": "node --test tests/check-css-contract.test.mjs tests/sync-comments.test.mjs",
+    "check": "npm run check:versions && npm run check:sync && npm run check:contrast && npm run check:css && npm test"
   },
   "devDependencies": {
+    "jsr": "0.14.3",
     "postcss": "^8.4.49",
     "stylelint": "^17.15.0",
     "stylelint-config-standard": "^40.0.0",

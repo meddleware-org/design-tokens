@@ -1,7 +1,7 @@
 /**
  * @packageDocumentation
  *
- * `@meddleware/design-tokens` — Oxblood / Indigo design tokens for the `@meddleware` UIs.
+ * `@meddleware/design-tokens` — design tokens for the `@meddleware` UIs.
  *
  * ### Typical usage
  *
@@ -31,7 +31,7 @@
  * import { brand, semantic, neutral } from '@meddleware/design-tokens'
  *
  * console.log(brand.oxblood[500]) // '#5e1622'
- * console.log(semantic.dark.accent)  // '#b0465a'
+ * console.log(semantic.dark.accent)  // '#e07850'
  * ```
  *
  * @module
@@ -85,7 +85,7 @@ export const semantic = tokens.semantic
  * @example
  * ```ts
  * import { brand } from '@meddleware/design-tokens'
- * document.body.style.background = brand.oxblood['050']
+ * document.body.style.background = semantic.light.bg
  * ```
  */
 export const brand = tokens.brand

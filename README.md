@@ -74,7 +74,7 @@ Component-level overrides (in your components)
 Each interactive role reads a seasonal override first, then falls back silently:
 
 ```css
---accent: var(--season-accent, var(--mw-red-500));
+--accent: var(--season-accent, var(--mw-terracotta-500));
 ```
 
 If no season is active, `--season-accent` is simply undefined and the primary fallback is used —
@@ -131,16 +131,19 @@ Values swap automatically between light and dark, and are overridable per season
 | `--border` | `#ded6cf` | `#372b2e` | Dividers, outlines, borders |
 | `--text` | `#201b19` | `#f2eae6` | Primary body text |
 | `--muted` | `#6e635c` | `#b7a9a3` | Secondary / helper text |
-| `--accent` / `--primary` | red `#d92d20` | red `#ef5a4c` | Primary interactive (links, CTAs, badges) |
-| `--accent-contrast` / `--primary-contrast` | `#ffffff` | `#201b19` | Text on accent |
-| `--secondary` | blue `#1d6fe0` | blue `#6ea8fe` | Secondary interactive |
+| `--accent` | terracotta `#b84527` | terracotta `#e07850` | Primary interactive (links, CTAs, badges) |
+| `--primary` | moss `#2b7a56` | moss `#5aaa80` | Affirmative / constructive actions |
+| `--accent-contrast` | `#ffffff` | `#201b19` | Text on accent |
+| `--primary-contrast` | `#ffffff` | `#0b0809` | Text on primary |
+| `--secondary` | slate `#4e5f9e` | slate `#9ba8d4` | Secondary interactive |
 | `--secondary-contrast` | `#ffffff` | `#0b0809` | Text on secondary |
 | `--danger` | `#b3261e` | `#f08a7e` | Error / destructive |
-| `--warning` | yellow `#e0a500` | yellow `#f4d84f` | Caution / degraded |
+| `--warning` | yellow `#e0a500` | yellow `#f4d84f` | Caution / degraded — a **fill** (2.0:1 on the light canvas) |
+| `--warning-text` | amber `#8a6500` | yellow `#f4d84f` | Warning drawn as **text** (4.86:1 on `--bg`) |
 | `--ok` | green `#177542` | green `#5bb392` | Success / healthy |
 | `--info` | blue `#1558b5` | blue `#6ea8fe` | Informational |
 | `--highlight` | yellow `#f2c744` | yellow `#f4d84f` | Emphasis (the old "premium" role) |
-| `--focus-ring` | blue `#1d6fe0` | blue `#6ea8fe` | Visible focus outline (distinct from accent) |
+| `--focus-ring` | slate `#4e5f9e` | slate `#9ba8d4` | Visible focus outline (distinct from accent; never red) |
 | `--radius` / `--radius-sm` / `--radius-lg` | `10 / 6 / 16px` | — | Corner radius |
 
 ### Functional primary + rainbow ramps
@@ -233,11 +236,20 @@ keep everything in lockstep:
 `"sideEffects": ["*.css"]` keeps CSS imports from being tree-shaken. The package ships `src/`
 directly (no build step); consumers' bundlers process the CSS/TS/JSON. `check:sync`
 (`scripts/check-token-sync.mjs`, run in CI) guards that `tokens.css` ↔ `tokens.json` ↔ `index.ts`
-stay in sync and that every season overrides the same role set.
+stay in sync and that every season overrides the same role set. `check:contrast` measures every
+role pairing in every theme × season against WCAG AA (4.5:1 text and labels, 3:1 focus ring), and
+`check:css` asserts both CSS files contain custom properties only (no rules, at-rules or `url()` beyond the
+pinned noise overlay) — they are imported as global CSS by every app.
+
+### Seasons and dark mode
+
+Each season has two blocks in `seasons.css`: darker stops for light canvases and lighter stops for dark
+canvases, because no single mid-tone reads at 4.5:1 on both. Set `data-season` on `<html>` together with
+`data-theme="dark"` (or `class="dark"` on `<html>`; the class form is honoured on the root element only).
 
 ## Publishing
 
-CI publishes on `v*` git tags via `.github/workflows/publish.yml` using **npm trusted publishing**
+CI publishes on `v*` git tags via `.github/workflows/npm-publish.yml` using **npm trusted publishing**
 (OIDC) — no long-lived tokens. Bump `version`, add a `CHANGELOG.md` entry, tag, and push.
 
 ## License

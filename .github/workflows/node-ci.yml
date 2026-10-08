@@ -5,6 +5,8 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  # The release workflow runs the same checks on the tagged commit.
+  workflow_call:
 
 permissions:
   contents: read
@@ -33,8 +35,30 @@ jobs:
       - name: Token sync check (tokens.css ↔ tokens.json ↔ index.ts)
         run: npm run check:sync
 
+      - name: Contrast (every theme × season meets WCAG AA)
+        run: npm run check:contrast
+
+      - name: CSS contract (custom properties only, no url() beyond the pinned noise overlay)
+        run: npm run check:css
+
+      - name: Check-script tests
+        run: npm test
+
       - name: Type-check
         run: npm run type-check
 
       - name: Lint CSS (stylelint)
-        run: npm run lint:css --if-present
+        run: npm run lint:css
+
+      - name: Package contents
+        run: |
+          npm pack --dry-run --json > pack.json
+          node -e "
+            const [p] = JSON.parse(require('fs').readFileSync('pack.json', 'utf8'))
+            const files = p.files.map((f) => f.path).sort()
+            const want = ['package.json', 'src/index.ts', 'src/seasons.css', 'src/tokens.css', 'src/tokens.json', 'LICENSE', 'README.md']
+            for (const f of want) if (!files.includes(f)) { console.error('missing from the tarball:', f); process.exit(1) }
+            const extra = files.filter((f) => !f.startsWith('src/') && !['package.json', 'LICENSE', 'README.md', 'CHANGELOG.md'].includes(f))
+            if (extra.length) { console.error('unexpected files in the tarball:', extra); process.exit(1) }
+            if (p.unpackedSize > 200_000) { console.error('tarball unpacked size', p.unpackedSize, 'exceeds 200 kB'); process.exit(1) }
+          "
