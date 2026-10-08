@@ -37,7 +37,7 @@
     "postcss": "^8.4.49",
     "stylelint": "^17.15.0",
     "stylelint-config-standard": "^40.0.0",
-    "typescript": "~6.0.0"
+    "typescript": "~7.0.2"
   },
   "browserslist": [
     "> 0.5%",
