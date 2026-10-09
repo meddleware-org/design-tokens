@@ -39,8 +39,8 @@
   },
   "devDependencies": {
     "jsr": "0.14.3",
-    "postcss": "^8.4.49",
-    "stylelint": "^17.15.0",
+    "postcss": "^8.5.29",
+    "stylelint": "^17.16.0",
     "stylelint-config-standard": "^40.0.0",
     "typescript": "~6.0.0"
   },
