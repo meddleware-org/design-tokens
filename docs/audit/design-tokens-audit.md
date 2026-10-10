@@ -37,7 +37,7 @@ CHANGELOG):
 - JSR `@meddleware/design-tokens` **0.1.9** (verified 2026-10-09 against `api.jsr.io`: 4 versions,
   `latestVersion` 0.1.9, no dependents). The first pass could not reach `api.jsr.io`; the JSR drift
   recorded then (stuck at 0.1.2 until 0.1.8) is closed by `check:versions`.
-- **Unreleased (2026-10-10 fix wave): 0.1.10**, committed locally (`commit pending`), not yet tagged or
+- **Unreleased (2026-10-10 fix wave): 0.1.10**, committed locally (`commit `8dffe14``), not yet tagged or
   published. It resolves F4, F5, F11 and F12 (see each finding and the log). Everything above describes
   the published 0.1.9 unless stated.
 - Consumers: 13 workspace packages, all on `^0.1.9` (`@meddleware/ui`, every tool UI, dashboard, landing,
@@ -62,7 +62,7 @@ CHANGELOG):
   first pass F1–F3 were all open at Low).
 
 **Status:** re-verified 2026-10-09 at `61863ad` (first-pass baseline 2026-10-03 at `097b73d`); fix wave
-2026-10-10 (0.1.10, `commit pending`). F1–F3, F6–F8 are resolved in 0.1.9; F4, F5, F11 and F12 are
+2026-10-10 (0.1.10, `commit `8dffe14``). F1–F3, F6–F8 are resolved in 0.1.9; F4, F5, F11 and F12 are
 resolved in 0.1.10; F10 stays deferred (the call sites are in three consumer repos).
 
 **Front matter (TS lens):**
@@ -417,7 +417,7 @@ Update SECURITY.md to name both CSS files and to state the `data:` exception pre
 ### F4 — The sync validator is comment-blind and covers only part of the role surface
 
 **Severity:** Info   **Disposition:** RESOLVED (comment blindness in 0.1.9; the partial mirror,
-missing exports and the `status.ok` mismatch in 0.1.10, `commit pending`)
+missing exports and the `status.ok` mismatch in 0.1.10, `commit `8dffe14``)
 **Where:** `scripts/check-token-sync.mjs:36-58, 136-138, 171-176, 188-196`; `src/tokens.json`;
 `src/index.ts`.
 
@@ -468,7 +468,7 @@ missing exports and the `status.ok` mismatch in 0.1.10, `commit pending`)
 - **Exports.** `secondary`, `status` and `radius` are still reachable only through `designTokens` or
   the default export; same reasoning.
 
-**Re-evaluated 2026-10-10 — RESOLVED in 0.1.10 (`commit pending`).** The two accepted limitations became
+**Re-evaluated 2026-10-10 — RESOLVED in 0.1.10 (`commit `8dffe14``).** The two accepted limitations became
 cheap once the sync check already resolved every role, so they were fixed rather than carried:
 
 - **Full role mirror.** `tokens.json` `semantic.light` and `semantic.dark` now hold all 21 colour roles
@@ -486,7 +486,7 @@ cheap once the sync check already resolved every role, so they were fixed rather
 
 ### F5 — JSR and Node entry-point caveats
 
-**Severity:** Info   **Disposition:** RESOLVED (0.1.10, `commit pending`; OQ4 decided: JSR is kept)
+**Severity:** Info   **Disposition:** RESOLVED (0.1.10, `commit `8dffe14``; OQ4 decided: JSR is kept)
 **Where:** `src/index.ts:39` (`import tokens from './tokens.json'` without `with { type: 'json' }`);
 `jsr.json` (exports `.` and `./tokens.json` only); `package.json` `exports["."]` → `.ts` source.
 
@@ -526,7 +526,7 @@ cheap once the sync check already resolved every role, so they were fixed rather
 - **Node and consumer `tsc`.** Unchanged and documented ("consumers' bundlers handle processing");
   `package.json` `exports` and `files` are as before (B.TS-1).
 
-**Fixed 2026-10-10 — RESOLVED in 0.1.10 (`commit pending`); OQ4 decided: JSR is kept.**
+**Fixed 2026-10-10 — RESOLVED in 0.1.10 (`commit `8dffe14``); OQ4 decided: JSR is kept.**
 
 - **Fix.** `src/index.ts` now reads `import tokens from './tokens.json' with { type: 'json' }`. The
   alternative (generating the values into TypeScript) was rejected: it would add a build step the
@@ -714,7 +714,7 @@ gate (as in `ui` 0.1.31) would catch a regression; access-gate-ui and treasury-u
 
 ### F11 — The contrast gate does not measure `--lift` or the panel palettes
 
-**Severity:** Info   **Disposition:** RESOLVED (0.1.10, `commit pending`; was ACCEPTED-RISK)
+**Severity:** Info   **Disposition:** RESOLVED (0.1.10, `commit `8dffe14``; was ACCEPTED-RISK)
 **Where:** `scripts/check-contrast.mjs:15-22` (canvases `bg` and `surface` only; panels not
 included); `src/tokens.css` (`--lift`: "hover / raised surface").
 
@@ -741,7 +741,7 @@ theme × season and passes.
 either darken the light `--lift` by one stop or add `lift` to `CANVASES` and the panel pairs to the gate
 in the same change as the retune. Revisit with S1.
 
-**Fixed 2026-10-10 — RESOLVED in 0.1.10 (`commit pending`).** The gate and the values changed together, as
+**Fixed 2026-10-10 — RESOLVED in 0.1.10 (`commit `8dffe14``).** The gate and the values changed together, as
 the remediation asked:
 
 - **Gate.** `check-contrast.mjs` adds `lift` to `CANVASES` (all nine text roles and the focus ring are
@@ -767,7 +767,7 @@ the remediation asked:
 
 ### F12 — Residual documentation and comment drift after 0.1.9
 
-**Severity:** Info   **Disposition:** RESOLVED (0.1.10, `commit pending`; was DEFERRED)
+**Severity:** Info   **Disposition:** RESOLVED (0.1.10, `commit `8dffe14``; was DEFERRED)
 **Where / Issue** (re-read 2026-10-09 against `61863ad`):
 
 - `src/tokens.css:31` and `src/seasons.css:8` show `--accent: var(--season-accent, var(--mw-red-500))`;
@@ -787,7 +787,7 @@ could still copy the red example.
 **Remediation / evidence:** one docs pass over the five places above. Not applied (no code or doc
 changes by this audit).
 
-**Fixed 2026-10-10 — RESOLVED in 0.1.10 (`commit pending`).**
+**Fixed 2026-10-10 — RESOLVED in 0.1.10 (`commit `8dffe14``).**
 
 - `tokens.css` and `seasons.css` header examples now read `var(--mw-terracotta-500)` (comments only;
   `check:css` still passes).
@@ -948,8 +948,8 @@ checked by the publish workflow's idempotency probes, not by a test.
 ### pre-mainnet
 
 - [x] `jsr` pinned; npm and JSR publishing split by job — F7
-- [x] JSR entry verified under Deno — F5 (0.1.10: import attribute; `tests/entry-import.test.mjs` under Node and Deno, `REQUIRE_DENO=1` in CI; `jsr publish --dry-run` in CI; OQ4 decided: JSR kept; `commit pending`)
-- [x] docs corrected (residual items) — F12 (0.1.10; `commit pending`)
+- [x] JSR entry verified under Deno — F5 (0.1.10: import attribute; `tests/entry-import.test.mjs` under Node and Deno, `REQUIRE_DENO=1` in CI; `jsr publish --dry-run` in CI; OQ4 decided: JSR kept; `commit `8dffe14``)
+- [x] docs corrected (residual items) — F12 (0.1.10; `commit `8dffe14``)
 - [ ] consumers use `--warning-text` for text (access-gate-ui, dao-ui, treasury-ui) — F10
 - [ ] external review (maintainer item)
 
@@ -1097,7 +1097,7 @@ checked by the publish workflow's idempotency probes, not by a test.
     MITIGATED (F4), 3 DEFERRED (F5, F10, F12), 1 ACCEPTED-RISK (F11).
   - **Not verified:** a clean `npm ci` run from the lockfile and the CI run itself (read, not re-run).
 
-- 2026-10-10 — fix wave on `main` (base `6ec76ff`), release 0.1.10 (local commit, `commit pending`; not
+- 2026-10-10 — fix wave on `main` (base `6ec76ff`), release 0.1.10 (local commit, `commit `8dffe14``; not
   tagged or published). Node 24.13.0, Deno 2.9.6 (scratch install of the `deno` npm package, outside the
   repo), `jsr` 0.14.3.
   - **Resolved:** F5 (import attribute; entry imported under Node and Deno; CI installs Deno and runs
