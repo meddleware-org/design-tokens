@@ -41,8 +41,18 @@ jobs:
       - name: CSS contract (custom properties only, no url() beyond the pinned noise overlay)
         run: npm run check:css
 
-      - name: Check-script tests
+      - name: Install Deno (the JSR runtime, for the entry-import test)
+        uses: denoland/setup-deno@22d081ff2d3a40755e97629de92e3bcbfa7cf2ed # v2.0.5
+        with:
+          deno-version: 2.9.6
+
+      - name: Check-script tests (including the built entry imported under Node and Deno)
+        env:
+          REQUIRE_DENO: '1'
         run: npm test
+
+      - name: JSR dry run (type, slow-type and file checks; nothing is published)
+        run: npx --no-install jsr publish --dry-run
 
       - name: Type-check
         run: npm run type-check

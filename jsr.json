@@ -1,17 +1,20 @@
 {
   "$schema": "https://jsr.io/schema/config-file.v1.json",
   "name": "@meddleware/design-tokens",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "license": "0BSD",
   "exports": {
     ".": "./src/index.ts",
     "./tokens.json": "./src/tokens.json"
   },
   "publish": {
-    "exclude": [
-      "AGENTS.md",
-      "CLAUDE.md",
-      ".github"
+    "include": [
+      "src/index.ts",
+      "src/tokens.json",
+      "README.md",
+      "LICENSE",
+      "CHANGELOG.md",
+      "jsr.json"
     ]
   }
 }

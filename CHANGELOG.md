@@ -3,6 +3,37 @@
 All notable changes to `@meddleware/design-tokens` are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versioning follows [Semantic Versioning](https://semver.org/).
 
+## [0.1.10] - 2026-10-10
+
+### Fixed
+
+- **The JSR `.` entry imports at runtime.** `src/index.ts` imported `tokens.json` without an import
+  attribute, so `deno check` passed but `deno run` (and Node, which also requires it) failed. It is now
+  `import tokens from './tokens.json' with { type: 'json' }`. `npm test` imports the entry under Node and
+  Deno, and CI installs Deno (`REQUIRE_DENO=1`) and runs `jsr publish --dry-run`.
+- **Text roles meet AA on `--lift`** (the hover / raised surface). Ten light-theme pairings measured
+  4.30–4.49:1; four ramp stops were darkened by 1–3% (invisible in use, all gates still pass):
+  `--mw-terracotta-500` `#b84527` → `#b74427`, `--mw-moss-500` `#2b7a56` → `#2a7754`,
+  `--mw-yellow-700` `#8a6500` → `#886400` (the `--warning-text` role), `--mw-orange-600` `#b0530c` →
+  `#aa500c`. Token names and the `--lift` value are unchanged.
+- Documentation drift: the `var(--mw-red-500)` example in `tokens.css` / `seasons.css`, the README
+  migration note and stale `semantic.light.accent` value, "oxblood/indigo" wording in `index.ts` and
+  `AGENTS.md`, `npx jsr publish` wording, and the stale header comment of `check-token-sync.mjs`.
+
+### Added
+
+- `check:contrast` also measures every text role on `--lift` and both panel palettes (`--mw-panel-dark-*`,
+  `--mw-panel-light-*`): 370 pairings. `tests/check-contrast.test.mjs` feeds it known-bad values.
+- `tokens.json` `semantic` now mirrors every colour role per theme (`lift`, the `-contrast` labels,
+  `danger`, `warning`, `ok`, `info`, `highlight`, `warning-text`, `focus-ring`); `check:sync` fails when a
+  role is missing (`tests/sync-mirror.test.mjs`). `index.ts` exports `secondary`, `status` (deprecated: its
+  `ok` is the legacy ramp stop, not the `--ok` role) and `radius` by name.
+
+### Changed
+
+- The JSR package carries only `src/index.ts`, `src/tokens.json`, `README.md`, `LICENSE`, `CHANGELOG.md`
+  and `jsr.json` (`publish.include`); scripts, tests and the audit are no longer uploaded.
+
 ## [0.1.9] - 2026-10-08
 
 ### Fixed

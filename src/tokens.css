@@ -28,7 +28,7 @@
  *      Dark via `data-theme="dark"`.
  *   3. Component-level overrides (in consuming components).
  *   Roles read seasonal-first with a silent fallback:
- *     `--accent: var(--season-accent, var(--mw-red-500));`
+ *     `--accent: var(--season-accent, var(--mw-terracotta-500));`
  *   If no season is active the `--season-*` var is simply undefined and the primary
  *   fallback is used — silently, no @property, no console noise.
  *
@@ -59,13 +59,13 @@
 
   --mw-orange-400: #f08a3c; /* light stop                                       */
   --mw-orange-500: #e06d10; /* primary orange (autumn, warning-alt)             */
-  --mw-orange-600: #b0530c; /* pressed / active                                 */
+  --mw-orange-600: #aa500c; /* pressed / active                                 */
 
   --mw-yellow-300: #f4d84f; /* light stop — dark-mode warning/highlight         */
   --mw-yellow-400: #f2c744; /* highlight (emphasis)                             */
   --mw-yellow-500: #e0a500; /* primary amber-yellow — warning (light mode)      */
   --mw-yellow-600: #a87c00; /* pressed / active                                 */
-  --mw-yellow-700: #8a6500; /* text-safe amber — warning text on light canvases (4.86:1 on --bg) */
+  --mw-yellow-700: #886400; /* text-safe amber — warning text on light canvases (4.95:1 on --bg, 4.54:1 on --lift) */
 
   --mw-green-300:  #5bb392; /* light stop — dark-mode success                   */
   --mw-green-500:  #1f9254; /* primary green                                    */
@@ -79,11 +79,11 @@
    * Terracotta (madder-inspired), Moss (forest green), Slate (dusty blue-violet).
    * All three appear together in nature; carry no confrontational tension. */
   --mw-terracotta-300: #e07850; /* dark-mode accent (warm fired earth)        */
-  --mw-terracotta-500: #b84527; /* light-mode accent (warm fired earth)       */
+  --mw-terracotta-500: #b74427; /* light-mode accent (warm fired earth)       */
   --mw-terracotta-600: #913519; /* pressed / active                           */
 
   --mw-moss-300: #5aaa80;  /* dark-mode primary (warm forest green at night) */
-  --mw-moss-500: #2b7a56;  /* light-mode primary (warm forest green)         */
+  --mw-moss-500: #2a7754;  /* light-mode primary (warm forest green)         */
   --mw-moss-600: #1f5c40;  /* pressed / active                              */
 
   --mw-slate-300: #9ba8d4; /* dark-mode secondary (dusty twilight blue)     */
@@ -251,7 +251,7 @@
 
   /* Status + emphasis (role-based; no colour in the name). */
   --danger:    var(--mw-danger-500);
-  --warning:   var(--mw-yellow-500);
+  --warning:   var(--mw-yellow-500); /* FILL only (borders, tints, badges' background) — never `color:`; use --warning-text */
   --ok:        var(--mw-green-600);
   --info:      var(--mw-blue-600);
   --highlight: var(--season-highlight, var(--mw-yellow-400)); /* emphasis         */

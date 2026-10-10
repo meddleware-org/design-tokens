@@ -20,10 +20,13 @@ scripts/
   check-css-contract.mjs npm run check:css — the two CSS files hold custom properties only (see SECURITY.md)
   check-versions.mjs     npm run check:versions — jsr.json version == package.json version
   lib/css.mjs            Shared CSS parsing, cascade evaluation and contrast maths
-tests/                   node:test cases for the checks (payload rejection, comment handling)
+tests/                   node:test cases: the checks (payload rejection, comment handling, drifted mirror,
+                         failing contrast) and the `.` entry imported under Node and Deno (REQUIRE_DENO=1 in CI)
 ```
 
 There is no build step. The package ships `src/` directly; consumers' bundlers handle processing.
+`index.ts` imports `tokens.json` with `with { type: 'json' }`: without the attribute `deno check` passes but
+`deno run` of the JSR entry fails. Keep it.
 
 > **Sync is now automated.** `scripts/check-token-sync.mjs` (run in CI via `npm run check:sync`)
 > verifies `tokens.css` ↔ `tokens.json` ↔ `index.ts` value parity (resolving `var(--x, fallback)`
@@ -116,7 +119,7 @@ is opt-in; not importing it means every role uses its primary light/dark fallbac
 Published to both **npmjs** and **JSR** on `v*` git tags using OIDC — no long-lived secrets required.
 
 - **npmjs**: npm trusted publishing (`id-token: write`). One-time setup: configure a trusted publisher on npmjs.com pointing at this repo and `npm-publish.yml`.
-- **JSR**: `npx jsr publish`, which auto-detects the GitHub Actions OIDC environment. One-time setup: link the GitHub repository to the JSR package in the JSR dashboard.
+- **JSR**: the lockfile-pinned CLI, `npx --no-install jsr publish`, in its own job; it auto-detects the GitHub Actions OIDC environment. One-time setup: link the GitHub repository to the JSR package in the JSR dashboard. CI runs `npx --no-install jsr publish --dry-run` on every push. JSR carries only `.` and `./tokens.json` (the `publish.include` list in `jsr.json`).
 
 To release: bump `version` in both `package.json` **and** `jsr.json` (CI's `check:versions` fails when they differ — a stale `jsr.json` makes the JSR publish a silent no-op), add a CHANGELOG entry, commit, tag (`git tag v0.x.y`), push the tag.
 

@@ -1,6 +1,6 @@
 # Security Audit — `design-tokens`
 
-**Classification:** Internal security review (re-verified 2026-10-09 — awaiting external review)
+**Classification:** Internal security review (re-verified 2026-10-09, fix wave 2026-10-10 — awaiting external review)
 **Project:** design-tokens (`@meddleware/design-tokens`) — the design-token package for every
 `@meddleware` UI. It ships:
 
@@ -37,6 +37,9 @@ CHANGELOG):
 - JSR `@meddleware/design-tokens` **0.1.9** (verified 2026-10-09 against `api.jsr.io`: 4 versions,
   `latestVersion` 0.1.9, no dependents). The first pass could not reach `api.jsr.io`; the JSR drift
   recorded then (stuck at 0.1.2 until 0.1.8) is closed by `check:versions`.
+- **Unreleased (2026-10-10 fix wave): 0.1.10**, committed locally (`commit pending`), not yet tagged or
+  published. It resolves F4, F5, F11 and F12 (see each finding and the log). Everything above describes
+  the published 0.1.9 unless stated.
 - Consumers: 13 workspace packages, all on `^0.1.9` (`@meddleware/ui`, every tool UI, dashboard, landing,
   status-page, walrus-relay, and the docs and dev sites).
 - `seasons.css` is imported by the apps, and seasons are **active in production**: `@meddleware/ui`'s
@@ -44,7 +47,7 @@ CHANGELOG):
   dashboard, landing, seal-ui, status-page, token-deployer-ui, treasury-ui and walrus-ui. It is
   *autumn* at this review. Since 0.1.9 every season passes the contrast gate in both themes (F1).
 
-**Review date:** 2026-10-03 (first pass); re-verified 2026-10-09
+**Review date:** 2026-10-03 (first pass); re-verified 2026-10-09; fix wave 2026-10-10
 **Reviewer:** Internal review
 **Severity ceiling:** Medium.
 
@@ -58,8 +61,9 @@ CHANGELOG):
 - Realised ceiling after the 2026-10-09 re-verification: **Low** (one open consumer item, F10; at the
   first pass F1–F3 were all open at Low).
 
-**Status:** re-verified 2026-10-09 at `61863ad` (first-pass baseline 2026-10-03 at `097b73d`). F1–F3,
-F6–F8 are resolved in 0.1.9; F4 is mitigated; F5, F10 and F12 are deferred; F11 is an accepted risk.
+**Status:** re-verified 2026-10-09 at `61863ad` (first-pass baseline 2026-10-03 at `097b73d`); fix wave
+2026-10-10 (0.1.10, `commit pending`). F1–F3, F6–F8 are resolved in 0.1.9; F4, F5, F11 and F12 are
+resolved in 0.1.10; F10 stays deferred (the call sites are in three consumer repos).
 
 **Front matter (TS lens):**
 
@@ -82,13 +86,15 @@ F6–F8 are resolved in 0.1.9; F4 is mitigated; F5, F10 and F12 are deferred; F1
 
 ## Executive summary
 
-The package is 617 lines of shipped source at 0.1.9: `tokens.css` 305, `seasons.css` 130, `index.ts` 142,
-`tokens.json` 40. Four Node check scripts (plus a shared `lib/css.mjs`), two test files and two CI
-workflows support it. There is no runtime JavaScript beyond static re-exports of the JSON.
+The package is 617 lines of shipped source at 0.1.9 (`tokens.css` 305, `seasons.css` 130, `index.ts` 142,
+`tokens.json` 40) and 663 at 0.1.10 (`index.ts` 174, `tokens.json` 54: the full role mirror and the
+remaining named exports). Four Node check scripts (plus a shared `lib/css.mjs`), five test files and two
+CI workflows support it. There is no runtime JavaScript beyond static re-exports of the JSON.
 
 The first pass (2026-10-03, `097b73d`, 0.1.8) recorded F1–F8 with every one DEFERRED. Release 0.1.9
 (2026-10-08, `db4e3ad`) fixed the contrast and CSS-integrity gaps and the release pipeline; the
-2026-10-09 re-verification re-checked every finding against `main` (`61863ad`).
+2026-10-09 re-verification re-checked every finding against `main` (`61863ad`). The 2026-10-10 fix wave
+(0.1.10, unreleased) resolves the four package-side leftovers: F4, F5, F11, F12.
 
 **What holds (verified 2026-10-09):**
 
@@ -96,8 +102,9 @@ The first pass (2026-10-03, `097b73d`, 0.1.8) recorded F1–F8 with every one DE
   only `--*` custom properties and `color-scheme` under the allow-listed selectors, with no at-rule,
   escape, `content` or `url()` beyond the SHA-256-pinned `--noise-overlay` data URI (F3).
 - **Every theme × season meets WCAG AA, and a gate enforces it.** `check:contrast` passes 250 pairings
-  (2 themes × 5 season states); each season has a light and a dark block (F1), and the light warning
-  text role is `--warning-text` (F2).
+  (2 themes × 5 season states) at 0.1.9 and 370 at 0.1.10 (adding every text role on `--lift` and both
+  panel palettes, F11); each season has a light and a dark block (F1), and the light warning text role
+  is `--warning-text` (F2).
 - **References resolve.** An unresolvable `var()` fails the contrast gate, and `check:sync` keeps the
   season key sets identical and matching what `tokens.css` reads.
 - **CI and release.**
@@ -107,9 +114,11 @@ The first pass (2026-10-03, `097b73d`, 0.1.8) recorded F1–F8 with every one DE
     pinned devDependency run with `npx --no-install` (F7).
   - SHA-pinned actions; OIDC publish with npm provenance (0.1.9 verified); an expiring audit
     allowlist; grouped weekly Dependabot for npm and actions; a tarball-contents check.
-- **Measured.** `npm run check` (versions, sync, contrast, CSS contract, 25 tests), type-check and
-  stylelint are clean. The audit gate: 1 high advisory, allowlisted and dev-only; `npm audit
-  --omit=dev` is clean. Pack is 7 files, 14.2 kB.
+- **Measured.** At 0.1.9 (2026-10-09): `npm run check` (versions, sync, contrast, CSS contract, 25
+  tests), type-check and stylelint clean; the audit gate: 1 high advisory, allowlisted and dev-only;
+  `npm audit --omit=dev` clean; pack 7 files, 14.2 kB. At 0.1.10 (2026-10-10): the same checks with 37
+  tests (Node and Deno entry import included) and 370 contrast pairings; pack 7 files, 15.3 kB; `jsr
+  publish --dry-run` succeeds.
 
 **Findings (none above Low):**
 
@@ -118,22 +127,23 @@ The first pass (2026-10-03, `097b73d`, 0.1.8) recorded F1–F8 with every one DE
 | F1 seasonal palettes failed AA | RESOLVED 0.1.9 |
 | F2 light `--warning` 2.0:1 | RESOLVED in the package (`--warning-text`); three consumer call sites still use `--warning` as text — **F10** |
 | F3 CSS-integrity invariants unmechanised | RESOLVED 0.1.9 (`check:css`, 22 payload tests) |
-| F4 comment-blind, partial validator | MITIGATED (comments fixed; partial JSON mirror accepted, no consumer imports it) |
-| F5 JSR / Node entry-point caveats | DEFERRED (JSR verified live; the Deno import of `.` fails — one-line fix, with OQ4) |
+| F4 comment-blind, partial validator | RESOLVED 0.1.10 (comments fixed in 0.1.9; every role mirrored, all subtrees exported, `status` deprecated) |
+| F5 JSR / Node entry-point caveats | RESOLVED 0.1.10 (import attribute; entry imported under Node and Deno in CI; JSR dry run; OQ4 decided: JSR kept) |
 | F6 global `.dark` | RESOLVED 0.1.9 (`:root.dark`) |
 | F7 CI/release details, unpinned `npx jsr` | RESOLVED 0.1.9 (unsigned tags accepted) |
 | F8 documentation drift | RESOLVED 0.1.9 for the recorded items; residual drift — **F12** |
 | F10 `--warning` still drawn as text in access-gate-ui, dao-ui, treasury-ui | DEFERRED |
-| F11 contrast gate omits `--lift` and panels | ACCEPTED-RISK |
-| F12 residual documentation drift | DEFERRED |
+| F11 contrast gate omits `--lift` and panels | RESOLVED 0.1.10 (gated; four ramp stops darkened 1–3%) |
+| F12 residual documentation drift | RESOLVED 0.1.10 |
 
 **Posture:**
 
 - The two gaps the first pass found were about outcomes the checks did not cover: contrast (F1, F2)
   and CSS content integrity (F3). Both are now gated in CI and before every publish, with tests that
   feed the gates the payloads they exist to catch.
-- What remains is consumer-side (F10), the JSR Deno entry (F5), a marginal gate-coverage gap (F11) and
-  documentation (F12). None is a supply-chain or integrity risk.
+- What remains is consumer-side (F10): three call sites in other repos. The JSR Deno entry (F5), the
+  `--lift` / panel gate gap (F11), the partial JSON mirror (F4) and the residual documentation (F12) are
+  fixed in 0.1.10, pending release. None was a supply-chain or integrity risk.
 - By maintainer instruction the first pass only recorded findings; the fixes landed in 0.1.9 and are
   cited per finding below.
 
@@ -143,10 +153,10 @@ The first pass (2026-10-03, `097b73d`, 0.1.8) recorded F1–F8 with every one DE
 
 | Actor / source | Controls | Can do | Bounded by |
 | --- | --- | --- | --- |
-| Token author / maintainer (honest) | values, selectors, roles | Ship low-contrast roles; drift JSON from CSS | `check:contrast` (every theme × season, F1/F2); `check:sync` (consistency); stylelint; all run in CI and before publish. Residual: `--lift` and panels are outside the gate (F11) |
+| Token author / maintainer (honest) | values, selectors, roles | Ship low-contrast roles; drift JSON from CSS | `check:contrast` (every theme × season, F1/F2); `check:sync` (consistency); stylelint; all run in CI and before publish. `--lift` and the panels are inside the gate from 0.1.10 (F11) |
 | Compromised maintainer account, CI step or dependency at publish | the published tarball | Ship CSS that relabels or hides UI text in every app, or loads off-origin CSS | `check:css` (F3) in CI and publish `verify`; OIDC + provenance; consumers' lockfiles; the JSR CLI is a lockfile-pinned devDependency and the two publish jobs hold separate `id-token` scopes (F7). The `v*` tag is lightweight and unsigned (F7, accepted) |
 | Consumer apps | which files they import; `data-theme`, `data-season`, `:root.dark` | Activate seasons (all nine call sites do, via `useSeason`) | Per-theme season blocks and the contrast gate (F1); `.dark` honoured on the root element only (F6). Consumers that draw `--warning` as text (F10) |
-| JS / tooling consumers | `import { semantic, … }` | Read role values | `check:sync` forward check. **Partial roles; `status.ok` differs from `--ok` (F4)** — no workspace consumer imports the JS API |
+| JS / tooling consumers | `import { semantic, … }` | Read role values | `check:sync` forward check; every colour role is mirrored from 0.1.10 and `status` is deprecated (F4) — no workspace consumer imports the JS API |
 | Browser CSP of consumers | loads | Block the `data:` texture | Consumer CSPs allow `img-src data:` |
 
 ### Supply chain & input matrix (TS lens)
@@ -183,6 +193,9 @@ Critical / High / Medium / Low / Info / Positive.
 - `--warning` and `--warning-text` usages across the consumers' `src/`;
 - the registries: `registry.npmjs.org` and `api.jsr.io` (public, read-only).
 
+**2026-10-10 fix wave (0.1.10):** the same files plus `tests/{check-contrast,sync-mirror,entry-import}.test.mjs`
+and the changed `jsr.json` (`publish.include`) and `node-ci.yml` (Deno, JSR dry run).
+
 **Out of scope:** the components' own contrast (ui audit); the docs and dev sites' VitePress
 theming.
 
@@ -202,7 +215,8 @@ theming.
 | Contrast cross-check (scratch script, deleted afterwards) | `--lift` as the background of the text roles: 10 light-theme pairings at 4.30–4.49:1 (F11); all 20 panel-palette pairings pass |
 | Installed `node_modules` | predate the 2026-10-09 Dependabot bump (`stylelint` 17.15.0, `postcss` 8.5.28 installed; the lockfile has 17.16.0 and 8.5.29). The checks above ran on that install; CI runs `npm ci` from the lockfile and was not re-run by this audit |
 
-No repo files were modified.
+No repo files were modified by the 2026-10-09 pass. The 2026-10-10 fix wave ran on Node 24.13.0, Deno 2.9.6
+(scratch install of the `deno` npm package) and `jsr` 0.14.3; see the log.
 
 ---
 
@@ -402,8 +416,8 @@ Update SECURITY.md to name both CSS files and to state the `data:` exception pre
 
 ### F4 — The sync validator is comment-blind and covers only part of the role surface
 
-**Severity:** Info   **Disposition:** MITIGATED (comment blindness RESOLVED in 0.1.9; the partial
-JSON mirror is an accepted limitation)
+**Severity:** Info   **Disposition:** RESOLVED (comment blindness in 0.1.9; the partial mirror,
+missing exports and the `status.ok` mismatch in 0.1.10, `commit pending`)
 **Where:** `scripts/check-token-sync.mjs:36-58, 136-138, 171-176, 188-196`; `src/tokens.json`;
 `src/index.ts`.
 
@@ -454,10 +468,25 @@ JSON mirror is an accepted limitation)
 - **Exports.** `secondary`, `status` and `radius` are still reachable only through `designTokens` or
   the default export; same reasoning.
 
+**Re-evaluated 2026-10-10 — RESOLVED in 0.1.10 (`commit pending`).** The two accepted limitations became
+cheap once the sync check already resolved every role, so they were fixed rather than carried:
+
+- **Full role mirror.** `tokens.json` `semantic.light` and `semantic.dark` now hold all 21 colour roles
+  (added `lift`, the three `-contrast` labels, `danger`, `warning`, `ok`, `info`, `highlight`,
+  `warning-text`, `warning-contrast`, `highlight-contrast`, `focus-ring`). The existing forward check
+  verifies each value against the CSS, and a new check (`COLOUR_ROLES` in `check-token-sync.mjs`) fails
+  when a role is missing, so a future role cannot be silently left out. Pinned by
+  `tests/sync-mirror.test.mjs` (a drifted `ok`, a deleted `lift`).
+- **Named exports.** `index.ts` exports `secondary`, `status` and `radius`; the sync check requires every
+  `tokens.json` subtree to have an `export const`, and the test removes one to prove it fails.
+- **`status.ok`.** The key and value are unchanged (public names are stable, `^0.1.9`): `status` mirrors
+  the legacy `--mw-danger-500` / `--mw-ok-500` ramp stops, not the roles. It is marked `@deprecated` in
+  TSDoc and the README, pointing at `semantic.*.ok` / `.danger`, which now carry the role values.
+  Re-deriving `status.ok` from `--ok` would silently change a published value for nothing that reads it.
+
 ### F5 — JSR and Node entry-point caveats
 
-**Severity:** Info   **Disposition:** DEFERRED (pre-mainnet gate "JSR entry verified", with OQ4;
-the fix is a one-line change)
+**Severity:** Info   **Disposition:** RESOLVED (0.1.10, `commit pending`; OQ4 decided: JSR is kept)
 **Where:** `src/index.ts:39` (`import tokens from './tokens.json'` without `with { type: 'json' }`);
 `jsr.json` (exports `.` and `./tokens.json` only); `package.json` `exports["."]` → `.ts` source.
 
@@ -496,6 +525,31 @@ the fix is a one-line change)
   and nothing depends on the package). The gate is the pre-mainnet "JSR entry verified" item (D).
 - **Node and consumer `tsc`.** Unchanged and documented ("consumers' bundlers handle processing");
   `package.json` `exports` and `files` are as before (B.TS-1).
+
+**Fixed 2026-10-10 — RESOLVED in 0.1.10 (`commit pending`); OQ4 decided: JSR is kept.**
+
+- **Fix.** `src/index.ts` now reads `import tokens from './tokens.json' with { type: 'json' }`. The
+  alternative (generating the values into TypeScript) was rejected: it would add a build step the
+  package forbids (CLAUDE.md) and a second source for the same values. `tsc --noEmit` is unchanged
+  (`module: ESNext`, `resolveJsonModule`); esbuild and Vite (SSR build) both bundle the entry (scratch
+  check, deleted afterwards).
+- **Before and after (Deno 2.9.6).** Before: `deno run src/index.ts` fails with the Json-module error.
+  After: it runs. Node 24.13 imports the source directly too (type stripping applies outside
+  `node_modules`; under `node_modules` Node still refuses, which is why npm consumers use a bundler —
+  documented in the `index.ts` TSDoc and the README).
+- **Test.** `tests/entry-import.test.mjs`: (1) the source carries the attribute; (2) the entry imports under
+  Node and exposes the 11 exports with the expected values; (3) the same under Deno (`deno eval`). Without
+  the attribute, all three fail (checked by removing it). Deno is optional locally (skipped when absent) but
+  CI sets `REQUIRE_DENO=1` and installs it with the SHA-pinned `denoland/setup-deno` v2.0.5 at Deno 2.9.6, so
+  the check cannot be skipped there.
+- **JSR dry run in CI.** `node-ci.yml` runs `npx --no-install jsr publish --dry-run` (the pinned CLI), which
+  also runs the slow-types check; the tag workflow's `verify` job runs it too.
+- **JSR contents.** `jsr.json` now has `publish.include` (`src/index.ts`, `src/tokens.json`, `README.md`,
+  `LICENSE`, `CHANGELOG.md`, `jsr.json`). The 0.1.9 dry run listed 21 files, including `scripts/`,
+  `tests/`, `package-lock.json` and this audit; the 0.1.10 dry run lists 6.
+- **OQ4.** Kept rather than dropped: the registry costs nothing now that the entry works and is checked,
+  dropping it would orphan the 4 published versions, and nothing depends on it either way. Revisit only if
+  the JSR job becomes a maintenance burden.
 
 ### F6 — The global `.dark` class flips every role in any subtree
 
@@ -612,9 +666,10 @@ the corrected 0.1.8 AA statement. What is still stale is listed in F12.
 - **`check:sync`** resolves `var()` chains (theme → root → fallback), computes the `calc()` space
   scale, checks light/dark key symmetry and season key symmetry, and ignores comments (F4).
 - **`check:contrast`** measures 250 pairings across 2 themes × 5 season states with the browser
-  cascade (F1, F2); `check:versions` keeps the npm and JSR versions equal.
-- **Gates have tests.** 25 `node:test` cases feed the CSS contract and the sync check the payloads
-  they exist to catch.
+  cascade (F1, F2) at 0.1.9, and 370 at 0.1.10 (`--lift` and the panels added, F11); `check:versions`
+  keeps the npm and JSR versions equal.
+- **Gates have tests.** 37 `node:test` cases (25 at 0.1.9) feed the CSS contract, the sync check and the
+  contrast gate the payloads they exist to catch, and import the entry under Node and Deno.
 - **Release integrity.**
   - The tag runs the full CI workflow before publishing; the audit gate with an expiring allowlist
     (entries validated, expiry enforced, stale entries reported).
@@ -646,13 +701,20 @@ dao-ui (retired from the cluster, still published) and treasury-ui is below AA. 
 `check:contrast` cannot see it: it measures roles, not the consumers' CSS. In dark mode
 `--warning` and `--warning-text` are the same stop, so only light mode is affected.
 
+**2026-10-10 — still DEFERRED (consumer repos).** Nothing in this package can see a consumer's CSS, so a
+lint or contract check here cannot prevent the pattern. What the package can do is make the intent
+unmissable, and 0.1.10 does: `--warning` carries a "FILL only — never `color:`; use `--warning-text`"
+comment in `tokens.css`, the README row says "a **fill**", and CLAUDE.md already requires
+`--warning-text` for status text. The fix itself (three `color:` declarations) belongs to the
+access-gate-ui, dao-ui and treasury-ui waves.
+
 **Remediation / evidence:** change the three `color:` declarations to `var(--warning-text)` (keep
 `--warning` for the border and tint), then release each app. The consumers' real-browser contrast
 gate (as in `ui` 0.1.31) would catch a regression; access-gate-ui and treasury-ui should adopt it.
 
 ### F11 — The contrast gate does not measure `--lift` or the panel palettes
 
-**Severity:** Info   **Disposition:** ACCEPTED-RISK
+**Severity:** Info   **Disposition:** RESOLVED (0.1.10, `commit pending`; was ACCEPTED-RISK)
 **Where:** `scripts/check-contrast.mjs:15-22` (canvases `bg` and `surface` only; panels not
 included); `src/tokens.css` (`--lift`: "hover / raised surface").
 
@@ -675,14 +737,37 @@ roles on two canvases) pass today, but are not gated.
 `@meddleware/ui` real-browser axe gate (0.1.31) measures the real component pairings in every
 theme × season and passes.
 
-**Remediation / evidence:** accepted for now. If a component places a text role on `--lift`
-permanently, either darken the light `--lift` by one stop or add `lift` to `CANVASES` and the panel
-pairs to the gate in the same change as the retune. Revisit with S1.
+**Remediation / evidence:** accepted for now. If a component places a text role on `--lift` permanently,
+either darken the light `--lift` by one stop or add `lift` to `CANVASES` and the panel pairs to the gate
+in the same change as the retune. Revisit with S1.
+
+**Fixed 2026-10-10 — RESOLVED in 0.1.10 (`commit pending`).** The gate and the values changed together, as
+the remediation asked:
+
+- **Gate.** `check-contrast.mjs` adds `lift` to `CANVASES` (all nine text roles and the focus ring are
+  measured on it, every theme × season) and measures the five text roles of each panel palette on the
+  panel's own `bg` and `surface`: 370 pairings (250 + 90 + 10 + 20). Before the retune the gate reported
+  exactly the ten failures listed above.
+- **Values.** Of the two fixes (lighten `--lift`, or darken the text stops), the text stops were chosen:
+  the light `--lift` is `#efeae6`, and reaching 4.5:1 for the worst pairing (autumn accent, 4.30) by
+  lightening it needs about `#f4f0ed`, which is nearly the `--bg` (`#f7f4f1`) and would erase the hover
+  affordance; the stops need only 1–3% (not visible in use). Changed: `--mw-terracotta-500`
+  `#b84527` → `#b74427` (the light accent, 4.49 → 4.54), `--mw-moss-500` `#2b7a56` → `#2a7754` (the light
+  primary, 4.37 → 4.55), `--mw-yellow-700` `#8a6500` → `#886400` (`--warning-text`, 4.46 → 4.54; 4.95 on
+  `--bg`), `--mw-orange-600` `#b0530c` → `#aa500c` (the autumn accent, 4.30 → 4.55). Ramp names, role
+  names and `--lift` are unchanged; the JSON mirror, the README table and the comments follow.
+  Contrast on `--bg`, `--surface` and the `-contrast` labels only rises. All dark-theme pairings and the 20
+  panel pairings already passed.
+- **Test.** `tests/check-contrast.test.mjs` runs the gate on copies of the files: the shipped tokens pass; a
+  too-light `--muted`, the previous `--mw-yellow-700` (fails only on `--lift`), a dimmed
+  `--mw-panel-dark-muted` and an unresolvable role each fail with the expected message. This also closes
+  the "contrast gate has no self-test" half of S3.
+
+---
 
 ### F12 — Residual documentation and comment drift after 0.1.9
 
-**Severity:** Info   **Disposition:** DEFERRED (maintainer documentation pass; pre-mainnet gate "docs
-corrected" in Section D)
+**Severity:** Info   **Disposition:** RESOLVED (0.1.10, `commit pending`; was DEFERRED)
 **Where / Issue** (re-read 2026-10-09 against `61863ad`):
 
 - `src/tokens.css:31` and `src/seasons.css:8` show `--accent: var(--season-accent, var(--mw-red-500))`;
@@ -702,30 +787,48 @@ could still copy the red example.
 **Remediation / evidence:** one docs pass over the five places above. Not applied (no code or doc
 changes by this audit).
 
+**Fixed 2026-10-10 — RESOLVED in 0.1.10 (`commit pending`).**
+
+- `tokens.css` and `seasons.css` header examples now read `var(--mw-terracotta-500)` (comments only;
+  `check:css` still passes).
+- README: the migration note describes the terracotta / moss / slate triad (no "now red / blue"); the
+  `semantic.light.accent` example value is `#b74427` (it still said the old red `#d92d20`, found while
+  fixing this); the exports table lists `secondary`, `status` (deprecated) and `radius`.
+- `index.ts` TSDoc: no "oxblood/indigo" as the current palette (`brand` is described as legacy swatches,
+  `neutral` no longer "complements" them); the `brand` example no longer uses `semantic` without importing
+  it.
+- AGENTS.md: Layer 1 lists the functional ramps and the legacy swatches separately; the exports table is
+  correct (four entries in `package.json`, two in `jsr.json`); `npx --no-install jsr publish`. CLAUDE.md: the
+  same JSR wording, the Deno note and the test list.
+- `check-token-sync.mjs`: the header no longer says "hand-synced with no automated guard" and lists the
+  checks it runs.
+- A grep of the repo (excluding `docs/audit` and CHANGELOG history) finds none of the stale strings.
+
 ---
 
 ## Section A — Invariant verification matrix
 
 | # | Invariant (source) | Enforced at | Proven by | Status |
 | --- | --- | --- | --- | --- |
-| A1 | `tokens.css` authoritative; JSON and `index.ts` mirror it (CLAUDE.md) | `check:sync` | CI; `tests/sync-comments.test.mjs` | HOLDS for mirrored keys (partial mirror accepted — F4) |
+| A1 | `tokens.css` authoritative; JSON and `index.ts` mirror it (CLAUDE.md) | `check:sync` (every colour role, every subtree exported) | CI; `tests/sync-comments.test.mjs`, `tests/sync-mirror.test.mjs` | HOLDS (F4; 0.1.10 mirrors all roles) |
 | A2 | Light/dark role symmetry; season key symmetry in both blocks (CLAUDE.md) | `check:sync` | CI | HOLDS |
-| A3 | Status roles ≥ 4.5:1 on `--bg` and `--surface` per theme (CLAUDE.md, CHANGELOG 0.1.9) | `check:contrast` (`--warning-text` for text) | CI; 250 pairings | HOLDS (F2); consumers still drawing `--warning` as text — see F10 |
-| A4 | Seasons read on both canvases (`seasons.css` header) | `check:contrast`, per-theme season blocks | CI; ui real-browser axe gate | HOLDS (F1); `--lift` and panels outside the gate — see F11 |
+| A3 | Status roles ≥ 4.5:1 on `--bg`, `--surface` and `--lift` per theme (CLAUDE.md, CHANGELOG 0.1.9) | `check:contrast` (`--warning-text` for text) | CI; 370 pairings (0.1.10); `tests/check-contrast.test.mjs` | HOLDS (F2, F11); consumers still drawing `--warning` as text — see F10 |
+| A4 | Seasons read on every canvas (`seasons.css` header) | `check:contrast`, per-theme season blocks | CI; ui real-browser axe gate | HOLDS (F1); `--lift` and the panel palettes are gated since 0.1.10 (F11) |
 | A5 | Focus never reads as an error; ≥ 3:1 (CLAUDE.md, `tokens.css:258`) | `check:contrast` (hue test + 3:1) | CI | HOLDS (F1) |
 | A6 | CSS is custom properties only; no `@import` / `content` / `url()` beyond the pinned data URI (SECURITY.md) | `check:css` in CI and publish `verify` | `tests/check-css-contract.test.mjs` (22 payloads) | HOLDS (F3) |
 | A7 | No code execution; static exports (SECURITY.md) | — | inspection | HOLDS (code-only) |
-| A8 | npm and JSR versions equal (CLAUDE.md) | `check:versions` | CI; both registries at 0.1.9 | HOLDS (JSR `.` entry not importable under Deno — see F5) |
+| A8 | npm and JSR versions equal (CLAUDE.md) | `check:versions` | CI; both registries at 0.1.9 | HOLDS |
 | A9 | `sideEffects` kept; no build step (CLAUDE.md) | — | inspection; pack check | HOLDS (code-only) |
 | A10 | Roles colour-agnostic; components use roles only (CLAUDE.md) | — | inspection | HOLDS in this package |
 | A11 | `.dark` applies on the root element only (CLAUDE.md, SECURITY.md) | `check:css` selector allowlist | CI | HOLDS (F6) |
+| A12 | The `.` entry imports at runtime under Node and Deno (F5) | `tests/entry-import.test.mjs`; `jsr publish --dry-run` | CI with `REQUIRE_DENO=1` | HOLDS from 0.1.10 (the published 0.1.9 entry fails under Deno) |
 
 **TS lens categories.** *Compiler strictness:* `strict`, `noUnusedLocals`, `noUnusedParameters`,
 `verbatimModuleSyntax`; `include` is `src/**/*.ts` and `skipLibCheck` hides nothing in it;
 `noUncheckedIndexedAccess` is off, recorded: the package parses no untrusted data. *Assertions, runtime
 validation, money math, promises, network I/O, encoding, test-only paths, caller-keyed lookups:* N/A
 (static CSS/JSON; no I/O, no amounts, no lookups by caller key). *Secrets in output, dynamic code:*
-HOLDS (A7). *Accurate comments:* one stale header comment (F12).
+HOLDS (A7). *Accurate comments:* the stale header comment and the other drift items are fixed in 0.1.10 (F12).
 
 ---
 
@@ -751,7 +854,7 @@ TS-M9 (peer dependencies for `@mysten/*`, `.d.ts`): N/A.
 | Authority | Where | Custody | Gates |
 | --- | --- | --- | --- |
 | npm publish `@meddleware/design-tokens` | `npm-publish.yml` job `publish-npm` (tag `v*`) | OIDC trusted publishing + `--provenance` | `verify` = the full node-ci workflow (audit gate, versions, sync, contrast, CSS contract, tests, type-check, lint, pack check) |
-| JSR publish | `publish-jsr` job (own `id-token: write`) | OIDC | same `verify`; idempotent check via `api.jsr.io`; `npx --no-install jsr publish` of the lockfile-pinned CLI |
+| JSR publish | `publish-jsr` job (own `id-token: write`) | OIDC | same `verify` (which now includes `jsr publish --dry-run` and the Deno import test); idempotent check via `api.jsr.io`; `npx --no-install jsr publish` of the lockfile-pinned CLI |
 
 No long-lived registry credential exists for this package, so there is no credential inventory to keep.
 
@@ -770,7 +873,7 @@ No long-lived registry credential exists for this package, so there is no creden
 | Publish tooling pinned | Yes | `jsr` 0.14.3 in the lockfile (F7) |
 | Shipped-content contract check | Yes | `check:css` (F3) |
 | Lint in publish verify | Yes | `lint:css` in node-ci, no `--if-present` |
-| Package-contents check | Yes | pack step in node-ci |
+| Package-contents check | Yes | pack step in node-ci; JSR dry run (0.1.10) |
 | Signed tags | No | lightweight tags — ACCEPTED-RISK (F7) |
 | Container image / real-funds / test-mode items | N/A | no image, no chain, no test mode |
 
@@ -778,10 +881,10 @@ No long-lived registry credential exists for this package, so there is no creden
 
 | Check | Result |
 | --- | --- |
-| `exports` / `types` | four explicit entries; `types` → `.ts` source (F5) |
-| `files` | `["src"]` → 7 files; no tests, scripts or config; node-ci fails on any extra file or unpacked size over 200 kB |
+| `exports` / `types` | four explicit entries; `types` → `.ts` source; the JSON import carries `with { type: 'json' }` (F5) |
+| `files` | `["src"]` → 7 files; no tests, scripts or config; node-ci fails on any extra file or unpacked size over 200 kB. JSR: `publish.include` → 6 files (`src/index.ts`, `src/tokens.json`, README, LICENSE, CHANGELOG, `jsr.json`) |
 | `sideEffects` | `["*.css"]` — accurate |
-| Ships-source type-check under consumer settings | the package's own `tsc` has `resolveJsonModule`; consumers need it too (every workspace consumer type-checks in its own CI); Deno needs the import attribute (F5) |
+| Ships-source type-check under consumer settings | the package's own `tsc` has `resolveJsonModule`; consumers need it too (every workspace consumer type-checks in its own CI). Node and Deno import the entry directly in `npm test` (F5; Node still refuses it under `node_modules`) |
 
 ### B.TS-2 Install-time code
 
@@ -798,18 +901,22 @@ and, through `verify`, before publish. Holds.
 
 ## Section C — Test-coverage & hermetic/live split
 
-### C.1 Coverage grade — B (consistency, contrast and content are gated and the gates are tested; the contrast gate has no self-test)
+### C.1 Coverage grade — A- (consistency, contrast, content and the runtime entry are gated and every gate is tested; the sync check has no reordered-block fixture)
 
-Framework: `node --test`, **25 tests, all passing** on 2026-10-09 (23 in `check-css-contract.test.mjs`,
-2 in `sync-comments.test.mjs`). `npm test` lists the two files explicitly, so a new test file must be
-added to the script. `tsc --noEmit` and stylelint run in CI.
+Framework: `node --test`, **37 tests, all passing** on 2026-10-10 at 0.1.10 (23 in
+`check-css-contract.test.mjs`, 2 in `sync-comments.test.mjs`, 4 in `sync-mirror.test.mjs`, 5 in
+`check-contrast.test.mjs`, 3 in `entry-import.test.mjs`; the Deno test needs `deno` and is skipped
+without it unless `REQUIRE_DENO=1`, which CI sets). At 0.1.9 there were 25 tests (grade B). `npm test`
+lists the files explicitly, so a new test file must be added to the script. `tsc --noEmit` and stylelint
+run in CI.
 
 | Dimension | Assessment |
 | --- | --- |
-| Consistency (CSS ↔ JSON ↔ TS, themes, seasons) | mechanised; comment handling tested (F4) |
-| Contrast (stated invariant) | mechanised: 250 pairings, every theme × season (F1, F2); `--lift` and panels outside it (F11) |
+| Consistency (CSS ↔ JSON ↔ TS, themes, seasons) | mechanised; comment handling, a drifted value, a missing role and a missing export are tested (F4) |
+| Contrast (stated invariant) | mechanised: 370 pairings, every theme × season on `--bg`, `--surface`, `--lift`, plus the panel palettes (F1, F2, F11) |
+| Runtime entry | `.` imported under Node and Deno (F5) |
 | Shipped-content contract (stated invariant) | mechanised and tested with 22 payloads in both files (F3) |
-| Validator self-tests | CSS contract: yes. Sync: comments only (no reordered-block or drifted-value fixture). Contrast: none (S3) |
+| Validator self-tests | CSS contract: yes. Sync: comments, drifted value, missing role, missing export (no reordered-block fixture). Contrast: yes (known-bad `--muted`, `--warning-text` on `--lift`, panel, unresolvable role) |
 
 ### C.2 Hermetic vs. live paths
 
@@ -833,7 +940,7 @@ checked by the publish workflow's idempotency probes, not by a test.
 
 - [x] status roles ≥ 4.5:1 in both themes (warning) — F2 (`--warning-text`; consumer call sites: F10)
 - [x] seasons AA in both themes — F1 (per-theme season blocks; seasons stay enabled in the apps)
-- [x] contrast gate in CI (theme × season) — S1 (`check:contrast`, 250 pairings)
+- [x] contrast gate in CI (theme × season) — S1 (`check:contrast`, 250 pairings at 0.1.9; 370 at 0.1.10 with `--lift` and the panels, F11)
 - [x] `SECURITY.md` present and consistent with the gates — F3
 - [x] npm pack contents verified; install-time code inventoried (none) — B.TS-1, B.TS-2
 - [x] audit gate in CI and publish; release gate equals CI — F7
@@ -841,8 +948,8 @@ checked by the publish workflow's idempotency probes, not by a test.
 ### pre-mainnet
 
 - [x] `jsr` pinned; npm and JSR publishing split by job — F7
-- [ ] JSR entry verified under Deno (`deno run` of `.` fails today) — F5; decision OQ4, one-line fix
-- [ ] docs corrected (residual items) — F12
+- [x] JSR entry verified under Deno — F5 (0.1.10: import attribute; `tests/entry-import.test.mjs` under Node and Deno, `REQUIRE_DENO=1` in CI; `jsr publish --dry-run` in CI; OQ4 decided: JSR kept; `commit pending`)
+- [x] docs corrected (residual items) — F12 (0.1.10; `commit pending`)
 - [ ] consumers use `--warning-text` for text (access-gate-ui, dao-ui, treasury-ui) — F10
 - [ ] external review (maintainer item)
 
@@ -861,28 +968,31 @@ checked by the publish workflow's idempotency probes, not by a test.
 - **Deployment readiness.** Section D, current.
 - **Chain-access layering & ID/ABI coupling.** N/A (no package or object IDs).
 - **A11y assumptions flow downstream.** The role pairs are now measured in every theme × season, here
-  (roles) and in ui (rendered components). Consumers' VUE-lens audits may credit "tokens meet AA"
-  for the measured roles, except where a consumer draws `--warning` as text (F10) and for `--lift`
-  (F11).
+  (roles, including `--lift` and the panel palettes since 0.1.10) and in ui (rendered components).
+  Consumers' VUE-lens audits may credit "tokens meet AA" for the measured roles, except where a consumer
+  draws `--warning` as text (F10).
 - **Global CSS is part of the signing surface.** Every app loads this package's CSS unscoped; F3's
   gate protects all of them at once.
 - **Publish tooling in OIDC-scoped jobs.** The `npx <tool>@latest`-in-a-publish-job pattern was
   fixed here (F7); it is worth checking in every repository that publishes to JSR.
 - **Versioning policy.** Pre-v0.2: patch-only bumps until go-live. 0.1.9 changed role values without
-  shims, as the policy allows; consumers moved to `^0.1.9` in step (13 of 13).
+  shims, as the policy allows; consumers moved to `^0.1.9` in step (13 of 13). 0.1.10 keeps every public
+  token and export name (it adds exports and JSON keys, and moves four ramp stops by 1–3%), so the `^0.1.9`
+  ranges take it without edits.
 
 ---
 
 ## Normative requirements (MUST / MUST NOT)
 
 1. MUST keep every text role ≥ 4.5:1, and every focus or boundary role ≥ 3:1, against its canvas in
-   every shipped theme × season combination — **holds** for the gated roles (`check:contrast`, F1,
-   F2); `--lift` is outside the gate (F11, accepted).
+   every shipped theme × season combination — **holds** (`check:contrast`, F1, F2, F11): the text roles
+   are measured on `--bg`, `--surface` and `--lift`, and the panel palettes on their own canvases.
 2. MUST ship CSS that contains only allow-listed selectors and custom-property declarations,
    enforced in CI and in publish verification — **holds** (`check:css`, F3).
 3. MUST NOT run unpinned tooling in a job that can mint publish credentials — **holds** (F7).
-4. MUST keep the JSON mirror a faithful mirror of the roles it names — **partially**: `status.ok`
-   differs from `--ok` (F4, accepted; no consumer reads it).
+4. MUST keep the JSON mirror a faithful mirror of the roles it names — **holds** from 0.1.10 (F4):
+   `semantic` mirrors every colour role and `check:sync` fails on drift or a missing role. The deprecated
+   `status` subtree is the legacy ramp stops (`status.ok` differs from `--ok`) and is not a role mirror.
 5. MUST NOT draw a fill role as text: consumers use `--warning-text` for `color:` — **does not hold**
    in three call sites (F10).
 
@@ -900,16 +1010,17 @@ checked by the publish workflow's idempotency probes, not by a test.
 
 ## Implementation suggestions (SHOULD / MAY)
 
-- **S1** *(done in 0.1.9, partly)* `scripts/check-contrast.mjs` in CI and publish verify covers text
-  roles on `--bg` and `--surface`, the `-contrast` labels and `--focus-ring`. It SHOULD also cover
-  `--lift` and the panel pairs (F11).
+- **S1** *(done in 0.1.9, completed in 0.1.10)* `scripts/check-contrast.mjs` in CI and publish verify
+  covers text roles on `--bg`, `--surface` and `--lift`, the `-contrast` labels, `--focus-ring` and the
+  panel pairs (F11).
 - **S2** *(done in 0.1.9)* the CSS content-contract script with the hash-pinned `--noise-overlay`.
-- **S3** SHOULD extend the fixtures: the sync check for a reordered block and a drifted value, and the
-  contrast gate for a known-bad value (the gate has no test that it fails).
+- **S3** *(mostly done in 0.1.10)* the contrast gate has known-bad fixtures and the sync check has a
+  drifted-value, missing-role and missing-export fixture. Still open: a reordered-block fixture for the
+  sync check.
 - **S4** MAY publish a machine-readable `roles.json` (every role × theme × season, resolved). It would
-  let consumers' a11y tests and the docs site render from the same values, and would remove F4's
-  partial mirror.
-- **S5** SHOULD add `deno run`/`jsr publish --dry-run` to CI once OQ4 is decided (F5).
+  let consumers' a11y tests and the docs site render from the same values (F4's partial mirror is
+  already gone: `semantic` mirrors every role, no-season).
+- **S5** *(done in 0.1.10)* the Deno entry import and `jsr publish --dry-run` run in CI (F5).
 
 ## Open questions (`OQ#`)
 
@@ -922,8 +1033,10 @@ checked by the publish workflow's idempotency probes, not by a test.
 3. **OQ3** F6: is `.dark` meant as a general subtree switch, or only for VitePress (`html.dark`)?
    (Decided 2026-10-08: root element only, `:root.dark` — see F6)
 4. **OQ4** F5: is JSR a supported distribution for this package (CSS cannot be exported there), or
-   should JSR publishing be dropped? Open: 0.1.9 is on JSR and nothing depends on it. If kept, apply
-   the import-attribute fix and a Deno CI check; if dropped, remove the JSR job and `jsr.json`.
+   should JSR publishing be dropped? (Decided 2026-10-10 by the 0.1.10 fix wave: kept. The import-
+   attribute fix, the Deno import test and the JSR dry run are in; JSR carries `.` and `tokens.json`
+   only, and `jsr.json` has `publish.include`. Nothing depends on JSR, so revisit only if the JSR job
+   becomes a burden — see F5)
 
 ## Risks
 
@@ -931,11 +1044,14 @@ checked by the publish workflow's idempotency probes, not by a test.
   provenance reduce the chance of an unnoticed malicious publish, but a compromised maintainer account
   that also edits the gate could still ship; consumers' lockfiles and the trusted-publisher binding are
   the remaining controls.
-- **Accessibility regressions are seasonal and consumer-side.** The gate protects the role values; a
-  component that picks the wrong role (F10) or a new surface outside the gate (F11) can still regress,
-  which is why the ui real-browser gate matters and should spread to the other apps.
-- **Docs as contract:** residual stale examples (F12) can still propagate wrong values into new
-  components.
+- **Accessibility regressions are seasonal and consumer-side.** The gate protects the role values on
+  `--bg`, `--surface`, `--lift` and the panels; a component that picks the wrong role (F10) or a new
+  surface outside the gate can still regress, which is why the ui real-browser gate matters and should
+  spread to the other apps.
+- **Docs as contract:** the residual stale examples (F12) are fixed in 0.1.10; the README role table is
+  the one most likely to be copied into component code and is checked by hand, not by a gate.
+- **Ramp-stop values moved (0.1.10).** Four stops changed by 1–3% (F11). Consumers that hard-code those
+  hex values (none found in the workspace; they use the CSS variables) would drift by a barely visible amount.
 - **Third-party liveness:** none at runtime. Publishing depends on npm, JSR and GitHub Actions OIDC
   availability only.
 
@@ -981,18 +1097,41 @@ checked by the publish workflow's idempotency probes, not by a test.
     MITIGATED (F4), 3 DEFERRED (F5, F10, F12), 1 ACCEPTED-RISK (F11).
   - **Not verified:** a clean `npm ci` run from the lockfile and the CI run itself (read, not re-run).
 
+- 2026-10-10 — fix wave on `main` (base `6ec76ff`), release 0.1.10 (local commit, `commit pending`; not
+  tagged or published). Node 24.13.0, Deno 2.9.6 (scratch install of the `deno` npm package, outside the
+  repo), `jsr` 0.14.3.
+  - **Resolved:** F5 (import attribute; entry imported under Node and Deno; CI installs Deno and runs
+    `jsr publish --dry-run`; JSR `publish.include`; OQ4 decided: JSR kept), F11 (gate extended to `--lift`
+    and the panels, four ramp stops darkened 1–3%), F12 (all five drift items, plus a stale README
+    `semantic.light.accent` value found on the way), F4 (full `semantic` role mirror with a completeness
+    check, `secondary` / `status` / `radius` exported, `status` deprecated).
+  - **Left open:** F10 stays DEFERRED (three call sites in access-gate-ui, dao-ui, treasury-ui; no check in
+    this package can see their CSS; `--warning` is now documented "fill only" in `tokens.css`).
+    The external review (maintainer item) is untouched.
+  - **Tests added:** `tests/check-contrast.test.mjs` (5), `tests/sync-mirror.test.mjs` (4),
+    `tests/entry-import.test.mjs` (3): 37 tests in all. Mutation checks: removing the import attribute
+    fails all three entry tests; reverting the four stops makes the gate report the ten `--lift` failures.
+  - **Measured:** `check:versions` ✓ (0.1.10), `check:sync` ✓, `check:contrast` ✓ (370 pairings),
+    `check:css` ✓, `npm test` 37 pass / 0 fail with Deno (`REQUIRE_DENO=1`), type-check ✓, `lint:css` ✓,
+    audit gate (1 allowlisted dev advisory, 0 not allowlisted), `npm pack --dry-run` 7 files 15.3 kB,
+    `npx --no-install jsr publish --dry-run` ✓ (6 files). esbuild and Vite SSR bundle the entry (scratch).
+  - **Counts:** 11 dispositioned findings + 1 Positive: 10 RESOLVED (F1–F8, F11, F12), 1 DEFERRED (F10).
+    Unsigned tags (F7) remain an accepted risk inside F7.
+  - **Not verified:** the GitHub Actions run of the new Deno and dry-run steps (the `setup-deno` SHA is the
+    v2.0.5 tag commit, read via the GitHub API); consumers at 0.1.10 (the orchestrator releases).
+
 ## Pre-save consistency checklist (this pass)
 
-- [x] Section A ↔ findings: every row HOLDS; caveats cite F4 (mirror), F5 (Deno), F10 and F11.
+- [x] Section A ↔ findings: every row HOLDS; the only caveat left cites F10.
 - [x] Finding header ↔ body: consistent; first-pass remediation text kept, with a dated re-verification
   paragraph under each.
 - [x] Template line: base + TS with registry dates (2026-10-08); untriggered lenses named; VUE
   contrast row applied by reference.
 - [x] Closing four-part structure present, in order.
-- [x] Open questions stay listed; OQ1–OQ3 carry the decision and date, OQ4 is open.
-- [x] Section D ↔ dispositions: ticked only for RESOLVED/MITIGATED items; unticked items cite F5, F10,
-  F12 or the external review.
+- [x] Open questions stay listed; OQ1–OQ4 carry their decision and date.
+- [x] Section D ↔ dispositions: ticked only for RESOLVED/MITIGATED items; unticked items cite F10 or the
+  external review.
 - [x] Executive summary ↔ dispositions and ceiling (Medium; realised Low).
-- [x] C.1 re-counted 2026-10-09 (25 tests).
+- [x] C.1 re-counted 2026-10-10 (37 tests).
 - [x] B.1 versions match `package.json` and the lockfile; deployment status matches npm and JSR.
-- [x] Re-verification log entry added.
+- [x] Re-verification log entry added (2026-10-09 and 2026-10-10).

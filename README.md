@@ -127,19 +127,19 @@ Values swap automatically between light and dark, and are overridable per season
 | --- | --- | --- | --- |
 | `--bg` | `#f7f4f1` | `#120e10` | Page / window background |
 | `--surface` | `#ffffff` | `#1c1618` | Card, modal, elevated panel |
-| `--lift` | `#efeae6` | `#241c1f` | Hover / raised surface |
+| `--lift` | `#efeae6` | `#241c1f` | Hover / raised surface (text roles meet AA on it) |
 | `--border` | `#ded6cf` | `#372b2e` | Dividers, outlines, borders |
 | `--text` | `#201b19` | `#f2eae6` | Primary body text |
 | `--muted` | `#6e635c` | `#b7a9a3` | Secondary / helper text |
-| `--accent` | terracotta `#b84527` | terracotta `#e07850` | Primary interactive (links, CTAs, badges) |
-| `--primary` | moss `#2b7a56` | moss `#5aaa80` | Affirmative / constructive actions |
+| `--accent` | terracotta `#b74427` | terracotta `#e07850` | Primary interactive (links, CTAs, badges) |
+| `--primary` | moss `#2a7754` | moss `#5aaa80` | Affirmative / constructive actions |
 | `--accent-contrast` | `#ffffff` | `#201b19` | Text on accent |
 | `--primary-contrast` | `#ffffff` | `#0b0809` | Text on primary |
 | `--secondary` | slate `#4e5f9e` | slate `#9ba8d4` | Secondary interactive |
 | `--secondary-contrast` | `#ffffff` | `#0b0809` | Text on secondary |
 | `--danger` | `#b3261e` | `#f08a7e` | Error / destructive |
 | `--warning` | yellow `#e0a500` | yellow `#f4d84f` | Caution / degraded — a **fill** (2.0:1 on the light canvas) |
-| `--warning-text` | amber `#8a6500` | yellow `#f4d84f` | Warning drawn as **text** (4.86:1 on `--bg`) |
+| `--warning-text` | amber `#886400` | yellow `#f4d84f` | Warning drawn as **text** (4.95:1 on `--bg`, 4.54:1 on `--lift`) |
 | `--ok` | green `#177542` | green `#5bb392` | Success / healthy |
 | `--info` | blue `#1558b5` | blue `#6ea8fe` | Informational |
 | `--highlight` | yellow `#f2c744` | yellow `#f4d84f` | Emphasis (the old "premium" role) |
@@ -154,7 +154,7 @@ not change name when you do.
 | Ramp | Stops |
 | --- | --- |
 | `--mw-red-*` | `300 #ef5a4c` · `500 #d92d20` · `600 #a81d13` |
-| `--mw-orange-*` | `400 #f08a3c` · `500 #e06d10` · `600 #b0530c` |
+| `--mw-orange-*` | `400 #f08a3c` · `500 #e06d10` · `600 #aa500c` |
 | `--mw-yellow-*` | `300 #f4d84f` · `400 #f2c744` · `500 #e0a500` · `600 #a87c00` |
 | `--mw-green-*` | `300 #5bb392` · `500 #1f9254` · `600 #177542` |
 | `--mw-blue-*` | `300 #6ea8fe` · `500 #1d6fe0` · `600 #1558b5` |
@@ -202,7 +202,7 @@ import tokens, { brand, primary, semantic, neutral, ratio, space, designTokens }
   from '@meddleware/design-tokens'
 
 primary.blue['500']   // '#1d6fe0'
-semantic.light.accent // '#d92d20'  (no-season default)
+semantic.light.accent // '#b74427'  (no-season default)
 ratio.phi             // 1.618
 space.md              // '2rem'
 neutral['800']        // '#201b19'
@@ -212,12 +212,22 @@ neutral['800']        // '#201b19'
 | --- | --- |
 | `primary` | Functional primary ramps: `red`, `orange`, `yellow`, `green`, `blue` |
 | `brand` | Legacy brand ramps (`oxblood`, `indigo`, `gold`) — retained swatches |
-| `semantic` | No-season resolved values per theme (`light`, `dark`) |
+| `semantic` | No-season resolved value of every colour role per theme (`light`, `dark`); `check:sync` fails if a role is missing |
 | `neutral` | Warm neutral scale `000`–`950` |
+| `secondary` | Retained swatches `pine`, `plum`, `copper` |
+| `status` | **Deprecated** — legacy `--mw-danger-500` / `--mw-ok-500` ramp stops, not the role values (`status.ok` differs from `--ok`); use `semantic.*.ok` / `.danger` |
+| `radius` | Corner radii `sm`, `md`, `lg` |
 | `ratio` | φ ratio constants |
 | `space` | Fibonacci spacing scale |
 | `designTokens` / `default` | The complete token tree |
 | `ColorMode` | type `'light' \| 'dark' \| 'system'` |
+
+The `.` entry ships TypeScript source and imports `tokens.json` with an import attribute
+(`with { type: 'json' }`), which Node, Deno/JSR and bundlers accept. Node does not strip types under
+`node_modules`, so from npm import it through a bundler or a TS loader; `tokens.json` itself
+(`@meddleware/design-tokens/tokens.json`) imports anywhere. JSR serves only `.` and `tokens.json`
+(CSS cannot be exported there) — use npm for `tokens.css` / `seasons.css`. `npm test` imports the entry
+under Node and Deno.
 
 ## Migration note (internal)
 
@@ -225,7 +235,8 @@ No published external consumers, so no backwards-compat shims and no version bum
 keep everything in lockstep:
 
 - `--gold` (semantic) is **removed**; use `--warning` (caution) or `--highlight` (emphasis).
-- `--accent`/`--primary` are now **red**, `--secondary` is **blue** (were oxblood/indigo).
+- `--accent`/`--primary`/`--secondary` are now terracotta, moss and slate (the 0.1.x functional triad;
+  they were oxblood/indigo, then briefly red/blue).
 - New: `--warning`, `--info`, `--highlight`, `--focus-ring`, the `--space-*`/`--font-size-*` scales,
   `--noise-*`, `--transition-*`, and the functional primary ramps.
 - Legacy `--mw-oxblood/indigo/gold/plum/copper-*` ramps still resolve (kept as swatches) but should

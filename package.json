@@ -1,6 +1,6 @@
 {
   "name": "@meddleware/design-tokens",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "description": "Framework-agnostic design tokens (warm-neutral canvas, functional accents) for @meddleware UIs — CSS custom properties + JS/JSON exports.",
   "license": "0BSD",
   "repository": {
@@ -34,7 +34,7 @@
     "lint": "npm run lint:css",
     "check:contrast": "node scripts/check-contrast.mjs",
     "check:css": "node scripts/check-css-contract.mjs",
-    "test": "node --test tests/check-css-contract.test.mjs tests/sync-comments.test.mjs",
+    "test": "node --test tests/check-css-contract.test.mjs tests/sync-comments.test.mjs tests/sync-mirror.test.mjs tests/check-contrast.test.mjs tests/entry-import.test.mjs",
     "check": "npm run check:versions && npm run check:sync && npm run check:contrast && npm run check:css && npm test"
   },
   "devDependencies": {

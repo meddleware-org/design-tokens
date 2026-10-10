@@ -5,7 +5,7 @@
  *
  * HOW IT WORKS
  *   The semantic roles in tokens.css read a seasonal override first, then fall back:
- *       --accent: var(--season-accent, var(--mw-red-500));
+ *       --accent: var(--season-accent, var(--mw-terracotta-500));
  *   This file defines the `--season-*` variables per season, scoped to a
  *   `[data-season="…"]` attribute. Activate a season by setting the attribute on
  *   any ancestor (usually <html>):  <html data-season="autumn">.

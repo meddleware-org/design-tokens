@@ -28,15 +28,23 @@
  * browser application — the CSS file is the source of truth.
  *
  * ```ts
- * import { brand, semantic, neutral } from '@meddleware/design-tokens'
+ * import { semantic, neutral } from '@meddleware/design-tokens'
  *
- * console.log(brand.oxblood[500]) // '#5e1622'
+ * console.log(semantic.light.accent) // '#b74427'
  * console.log(semantic.dark.accent)  // '#e07850'
  * ```
  *
+ * ### Runtime support
+ *
+ * This entry ships TypeScript source (there is no build step) and imports `tokens.json` with an
+ * import attribute (`with { type: 'json' }`), the form Node, Deno/JSR and bundlers all accept. Node
+ * does not strip types for files under `node_modules`, so from npm use a bundler or a TS loader.
+ * From JSR, Deno runs it directly and `npx jsr add` serves compiled JavaScript to Node. CSS cannot be
+ * exported from JSR — use npm for `tokens.css` / `seasons.css`.
+ *
  * @module
  */
-import tokens from './tokens.json'
+import tokens from './tokens.json' with { type: 'json' }
 
 /**
  * The three supported colour-mode states.
@@ -60,10 +68,14 @@ export const designTokens = tokens
 /**
  * Semantic colour tokens resolved per theme.
  *
- * Keys: `light` and `dark`. Each value is a flat map of semantic role → resolved hex.
+ * Keys: `light` and `dark`. Each value is a flat map of every semantic colour role (`bg`, `surface`,
+ * `lift`, `border`, `text`, `muted`, the interactive roles and their `-contrast` labels, the status
+ * roles `danger` / `warning` / `ok` / `info`, `warning-text`, `highlight`, `focus-ring`) → resolved
+ * hex with no season applied.
  *
  * These mirror the CSS custom properties (`--bg`, `--surface`, `--text`, etc.) defined
- * in `tokens.css`. They are useful in server-rendered or headless environments where
+ * in `tokens.css`; `check:sync` fails when a role is missing or drifts. Draw warnings as text with
+ * `warning-text`, never `warning` (a fill). They are useful in server-rendered or headless environments where
  * CSS variables are not available.
  *
  * @example
@@ -75,17 +87,17 @@ export const designTokens = tokens
 export const semantic = tokens.semantic
 
 /**
- * Brand colour ramps (theme-independent, fixed values).
+ * Legacy brand ramps (theme-independent, fixed values) — `oxblood`, `indigo` and `gold`, each with
+ * several lightness stops (e.g. `brand.oxblood[500]`).
  *
- * Contains three primary brand hues — `oxblood`, `indigo`, and `gold` — each
- * with multiple lightness stops (e.g. `brand.oxblood[500]`). Use these when you
- * need a specific brand stop rather than a semantic role (e.g. for illustrations,
- * data-vis, or documentation colour swatches).
+ * These are retained swatches only: no semantic role references them and new code should not. Use the
+ * {@link semantic} roles for UI, or {@link primary} for a functional accent stop; reach for these only
+ * for illustrations, data-vis or documentation swatches.
  *
  * @example
  * ```ts
  * import { brand } from '@meddleware/design-tokens'
- * document.body.style.background = semantic.light.bg
+ * brand.oxblood['500'] // '#5e1622'
  * ```
  */
 export const brand = tokens.brand
@@ -121,8 +133,8 @@ export const space = tokens.space
 /**
  * Warm neutral scale (theme-independent, fixed values).
  *
- * Steps: `000` (white) through `950` (near-black), intentionally warm-toned to
- * complement the oxblood/indigo brand palette. Prefer the semantic tokens
+ * Steps: `000` (white) through `950` (near-black), intentionally warm-toned so the canvas
+ * recedes behind the functional accents. Prefer the semantic tokens
  * (`--text`, `--muted`, `--bg`, `--surface`, `--border`) in components; reach for
  * these only when you need a specific neutral stop (e.g. for shadows or illustrations).
  *
@@ -133,6 +145,26 @@ export const space = tokens.space
  * ```
  */
 export const neutral = tokens.neutral
+
+/**
+ * Secondary swatches (`pine`, `plum`, `copper`, the `-500` stops). Retained swatches, like {@link brand};
+ * no semantic role uses them.
+ */
+export const secondary = tokens.secondary
+
+/**
+ * Status ramp stops (`danger`, `ok`): the legacy `--mw-danger-500` and `--mw-ok-500` ramp values.
+ *
+ * @deprecated These are ramp swatches, not the role values: `status.ok` (`#1c5e4a`) differs from the
+ * `--ok` role (`#177542`). Read `semantic.light.ok` / `semantic.dark.ok` (and `danger`) instead.
+ */
+export const status = tokens.status
+
+/**
+ * Corner radii (`sm`, `md`, `lg`), mirroring `--mw-radius-sm`, `--mw-radius` and `--mw-radius-lg`
+ * (the `--radius-*` role aliases resolve to these).
+ */
+export const radius = tokens.radius
 
 /**
  * Default export — the complete token tree.

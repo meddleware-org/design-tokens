@@ -2,21 +2,22 @@
 // Validates that src/tokens.json (the JS/TS API surface) stays in sync with src/tokens.css
 // (the authoritative source) and that src/index.ts re-exports the JSON subtrees.
 //
-// Why: tokens.css, tokens.json, and index.ts are hand-synced with no automated guard (see
-// CLAUDE.md "Known footgun"). The most dangerous drift is a tokens.json value that no longer
-// matches tokens.css — JS/tooling consumers would then read a stale colour. This script fails CI
-// on that drift.
+// Why: tokens.css is authoritative; tokens.json and index.ts mirror it for JS/tooling consumers. The
+// most dangerous drift is a tokens.json value that no longer matches tokens.css — a consumer would
+// read a stale colour. This script fails CI (and the publish `verify` job) on that drift.
 //
 // What it checks (all deterministic, no network):
 //   1. Forward JSON -> CSS: every value in tokens.json maps to a CSS custom property whose
 //      resolved value is byte-identical. Semantic values resolve var(--mw-*) references.
 //   2. Semantic light/dark symmetry: both themes declare the same key set (CLAUDE.md: "add it to
 //      both blocks").
-//   3. index.ts re-exports the brand/semantic/neutral subtrees that tokens.json declares.
+//   3. index.ts re-exports every subtree that tokens.json declares by name.
+//   4. The `semantic` mirror covers every colour role (no role may be silently absent).
+//   5. Every `[data-season]` block overrides the same --season-* key set.
 //
-// It intentionally does NOT flag CSS custom properties that are absent from tokens.json: the JSON
-// is a curated partial mirror (e.g. --mw-oxblood-050, --mw-panel-*, --mw-font-* are CSS-only by
-// design). The forward direction is the one that protects JS consumers.
+// It intentionally does NOT flag ramp stops or scales that are absent from tokens.json (e.g.
+// --mw-oxblood-050, --mw-panel-*, --mw-font-* are CSS-only by design); only the semantic colour roles
+// must be complete. The forward direction is the one that protects JS consumers.
 
 import { existsSync, readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
@@ -186,8 +187,21 @@ if (JSON.stringify(lightKeys) !== JSON.stringify(darkKeys)) {
   )
 }
 
-// 3. index.ts re-exports the mirrored subtrees.
-for (const subtree of ['brand', 'semantic', 'neutral', 'primary', 'ratio', 'space']) {
+// 2b. The semantic mirror covers every colour role, so JS consumers can read the status and focus roles.
+const COLOUR_ROLES = [
+  'bg', 'surface', 'lift', 'border', 'text', 'muted',
+  'accent', 'accent-contrast', 'primary', 'primary-contrast', 'secondary', 'secondary-contrast',
+  'danger', 'warning', 'ok', 'info', 'highlight', 'warning-text', 'warning-contrast',
+  'highlight-contrast', 'focus-ring',
+]
+for (const theme of ['light', 'dark']) {
+  for (const role of COLOUR_ROLES) {
+    if (!(role in tokens.semantic[theme])) errors.push(`tokens.json semantic.${theme} is missing the "${role}" role`)
+  }
+}
+
+// 3. index.ts re-exports every mirrored subtree by name.
+for (const subtree of ['brand', 'semantic', 'neutral', 'primary', 'secondary', 'status', 'radius', 'ratio', 'space']) {
   if (!(subtree in tokens)) {
     errors.push(`tokens.json is missing the "${subtree}" subtree that index.ts re-exports`)
   }

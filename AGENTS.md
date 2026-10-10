@@ -20,16 +20,17 @@ There is no build step. The package ships `src/` directly; consumers' bundlers h
 Every token change requires three coordinated edits:
 
 1. **`src/tokens.css`** — the authoritative source. Add the CSS custom property with an inline comment explaining the role and any theme-specific notes.
-2. **`src/tokens.json`** — mirror the resolved value(s) into the appropriate JSON subtree (`brand`, `secondary`, `neutral`, `status`, `semantic.light`, `semantic.dark`, or `radius`).
+2. **`src/tokens.json`** — mirror the resolved value(s) into the appropriate JSON subtree (`primary`, `brand`, `secondary`, `neutral`, `status`, `semantic.light`, `semantic.dark`, `radius`, `ratio` or `space`). Every semantic colour role must be in both `semantic.light` and `semantic.dark`.
 3. **`src/index.ts`** — if the JSON structure changes, update the named exports and TSDoc accordingly.
 
 CSS variables not in `tokens.json` (e.g. `--mw-panel-*`) are intentionally CSS-only — they are theme-independent layout/panel tokens consumed by `@meddleware/ui` components. They do not need a JS representation unless tooling demands it.
 
 ## Token architecture
 
-### Layer 1: Brand ramps (`--mw-oxblood-*`, `--mw-indigo-*`, `--mw-gold-*`)
+### Layer 1: Palette ramps
 
-Fixed, theme-independent stops. Used directly only in illustrations, data-vis, or colour swatches. Components should not reference these directly.
+- Functional primaries and the earth triad (`--mw-red-*`, `--mw-orange-*`, `--mw-yellow-*`, `--mw-green-*`, `--mw-blue-*`, `--mw-terracotta-*`, `--mw-moss-*`, `--mw-slate-*`) and the warm neutrals (`--mw-neutral-*`): what the roles resolve to.
+- Legacy brand and secondary swatches (`--mw-oxblood-*`, `--mw-indigo-*`, `--mw-gold-*`, `--mw-pine-*`, `--mw-plum-*`, `--mw-copper-*`): retained, not referenced by any role. Components must not reference ramps directly.
 
 ### Layer 2: Semantic tokens (`--bg`, `--surface`, `--text`, …)
 
@@ -49,15 +50,16 @@ Light is the default (`:root`). Dark activates on `:root[data-theme="dark"]`. Th
 
 ## Exports
 
-Both `package.json` and `jsr.json` declare the same entry points (`.`, `tokens.css`, `seasons.css`, `tokens.json`):
+`package.json` declares four entry points; `jsr.json` only `.` and `./tokens.json` (JSR cannot export CSS):
 
 | Entry | File | Description |
 | --- | --- | --- |
 | `.` | `./src/index.ts` | TypeScript token tree with named exports and TSDoc |
 | `./tokens.css` | `./src/tokens.css` | CSS custom properties (what browsers load) |
+| `./seasons.css` | `./src/seasons.css` | Optional seasonal `--season-*` overrides |
 | `./tokens.json` | `./src/tokens.json` | Raw JSON token values |
 
-Do not add a default/wildcard export path — consumers should import one of these three explicitly.
+Do not add a default/wildcard export path — consumers should import one of these four explicitly.
 
 `"sideEffects": ["*.css"]` in `package.json` tells bundlers not to tree-shake CSS-only imports. This must stay.
 
@@ -66,7 +68,7 @@ Do not add a default/wildcard export path — consumers should import one of the
 Published to both **npmjs** and **JSR** on `v*` git tags via `.github/workflows/npm-publish.yml` using OIDC — no long-lived secrets required.
 
 - **npmjs**: uses npm trusted publishing (`id-token: write`). One-time setup: configure a trusted publisher on npmjs.com pointing at this repo and `npm-publish.yml`.
-- **JSR**: uses `npx jsr publish`, which auto-detects the GitHub Actions OIDC environment. One-time setup: link the GitHub repository to the JSR package in the JSR dashboard.
+- **JSR**: uses the lockfile-pinned CLI (`npx --no-install jsr publish`) in its own job; it auto-detects the GitHub Actions OIDC environment. One-time setup: link the GitHub repository to the JSR package in the JSR dashboard.
 
 To release: bump `version` in both `package.json` and `jsr.json`, add a CHANGELOG entry, commit, tag (`git tag v0.x.y`), push the tag.
 
