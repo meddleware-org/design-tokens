@@ -63,12 +63,15 @@ CHANGELOG):
   over an address or amount), hide warnings, or pull off-origin CSS.
 - Separately, its colour roles decide whether status and interactive text meets WCAG AA across all
   apps.
-- Realised ceiling after the 2026-10-09 re-verification: **Low** (one open consumer item, F10; at the
-  first pass F1–F3 were all open at Low).
+- Realised ceiling after the 2026-10-18 re-verification: **none open** (every finding is resolved;
+  F10, the last, is fixed in the three consumers. At the 2026-10-09 re-verification it was Low with one open
+  consumer item, and at the first pass F1–F3 were all open at Low).
 
 **Status:** re-verified 2026-10-09 at `61863ad` (first-pass baseline 2026-10-03 at `097b73d`); fix wave
-2026-10-10 (0.1.10, `commit `8dffe14``, released 2026-10-10 to npm and JSR). F1–F3, F6–F8 are resolved in
-0.1.9; F4, F5, F11 and F12 are resolved in 0.1.10; F10 stays deferred (the call sites are in three consumer repos).
+2026-10-10 (0.1.10, `commit `8dffe14``, released 2026-10-10 to npm and JSR); consumer follow-up
+re-verified 2026-10-18. F1–F3, F6–F8 are resolved in 0.1.9; F4, F5, F11 and F12 are resolved in 0.1.10;
+F10 is resolved in the three consumers (access-gate-ui 0.1.37, treasury-ui 0.0.18, dao-ui 0.1.34). Only the
+external review (maintainer item) remains open.
 
 **Front matter (TS lens):**
 
@@ -99,7 +102,9 @@ CI workflows support it. There is no runtime JavaScript beyond static re-exports
 The first pass (2026-10-03, `097b73d`, 0.1.8) recorded F1–F8 with every one DEFERRED. Release 0.1.9
 (2026-10-08, `db4e3ad`) fixed the contrast and CSS-integrity gaps and the release pipeline; the
 2026-10-09 re-verification re-checked every finding against `main` (`61863ad`). The 2026-10-10 fix wave
-(0.1.10, released 2026-10-10) resolves the four package-side leftovers: F4, F5, F11, F12.
+(0.1.10, released 2026-10-10) resolves the four package-side leftovers: F4, F5, F11, F12. The consumer
+follow-up F10 (three call sites drawing `--warning` as text) is resolved in the consumers' 2026-10-18
+releases.
 
 **What holds (verified 2026-10-09):**
 
@@ -130,14 +135,14 @@ The first pass (2026-10-03, `097b73d`, 0.1.8) recorded F1–F8 with every one DE
 | Finding | State |
 | --- | --- |
 | F1 seasonal palettes failed AA | RESOLVED 0.1.9 |
-| F2 light `--warning` 2.0:1 | RESOLVED in the package (`--warning-text`); three consumer call sites still use `--warning` as text — **F10** |
+| F2 light `--warning` 2.0:1 | RESOLVED 0.1.9 (`--warning-text`); the three consumer call sites are fixed — **F10** |
 | F3 CSS-integrity invariants unmechanised | RESOLVED 0.1.9 (`check:css`, 22 payload tests) |
 | F4 comment-blind, partial validator | RESOLVED 0.1.10 (comments fixed in 0.1.9; every role mirrored, all subtrees exported, `status` deprecated) |
 | F5 JSR / Node entry-point caveats | RESOLVED 0.1.10 (import attribute; entry imported under Node and Deno in CI; JSR dry run; OQ4 decided: JSR kept) |
 | F6 global `.dark` | RESOLVED 0.1.9 (`:root.dark`) |
 | F7 CI/release details, unpinned `npx jsr` | RESOLVED 0.1.9 (unsigned tags accepted) |
 | F8 documentation drift | RESOLVED 0.1.9 for the recorded items; residual drift — **F12** |
-| F10 `--warning` still drawn as text in access-gate-ui, dao-ui, treasury-ui | DEFERRED |
+| F10 `--warning` drawn as text in access-gate-ui, dao-ui, treasury-ui | RESOLVED 2026-10-18 (access-gate-ui 0.1.37, treasury-ui 0.0.18, dao-ui 0.1.34; each with `tests/design-tokens-used.test.ts`) |
 | F11 contrast gate omits `--lift` and panels | RESOLVED 0.1.10 (gated; four ramp stops darkened 1–3%) |
 | F12 residual documentation drift | RESOLVED 0.1.10 |
 
@@ -146,9 +151,11 @@ The first pass (2026-10-03, `097b73d`, 0.1.8) recorded F1–F8 with every one DE
 - The two gaps the first pass found were about outcomes the checks did not cover: contrast (F1, F2)
   and CSS content integrity (F3). Both are now gated in CI and before every publish, with tests that
   feed the gates the payloads they exist to catch.
-- What remains is consumer-side (F10): three call sites in other repos. The JSR Deno entry (F5), the
-  `--lift` / panel gate gap (F11), the partial JSON mirror (F4) and the residual documentation (F12) are
-  fixed in 0.1.10 (released 2026-10-10). None was a supply-chain or integrity risk.
+- The consumer-side item (F10, three call sites in other repos) is resolved: access-gate-ui, treasury-ui
+  and dao-ui no longer draw `--warning` as text, and each adds a test that keeps it so. The JSR Deno entry
+  (F5), the `--lift` / panel gate gap (F11), the partial JSON mirror (F4) and the residual documentation (F12)
+  were fixed in 0.1.10 (released 2026-10-10). None was a supply-chain or integrity risk. What remains
+  open is the external review (maintainer item).
 - By maintainer instruction the first pass only recorded findings; the fixes landed in 0.1.9 and are
   cited per finding below.
 
@@ -160,7 +167,7 @@ The first pass (2026-10-03, `097b73d`, 0.1.8) recorded F1–F8 with every one DE
 | --- | --- | --- | --- |
 | Token author / maintainer (honest) | values, selectors, roles | Ship low-contrast roles; drift JSON from CSS | `check:contrast` (every theme × season, F1/F2); `check:sync` (consistency); stylelint; all run in CI and before publish. `--lift` and the panels are inside the gate from 0.1.10 (F11) |
 | Compromised maintainer account, CI step or dependency at publish | the published tarball | Ship CSS that relabels or hides UI text in every app, or loads off-origin CSS | `check:css` (F3) in CI and publish `verify`; OIDC + provenance; consumers' lockfiles; the JSR CLI is a lockfile-pinned devDependency and the two publish jobs hold separate `id-token` scopes (F7). The `v*` tag is lightweight and unsigned (F7, accepted) |
-| Consumer apps | which files they import; `data-theme`, `data-season`, `:root.dark` | Activate seasons (all nine call sites do, via `useSeason`) | Per-theme season blocks and the contrast gate (F1); `.dark` honoured on the root element only (F6). Consumers that draw `--warning` as text (F10) |
+| Consumer apps | which files they import; `data-theme`, `data-season`, `:root.dark` | Activate seasons (all nine call sites do, via `useSeason`) | Per-theme season blocks and the contrast gate (F1); `.dark` honoured on the root element only (F6). No consumer `src/` draws `--warning` as text since 2026-10-18; each of the three former call sites has a test (F10) |
 | JS / tooling consumers | `import { semantic, … }` | Read role values | `check:sync` forward check; every colour role is mirrored from 0.1.10 and `status` is deprecated (F4) — no workspace consumer imports the JS API |
 | Browser CSP of consumers | loads | Block the `data:` texture | Consumer CSPs allow `img-src data:` |
 
@@ -195,7 +202,7 @@ Critical / High / Medium / Low / Info / Positive.
 - `ui/src/composables/useSeason.ts`, `ui/e2e/contrast.spec.ts` and `ui/CHANGELOG.md` 0.1.31 (the
   real-browser axe gate over every theme × season);
 - consumers' `main.ts` (`useSeason()` calls) and `package.json` ranges;
-- `--warning` and `--warning-text` usages across the consumers' `src/`;
+- `--warning` and `--warning-text` usages across the consumers' `src/` (re-grepped 2026-10-18);
 - the registries: `registry.npmjs.org` and `api.jsr.io` (public, read-only).
 
 **2026-10-10 fix wave (0.1.10):** the same files plus `tests/{check-contrast,sync-mirror,entry-import}.test.mjs`
@@ -306,8 +313,8 @@ to read on both canvases"); `src/tokens.css:242-259, 284-297` (the season-first 
 
 ### F2 — Light-theme `--warning` is 2.0:1 and is used as text colour
 
-**Severity:** Low   **Disposition:** RESOLVED in this package (0.1.9, `db4e3ad`); the consumer
-call sites that remain are tracked as F10
+**Severity:** Low   **Disposition:** RESOLVED (0.1.9, `db4e3ad`, in this package; the consumer
+call sites were tracked as F10 and are resolved 2026-10-18)
 **Where:** `src/tokens.css:251` (`--warning: var(--mw-yellow-500)` = `#e0a500`); CLAUDE.md "status
 roles (`--danger`, `--warning`, `--ok`, `--info`) … must keep ≥ 4.5:1 on that theme's `--bg` and
 `--surface`"; CHANGELOG 0.1.8 "status roles are theme-aware and meet WCAG AA".
@@ -347,7 +354,7 @@ claim otherwise.
   season; the `--warning-contrast` label on `--warning` is one of the label pairs.
 - **CHANGELOG.** 0.1.9 states the 0.1.8 claim "was true of every role except light `--warning`".
 - **Consumers.** `@meddleware/ui` (`UiBadge.vue:33`) and wallet-adapter (`WalletSelector.vue:88`) use
-  `--warning-text`. access-gate-ui, dao-ui and treasury-ui do not yet (F10).
+  `--warning-text`. access-gate-ui, dao-ui and treasury-ui did not at this date; they do since 2026-10-18 (F10).
 
 ### F3 — The CSS-integrity invariants in SECURITY.md are not mechanised
 
@@ -686,14 +693,14 @@ the corrected 0.1.8 AA statement. What is still stale is listed in F12.
   included) meet AA.
 - **`sideEffects: ["*.css"]`** is correct for CSS-only imports.
 
-### F10 — access-gate-ui, dao-ui and treasury-ui still draw `--warning` as text
+### F10 — access-gate-ui, dao-ui and treasury-ui drew `--warning` as text
 
-**Severity:** Low   **Disposition:** DEFERRED (consumer follow-up of F2; tracked in the
-access-gate-ui, dao-ui and treasury-ui audits and by the pre-mainnet gate in Section D; no code
-change made by this audit)
+**Severity:** Low   **Disposition:** RESOLVED (2026-10-18: access-gate-ui 0.1.37, treasury-ui 0.0.18,
+dao-ui 0.1.34; consumer follow-up of F2; was DEFERRED)
 **Where:** access-gate-ui `src/components/GateCard.vue:112` (`.badge--warn { color: var(--warning) }`);
 dao-ui and treasury-ui `src/styles/qt.css:172` (`.dao-notice { color: var(--warning) }` on a 10%
-warning tint). Re-grepped 2026-10-09 across every consumer `src/`.
+warning tint). Re-grepped 2026-10-09 across every consumer `src/` (the state described under Issue and
+Impact is that of the 2026-10-09 and 2026-10-10 passes).
 
 **Issue:** these three call sites predate `--warning-text` and still use the bright fill role as
 foreground text, which is 2.0:1 on the light `--bg` (F2). The package-side fix does not change them
@@ -716,6 +723,21 @@ access-gate-ui, dao-ui and treasury-ui waves.
 **Remediation / evidence:** change the three `color:` declarations to `var(--warning-text)` (keep
 `--warning` for the border and tint), then release each app. The consumers' real-browser contrast
 gate (as in `ui` 0.1.31) would catch a regression; access-gate-ui and treasury-ui should adopt it.
+
+**Re-verified 2026-10-18 — RESOLVED (all three consumers).**
+
+- **Grep.** `grep -rn "color: var(--warning)" repos/*/src` returns nothing across every satellite repo.
+- **access-gate-ui 0.1.37** (tag commit `1875326` per its audit): `GateCard.vue:112` is now
+  `color: var(--warning-text)`; `--warning` stays on the border and tint.
+- **treasury-ui 0.0.18 and dao-ui 0.1.34:** the `.dao-notice` rule in `src/styles/qt.css` was unused and
+  is deleted, so no `color: var(--warning)` remains in either.
+- **Tests.** Each of the three adds `tests/design-tokens-used.test.ts`. It fails if a component reads a
+  custom property this package does not define, and it holds the `--warning-as-text` pattern out of the
+  source. This is the regression check the 2026-10-10 entry said this package cannot provide.
+- **Release and deploy.** All three released 2026-10-18. access-gate-ui and treasury-ui are deployed; dao-ui
+  is published, not deployed (retired from the cluster). The real-browser
+  contrast gate (as in `ui` 0.1.31) was recommended above and is not adopted by this fix; the source-level
+  test covers this specific pattern.
 
 ### F11 — The contrast gate does not measure `--lift` or the panel palettes
 
@@ -817,7 +839,7 @@ changes by this audit).
 | --- | --- | --- | --- | --- |
 | A1 | `tokens.css` authoritative; JSON and `index.ts` mirror it (CLAUDE.md) | `check:sync` (every colour role, every subtree exported) | CI; `tests/sync-comments.test.mjs`, `tests/sync-mirror.test.mjs` | HOLDS (F4; 0.1.10 mirrors all roles) |
 | A2 | Light/dark role symmetry; season key symmetry in both blocks (CLAUDE.md) | `check:sync` | CI | HOLDS |
-| A3 | Status roles ≥ 4.5:1 on `--bg`, `--surface` and `--lift` per theme (CLAUDE.md, CHANGELOG 0.1.9) | `check:contrast` (`--warning-text` for text) | CI; 370 pairings (0.1.10); `tests/check-contrast.test.mjs` | HOLDS (F2, F11); consumers still drawing `--warning` as text — see F10 |
+| A3 | Status roles ≥ 4.5:1 on `--bg`, `--surface` and `--lift` per theme (CLAUDE.md, CHANGELOG 0.1.9) | `check:contrast` (`--warning-text` for text) | CI; 370 pairings (0.1.10); `tests/check-contrast.test.mjs` | HOLDS (F2, F11); no consumer `src/` draws `--warning` as text since 2026-10-18 (F10) |
 | A4 | Seasons read on every canvas (`seasons.css` header) | `check:contrast`, per-theme season blocks | CI; ui real-browser axe gate | HOLDS (F1); `--lift` and the panel palettes are gated since 0.1.10 (F11) |
 | A5 | Focus never reads as an error; ≥ 3:1 (CLAUDE.md, `tokens.css:258`) | `check:contrast` (hue test + 3:1) | CI | HOLDS (F1) |
 | A6 | CSS is custom properties only; no `@import` / `content` / `url()` beyond the pinned data URI (SECURITY.md) | `check:css` in CI and publish `verify` | `tests/check-css-contract.test.mjs` (22 payloads) | HOLDS (F3) |
@@ -943,7 +965,7 @@ checked by the publish workflow's idempotency probes, not by a test.
 
 ### pre-testnet *(consumers are live on testnet; unmet items are retroactive)*
 
-- [x] status roles ≥ 4.5:1 in both themes (warning) — F2 (`--warning-text`; consumer call sites: F10)
+- [x] status roles ≥ 4.5:1 in both themes (warning) — F2 (`--warning-text`; consumer call sites fixed: F10)
 - [x] seasons AA in both themes — F1 (per-theme season blocks; seasons stay enabled in the apps)
 - [x] contrast gate in CI (theme × season) — S1 (`check:contrast`, 250 pairings at 0.1.9; 370 at 0.1.10 with `--lift` and the panels, F11)
 - [x] `SECURITY.md` present and consistent with the gates — F3
@@ -955,7 +977,7 @@ checked by the publish workflow's idempotency probes, not by a test.
 - [x] `jsr` pinned; npm and JSR publishing split by job — F7
 - [x] JSR entry verified under Deno — F5 (0.1.10: import attribute; `tests/entry-import.test.mjs` under Node and Deno, `REQUIRE_DENO=1` in CI; `jsr publish --dry-run` in CI; OQ4 decided: JSR kept; `commit `8dffe14``)
 - [x] docs corrected (residual items) — F12 (0.1.10; `commit `8dffe14``)
-- [ ] consumers use `--warning-text` for text (access-gate-ui, dao-ui, treasury-ui) — F10
+- [x] consumers use `--warning-text` for text (access-gate-ui, dao-ui, treasury-ui) — F10 (2026-10-18: `grep -rn "color: var(--warning)" repos/*/src` empty; access-gate-ui 0.1.37 `GateCard.vue:112`, treasury-ui 0.0.18 and dao-ui 0.1.34 deleted the unused `.dao-notice`; `tests/design-tokens-used.test.ts` in each)
 - [ ] external review (maintainer item)
 
 ---
@@ -974,8 +996,8 @@ checked by the publish workflow's idempotency probes, not by a test.
 - **Chain-access layering & ID/ABI coupling.** N/A (no package or object IDs).
 - **A11y assumptions flow downstream.** The role pairs are now measured in every theme × season, here
   (roles, including `--lift` and the panel palettes since 0.1.10) and in ui (rendered components).
-  Consumers' VUE-lens audits may credit "tokens meet AA" for the measured roles, except where a consumer
-  draws `--warning` as text (F10).
+  Consumers' VUE-lens audits may credit "tokens meet AA" for the measured roles; the three former
+  `--warning`-as-text call sites are fixed (F10, 2026-10-18).
 - **Global CSS is part of the signing surface.** Every app loads this package's CSS unscoped; F3's
   gate protects all of them at once.
 - **Publish tooling in OIDC-scoped jobs.** The `npx <tool>@latest`-in-a-publish-job pattern was
@@ -999,8 +1021,9 @@ checked by the publish workflow's idempotency probes, not by a test.
 4. MUST keep the JSON mirror a faithful mirror of the roles it names — **holds** from 0.1.10 (F4):
    `semantic` mirrors every colour role and `check:sync` fails on drift or a missing role. The deprecated
    `status` subtree is the legacy ramp stops (`status.ok` differs from `--ok`) and is not a role mirror.
-5. MUST NOT draw a fill role as text: consumers use `--warning-text` for `color:` — **does not hold**
-   in three call sites (F10).
+5. MUST NOT draw a fill role as text: consumers use `--warning-text` for `color:` — **holds** since
+   2026-10-18 (F10): no consumer `src/` has `color: var(--warning)`, and access-gate-ui, treasury-ui and
+   dao-ui each test it (`tests/design-tokens-used.test.ts`).
 
 **TS lens baseline:**
 
@@ -1035,7 +1058,7 @@ checked by the publish workflow's idempotency probes, not by a test.
    release: seasons stay enabled; the per-theme values and the gate landed together — see F1)
 2. **OQ2** F2: retune `--warning` itself (affecting fills), or add `--warning-text` and move the
    consumers' `color:` uses to it? (Decided 2026-10-08: add `--warning-text`, keep `--warning` as the
-   fill — see F2, F10)
+   fill; the consumers' `color:` uses moved 2026-10-18 — see F2, F10)
 3. **OQ3** F6: is `.dark` meant as a general subtree switch, or only for VitePress (`html.dark`)?
    (Decided 2026-10-08: root element only, `:root.dark` — see F6)
 4. **OQ4** F5: is JSR a supported distribution for this package (CSS cannot be exported there), or
@@ -1051,8 +1074,8 @@ checked by the publish workflow's idempotency probes, not by a test.
   that also edits the gate could still ship; consumers' lockfiles and the trusted-publisher binding are
   the remaining controls.
 - **Accessibility regressions are seasonal and consumer-side.** The gate protects the role values on
-  `--bg`, `--surface`, `--lift` and the panels; a component that picks the wrong role (F10) or a new
-  surface outside the gate can still regress, which is why the ui real-browser gate matters and should
+  `--bg`, `--surface`, `--lift` and the panels; a component that picks the wrong role (F10 was one; fixed and tested in the
+  three consumers) or a new surface outside the gate can still regress, which is why the ui real-browser gate matters and should
   spread to the other apps.
 - **Docs as contract:** the residual stale examples (F12) are fixed in 0.1.10; the README role table is
   the one most likely to be copied into component code and is checked by hand, not by a gate.
@@ -1136,18 +1159,35 @@ checked by the publish workflow's idempotency probes, not by a test.
   JSR-entry and docs boxes were already ticked from the local run; the only unticked boxes are F10 (consumer
   call sites) and the external review.
 
+- 2026-10-18 — consumer re-verification (F10). Read-only: `grep -rn "color: var(--warning)" repos/*/src` over
+  every satellite repo returns nothing.
+  - **Resolved:** F10. access-gate-ui 0.1.37 (tag commit `1875326` per its audit) uses `var(--warning-text)`
+    at `GateCard.vue:112`; treasury-ui 0.0.18 and dao-ui 0.1.34 deleted the unused `.dao-notice` rule from
+    `qt.css`. Each adds `tests/design-tokens-used.test.ts`, which also fails if a component reads a custom
+    property this package does not define. All three released 2026-10-18; access-gate-ui and treasury-ui
+    deployed, dao-ui published and not deployed.
+  - **Dependent text updated:** front matter (realised ceiling, status), executive summary and findings
+    table, F2 and F10 bodies, threat-model consumer row, Section A3, the Section D pre-mainnet box (ticked),
+    normative requirement 5 (now holds), OQ2, the A11y-downstream theme, the Risks bullet and the pre-save
+    checklist.
+  - **Counts:** 11 dispositioned findings + 1 Positive: 11 RESOLVED (F1–F8, F10, F11, F12), 0 DEFERRED,
+    0 MITIGATED, 0 ACCEPTED-RISK as a disposition. Unsigned tags (F7) remain an accepted risk inside F7.
+  - **Open gates:** only the external review (maintainer item) in Section D.
+  - **Not verified:** the three tests were read, not re-run here; the consumer apps' rendered contrast (the
+    `ui` real-browser gate covers `@meddleware/ui` components, not these apps).
+
 ## Pre-save consistency checklist (this pass)
 
-- [x] Section A ↔ findings: every row HOLDS; the only caveat left cites F10.
+- [x] Section A ↔ findings: every row HOLDS; no caveat is left (F10 resolved 2026-10-18).
 - [x] Finding header ↔ body: consistent; first-pass remediation text kept, with a dated re-verification
   paragraph under each.
 - [x] Template line: base + TS with registry dates (2026-10-08); untriggered lenses named; VUE
   contrast row applied by reference.
 - [x] Closing four-part structure present, in order.
 - [x] Open questions stay listed; OQ1–OQ4 carry their decision and date.
-- [x] Section D ↔ dispositions: ticked only for RESOLVED/MITIGATED items; unticked items cite F10 or the
-  external review.
-- [x] Executive summary ↔ dispositions and ceiling (Medium; realised Low).
+- [x] Section D ↔ dispositions: ticked only for RESOLVED/MITIGATED items; the only unticked item is the
+  external review (F10's box ticked 2026-10-18 with evidence).
+- [x] Executive summary ↔ dispositions and ceiling (Medium; realised: none open, 11 RESOLVED as of 2026-10-18).
 - [x] C.1 re-counted 2026-10-10 (37 tests).
 - [x] B.1 versions match `package.json` and the lockfile; deployment status matches npm and JSR.
 - [x] Re-verification log entry added (2026-10-09 and 2026-10-10).
