@@ -30,24 +30,29 @@ CHANGELOG):
 
 **Deployment status:**
 
-- npm `@meddleware/design-tokens` **0.1.9** (published 2026-10-08, `latest`, SLSA v1 provenance
-  attestation). Tag `v0.1.9` = `db4e3ad`; `main` HEAD is `61863ad` (2026-10-09, a Dependabot
-  minor/patch group for `postcss` and `stylelint`, dev-only, not in the tarball). 7 files, 45.2 kB
-  unpacked, 14.2 kB packed.
-- JSR `@meddleware/design-tokens` **0.1.9** (verified 2026-10-09 against `api.jsr.io`: 4 versions,
-  `latestVersion` 0.1.9, no dependents). The first pass could not reach `api.jsr.io`; the JSR drift
-  recorded then (stuck at 0.1.2 until 0.1.8) is closed by `check:versions`.
-- **Unreleased (2026-10-10 fix wave): 0.1.10**, committed locally (`commit `8dffe14``), not yet tagged or
-  published. It resolves F4, F5, F11 and F12 (see each finding and the log). Everything above describes
-  the published 0.1.9 unless stated.
-- Consumers: 13 workspace packages, all on `^0.1.9` (`@meddleware/ui`, every tool UI, dashboard, landing,
-  status-page, walrus-relay, and the docs and dev sites).
+- npm `@meddleware/design-tokens` **0.1.10** (published 2026-10-10T19:07Z, `latest`, SLSA v1 provenance
+  attestation, `dist.attestations` checked 2026-10-18). Tag `v0.1.10` = `90b2fbb` (code commit `8dffe14`; the
+  later commit only records the hash in this audit); the `Publish (npm)` run for the tag succeeded.
+  0.1.9 (published 2026-10-08, tag `v0.1.9` = `db4e3ad`; 7 files, 45.2 kB unpacked, 14.2 kB packed) was the
+  version of the 2026-10-09 pass; `main` HEAD was then `61863ad` (a Dependabot minor/patch group for
+  `postcss` and `stylelint`, dev-only, not in the tarball).
+- JSR `@meddleware/design-tokens` **0.1.10** (created 2026-10-10T19:06Z; `jsr.io/@meddleware/design-tokens/meta.json`
+  on 2026-10-18: `latest` 0.1.10, 5 versions). On 2026-10-09 it was 0.1.9 (`api.jsr.io`: 4 versions, no
+  dependents). The first pass could not reach `api.jsr.io`; the JSR drift recorded then (stuck at 0.1.2 until
+  0.1.8) is closed by `check:versions`.
+- **Released (2026-10-10 fix wave): 0.1.10.** It resolves F4, F5, F11 and F12 (see each finding and the log).
+  The first CI run with the Deno import test and the `jsr publish --dry-run` step (`Node CI` run 38078406928
+  on `90b2fbb`) passed, and so did the tag's publish run (38078449526), which put 0.1.10 on both registries.
+- Consumers (verified 2026-10-18 in `repos/*/package.json`): 13 workspace packages. 12 are on `^0.1.10`
+  (every tool UI, dashboard, landing, status-page, walrus-relay, and the docs and dev sites).
+  `@meddleware/ui` is still on `^0.1.9`, which also resolves 0.1.10; it moves with its own next release (a
+  lint-only follow-up is on `main`).
 - `seasons.css` is imported by the apps, and seasons are **active in production**: `@meddleware/ui`'s
   `useSeason()` sets `data-season` from the calendar month and is called by access-gate-ui, dao-ui,
   dashboard, landing, seal-ui, status-page, token-deployer-ui, treasury-ui and walrus-ui. It is
   *autumn* at this review. Since 0.1.9 every season passes the contrast gate in both themes (F1).
 
-**Review date:** 2026-10-03 (first pass); re-verified 2026-10-09; fix wave 2026-10-10
+**Review date:** 2026-10-03 (first pass); re-verified 2026-10-09; fix wave 2026-10-10; release status 2026-10-18
 **Reviewer:** Internal review
 **Severity ceiling:** Medium.
 
@@ -62,8 +67,8 @@ CHANGELOG):
   first pass F1–F3 were all open at Low).
 
 **Status:** re-verified 2026-10-09 at `61863ad` (first-pass baseline 2026-10-03 at `097b73d`); fix wave
-2026-10-10 (0.1.10, `commit `8dffe14``). F1–F3, F6–F8 are resolved in 0.1.9; F4, F5, F11 and F12 are
-resolved in 0.1.10; F10 stays deferred (the call sites are in three consumer repos).
+2026-10-10 (0.1.10, `commit `8dffe14``, released 2026-10-10 to npm and JSR). F1–F3, F6–F8 are resolved in
+0.1.9; F4, F5, F11 and F12 are resolved in 0.1.10; F10 stays deferred (the call sites are in three consumer repos).
 
 **Front matter (TS lens):**
 
@@ -94,7 +99,7 @@ CI workflows support it. There is no runtime JavaScript beyond static re-exports
 The first pass (2026-10-03, `097b73d`, 0.1.8) recorded F1–F8 with every one DEFERRED. Release 0.1.9
 (2026-10-08, `db4e3ad`) fixed the contrast and CSS-integrity gaps and the release pipeline; the
 2026-10-09 re-verification re-checked every finding against `main` (`61863ad`). The 2026-10-10 fix wave
-(0.1.10, unreleased) resolves the four package-side leftovers: F4, F5, F11, F12.
+(0.1.10, released 2026-10-10) resolves the four package-side leftovers: F4, F5, F11, F12.
 
 **What holds (verified 2026-10-09):**
 
@@ -143,7 +148,7 @@ The first pass (2026-10-03, `097b73d`, 0.1.8) recorded F1–F8 with every one DE
   feed the gates the payloads they exist to catch.
 - What remains is consumer-side (F10): three call sites in other repos. The JSR Deno entry (F5), the
   `--lift` / panel gate gap (F11), the partial JSON mirror (F4) and the residual documentation (F12) are
-  fixed in 0.1.10, pending release. None was a supply-chain or integrity risk.
+  fixed in 0.1.10 (released 2026-10-10). None was a supply-chain or integrity risk.
 - By maintainer instruction the first pass only recorded findings; the fixes landed in 0.1.9 and are
   cited per finding below.
 
@@ -208,8 +213,8 @@ theming.
 | `node .github/audit-gate.mjs` | 1 high/critical (GHSA-vfj7-8cjw-p6xm, braces via stylelint → micromatch), 0 not allowlisted |
 | `npm audit --omit=dev` | 0 vulnerabilities |
 | `npm pack --dry-run` | 7 files, 14.2 kB packed / 45.2 kB unpacked |
-| `registry.npmjs.org` | `latest` 0.1.9, published 2026-10-08; `dist.attestations` SLSA v1 provenance |
-| `api.jsr.io` | package has 4 versions, `latestVersion` 0.1.9, `GET …/versions/0.1.9` 200, 0 dependents |
+| `registry.npmjs.org` | `latest` 0.1.9, published 2026-10-08; `dist.attestations` SLSA v1 provenance (2026-10-18: `latest` 0.1.10, published 2026-10-10T19:07Z, attestation present) |
+| `api.jsr.io` | package has 4 versions, `latestVersion` 0.1.9, `GET …/versions/0.1.9` 200, 0 dependents (2026-10-18, `jsr.io/@meddleware/design-tokens/meta.json`: `latest` 0.1.10, created 2026-10-10T19:06Z, 5 versions) |
 | Deno 2.9.6 (scratch dir, via the `deno` npm package; deleted afterwards) | `deno check index.ts` passes; `deno run` of `index.ts` **fails**: the JSON import has no `with { type: "json" }` attribute (F5) |
 | `git cat-file -t v0.1.9` | `commit` (lightweight tag) |
 | Contrast cross-check (scratch script, deleted afterwards) | `--lift` as the background of the text roles: 10 light-theme pairings at 4.30–4.49:1 (F11); all 20 panel-palette pairings pass |
@@ -674,7 +679,7 @@ the corrected 0.1.8 AA statement. What is still stale is listed in F12.
   - The tag runs the full CI workflow before publishing; the audit gate with an expiring allowlist
     (entries validated, expiry enforced, stale entries reported).
   - SHA-pinned actions; least privilege with `id-token: write` on the two publish jobs only; tag =
-    version; idempotent publish to both registries; npm provenance on 0.1.9; the JSR CLI pinned.
+    version; idempotent publish to both registries; npm provenance on 0.1.9 and 0.1.10; the JSR CLI pinned.
   - Grouped weekly Dependabot (npm, actions).
 - **A legible default.** Text and muted on every canvas, the status roles including `--warning-text`,
   the interactive roles and their labels, and all panel palettes (the 0.1.8 panel status tokens
@@ -817,7 +822,7 @@ changes by this audit).
 | A5 | Focus never reads as an error; ≥ 3:1 (CLAUDE.md, `tokens.css:258`) | `check:contrast` (hue test + 3:1) | CI | HOLDS (F1) |
 | A6 | CSS is custom properties only; no `@import` / `content` / `url()` beyond the pinned data URI (SECURITY.md) | `check:css` in CI and publish `verify` | `tests/check-css-contract.test.mjs` (22 payloads) | HOLDS (F3) |
 | A7 | No code execution; static exports (SECURITY.md) | — | inspection | HOLDS (code-only) |
-| A8 | npm and JSR versions equal (CLAUDE.md) | `check:versions` | CI; both registries at 0.1.9 | HOLDS |
+| A8 | npm and JSR versions equal (CLAUDE.md) | `check:versions` | CI; both registries at 0.1.9 (2026-10-09) and at 0.1.10 (2026-10-18) | HOLDS |
 | A9 | `sideEffects` kept; no build step (CLAUDE.md) | — | inspection; pack check | HOLDS (code-only) |
 | A10 | Roles colour-agnostic; components use roles only (CLAUDE.md) | — | inspection | HOLDS in this package |
 | A11 | `.dark` applies on the root element only (CLAUDE.md, SECURITY.md) | `check:css` selector allowlist | CI | HOLDS (F6) |
@@ -864,7 +869,7 @@ No long-lived registry credential exists for this package, so there is no creden
 | --- | --- | --- |
 | Actions pinned to SHAs | Yes | all `uses:` in both workflows |
 | Least privilege | Yes | `contents: read` at the top; `id-token: write` on the two publish jobs only |
-| OIDC trusted publishing | Yes | npm `--provenance` (0.1.9 attested); JSR OIDC |
+| OIDC trusted publishing | Yes | npm `--provenance` (0.1.9 and 0.1.10 attested); JSR OIDC |
 | Tag ↔ version, npm ↔ JSR | Yes | "Tag matches the package version" step; `check:versions` |
 | Tag-gated, idempotent publish | Yes | registry check before publishing, both registries |
 | Release gate equals CI | Yes | `verify` is `uses: ./.github/workflows/node-ci.yml` |
@@ -978,7 +983,8 @@ checked by the publish workflow's idempotency probes, not by a test.
 - **Versioning policy.** Pre-v0.2: patch-only bumps until go-live. 0.1.9 changed role values without
   shims, as the policy allows; consumers moved to `^0.1.9` in step (13 of 13). 0.1.10 keeps every public
   token and export name (it adds exports and JSON keys, and moves four ramp stops by 1–3%), so the `^0.1.9`
-  ranges take it without edits.
+  ranges take it without edits; 12 of the 13 have since moved to `^0.1.10` (2026-10-18; `@meddleware/ui` stays
+  on `^0.1.9` until its next release).
 
 ---
 
@@ -1119,6 +1125,16 @@ checked by the publish workflow's idempotency probes, not by a test.
     Unsigned tags (F7) remain an accepted risk inside F7.
   - **Not verified:** the GitHub Actions run of the new Deno and dry-run steps (the `setup-deno` SHA is the
     v2.0.5 tag commit, read via the GitHub API); consumers at 0.1.10 (the orchestrator releases).
+- 2026-10-18 — released (0.1.10, npm and JSR), consumers bumped (12 of 13 workspace packages on `^0.1.10`: access-gate-ui,
+  dao-ui, dashboard, dev, docs, landing, seal-ui, status-page, token-deployer-ui, treasury-ui, walrus-relay,
+  walrus-ui; `@meddleware/ui` stays on `^0.1.9`, which resolves 0.1.10, until its next release). `npm view` shows
+  0.1.10 as `latest`, published 2026-10-10T19:07Z, with SLSA v1 provenance (`dist.attestations`); the JSR
+  `meta.json` shows `latest` 0.1.10 (created 2026-10-10T19:06Z). Tag `v0.1.10` = `90b2fbb`. The item "not verified:
+  the GitHub Actions run of the new Deno and dry-run steps" of the 2026-10-10 entry is closed: the first CI run
+  with those steps (`Node CI`, run 38078406928 on `90b2fbb`) passed with the Deno install, the entry-import
+  test and the JSR dry-run steps green, and the tag's `Publish (npm)` run (38078449526) succeeded. Section D: the
+  JSR-entry and docs boxes were already ticked from the local run; the only unticked boxes are F10 (consumer
+  call sites) and the external review.
 
 ## Pre-save consistency checklist (this pass)
 
