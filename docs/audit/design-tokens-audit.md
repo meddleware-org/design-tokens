@@ -1175,6 +1175,8 @@ checked by the publish workflow's idempotency probes, not by a test.
   - **Open gates:** only the external review (maintainer item) in Section D.
   - **Not verified:** the three tests were read, not re-run here; the consumer apps' rendered contrast (the
     `ui` real-browser gate covers `@meddleware/ui` components, not these apps).
+- 2026-10-19 — dependency-bot status checked (read-only): `.github/dependabot.yml` carries the `ignore` rules and the repository has no open Dependabot pull requests (`gh pr list`, 2026-10-19). Versions, findings and gates were not re-examined in this pass.
+  - Dependabot policy encoded in .github/dependabot.yml (majors declined); open PRs merged 2026-10-19
 
 ## Pre-save consistency checklist (this pass)
 
