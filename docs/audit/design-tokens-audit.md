@@ -44,12 +44,12 @@ CHANGELOG):
   The first CI run with the Deno import test and the `jsr publish --dry-run` step (`Node CI` run 38078406928
   on `90b2fbb`) passed, and so did the tag's publish run (38078449526), which put 0.1.10 on both registries.
 - Consumers (verified 2026-10-18 in `repos/*/package.json`): 13 workspace packages. 12 are on `^0.1.10`
-  (every tool UI, dashboard, landing, status-page, walrus-relay, and the docs and dev sites).
+  (every tool UI, dashboard, landing, status-ui, walrus-relay, and the docs and dev sites).
   `@meddleware/ui` is still on `^0.1.9`, which also resolves 0.1.10; it moves with its own next release (a
   lint-only follow-up is on `main`).
 - `seasons.css` is imported by the apps, and seasons are **active in production**: `@meddleware/ui`'s
   `useSeason()` sets `data-season` from the calendar month and is called by access-gate-ui, dao-ui,
-  dashboard, landing, seal-ui, status-page, token-deployer-ui, treasury-ui and walrus-ui. It is
+  dashboard, landing, sealed-storage-ui, status-ui, token-issuance-ui, treasury-ui and walrus-storage-ui. It is
   *autumn* at this review. Since 0.1.9 every season passes the contrast gate in both themes (F1).
 
 **Review date:** 2026-10-03 (first pass); re-verified 2026-10-09; fix wave 2026-10-10; release status 2026-10-18
@@ -241,7 +241,7 @@ RESOLVED (0.1.9, `db4e3ad`)
 **Where:** `src/seasons.css:33-79`; header comment `:22-26` ("Values are mid-tone ramp stops chosen
 to read on both canvases"); `src/tokens.css:242-259, 284-297` (the season-first roles, including the
 `-contrast` pairs); `ui/src/composables/useSeason.ts` (sets `data-season` from the month);
-`useSeason()` called in access-gate-ui, dao-ui, dashboard, landing and seal-ui.
+`useSeason()` called in access-gate-ui, dao-ui, dashboard, landing and sealed-storage-ui.
 
 **Issue — computed failures (AA: 4.5:1 text, 3:1 non-text):**
 
@@ -705,7 +705,7 @@ Impact is that of the 2026-10-09 and 2026-10-10 passes).
 **Issue:** these three call sites predate `--warning-text` and still use the bright fill role as
 foreground text, which is 2.0:1 on the light `--bg` (F2). The package-side fix does not change them
 because `--warning` keeps its value. `@meddleware/ui` (`UiBadge`, `StatusWidget`) and wallet-adapter
-already use `--warning-text`; `status-page`, `UiStatusDot` and `StatusWidget` use `--warning` only as a
+already use `--warning-text`; `status-ui`, `UiStatusDot` and `StatusWidget` use `--warning` only as a
 fill, which is correct.
 
 **Impact:** light-mode "caution" badge text in the access-gate pass card and the DAO-style notice in
@@ -1149,8 +1149,8 @@ checked by the publish workflow's idempotency probes, not by a test.
   - **Not verified:** the GitHub Actions run of the new Deno and dry-run steps (the `setup-deno` SHA is the
     v2.0.5 tag commit, read via the GitHub API); consumers at 0.1.10 (the orchestrator releases).
 - 2026-10-18 — released (0.1.10, npm and JSR), consumers bumped (12 of 13 workspace packages on `^0.1.10`: access-gate-ui,
-  dao-ui, dashboard, dev, docs, landing, seal-ui, status-page, token-deployer-ui, treasury-ui, walrus-relay,
-  walrus-ui; `@meddleware/ui` stays on `^0.1.9`, which resolves 0.1.10, until its next release). `npm view` shows
+  dao-ui, dashboard, dev, docs, landing, sealed-storage-ui, status-ui, token-issuance-ui, treasury-ui, walrus-relay,
+  walrus-storage-ui; `@meddleware/ui` stays on `^0.1.9`, which resolves 0.1.10, until its next release). `npm view` shows
   0.1.10 as `latest`, published 2026-10-10T19:07Z, with SLSA v1 provenance (`dist.attestations`); the JSR
   `meta.json` shows `latest` 0.1.10 (created 2026-10-10T19:06Z). Tag `v0.1.10` = `90b2fbb`. The item "not verified:
   the GitHub Actions run of the new Deno and dry-run steps" of the 2026-10-10 entry is closed: the first CI run
