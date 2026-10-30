@@ -52,7 +52,7 @@ CHANGELOG):
   dashboard, landing, sealed-storage-ui, status-ui, token-issuance-ui, treasury-ui and walrus-storage-ui. It is
   *autumn* at this review. Since 0.1.9 every season passes the contrast gate in both themes (F1).
 
-**Review date:** 2026-10-03 (first pass); re-verified 2026-10-09; fix wave 2026-10-10; release status 2026-10-18
+**Review date:** 2026-10-03 (first pass); re-verified 2026-10-09; fix wave 2026-10-10; release status 2026-10-18; 0.1.11 re-verified 2026-10-30 (Node 26 baseline for CI and build images, dependency and advisory patches (postcss), workspace naming (ADR-0003))
 **Reviewer:** Internal review
 **Severity ceiling:** Medium.
 

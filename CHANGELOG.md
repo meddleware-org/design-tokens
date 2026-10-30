@@ -3,6 +3,10 @@
 All notable changes to `@meddleware/design-tokens` are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versioning follows [Semantic Versioning](https://semver.org/).
 
+## [0.1.11] - 2026-10-30
+
+- Node 26 baseline for CI and build images, dependency and advisory patches (postcss), workspace naming (ADR-0003). No change to the tokens.
+
 ## [0.1.10] - 2026-10-10
 
 ### Fixed
