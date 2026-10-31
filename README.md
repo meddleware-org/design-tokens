@@ -127,24 +127,26 @@ Values swap automatically between light and dark, and are overridable per season
 | --- | --- | --- | --- |
 | `--bg` | `#f7f4f1` | `#120e10` | Page / window background |
 | `--surface` | `#ffffff` | `#1c1618` | Card, modal, elevated panel |
-| `--lift` | `#efeae6` | `#241c1f` | Hover / raised surface (text roles meet AA on it) |
+| `--lift` | `#efeae6` | `#241c1f` | Hover / raised surface (text roles meet AAA on it) |
 | `--border` | `#ded6cf` | `#372b2e` | Dividers, outlines, borders |
 | `--text` | `#201b19` | `#f2eae6` | Primary body text |
-| `--muted` | `#6e635c` | `#b7a9a3` | Secondary / helper text |
-| `--accent` | terracotta `#b74427` | terracotta `#e07850` | Primary interactive (links, CTAs, badges) |
-| `--primary` | moss `#2a7754` | moss `#5aaa80` | Affirmative / constructive actions |
+| `--muted` | `#544b46` | `#b7a9a3` | Secondary / helper text |
+| `--accent` | terracotta `#86321d` | terracotta `#e79475` | Primary interactive (links, CTAs, badges) |
+| `--primary` | moss `#1f573e` | moss `#72b793` | Affirmative / constructive actions |
 | `--accent-contrast` | `#ffffff` | `#201b19` | Text on accent |
 | `--primary-contrast` | `#ffffff` | `#0b0809` | Text on primary |
-| `--secondary` | slate `#4e5f9e` | slate `#9ba8d4` | Secondary interactive |
+| `--secondary` | slate `#3d4a7c` | slate `#9ba8d4` | Secondary interactive |
 | `--secondary-contrast` | `#ffffff` | `#0b0809` | Text on secondary |
-| `--danger` | `#b3261e` | `#f08a7e` | Error / destructive |
+| `--danger` | `#942019` | `#f08e82` | Error / destructive |
 | `--warning` | yellow `#e0a500` | yellow `#f4d84f` | Caution / degraded — a **fill** (2.0:1 on the light canvas) |
-| `--warning-text` | amber `#886400` | yellow `#f4d84f` | Warning drawn as **text** (4.95:1 on `--bg`, 4.54:1 on `--lift`) |
-| `--ok` | green `#177542` | green `#5bb392` | Success / healthy |
-| `--info` | blue `#1558b5` | blue `#6ea8fe` | Informational |
+| `--warning-text` | amber `#634900` | yellow `#f4d84f` | Warning drawn as **text** (7.72:1 on `--bg`, 7.08:1 on `--lift`) |
+| `--ok` | green `#115832` | green `#67b89a` | Success / healthy |
+| `--info` | blue `#124b99` | blue `#72aafe` | Informational |
 | `--highlight` | yellow `#f2c744` | yellow `#f4d84f` | Emphasis (the old "premium" role) |
-| `--focus-ring` | slate `#4e5f9e` | slate `#9ba8d4` | Visible focus outline (distinct from accent; never red) |
-| `--radius` / `--radius-sm` / `--radius-lg` | `10 / 6 / 16px` | — | Corner radius |
+| `--focus-ring` | slate `#3d4a7c` | slate `#9ba8d4` | Visible focus outline (distinct from accent; never red) |
+| `--radius` / `--radius-xs` / `--radius-sm` / `--radius-lg` | `10 / 2 / 6 / 16px` | — | Corner radius (`xs` is the console density: badges, toolbar buttons) |
+| `--shadow-1` / `--shadow-2` / `--shadow-3` | neutral, 10 / 14 / 28% | neutral, 28 / 40 / 65% | Elevation: resting card or tooltip, popover or menu, modal. **Theme-only**: never varies by season |
+| `--backdrop` | neutral, 50% | (same) | The wash behind a modal |
 
 ### Functional primary + rainbow ramps
 
@@ -153,11 +155,11 @@ not change name when you do.
 
 | Ramp | Stops |
 | --- | --- |
-| `--mw-red-*` | `300 #ef5a4c` · `500 #d92d20` · `600 #a81d13` |
-| `--mw-orange-*` | `400 #f08a3c` · `500 #e06d10` · `600 #aa500c` |
+| `--mw-red-*` | `300 #f48c82` · `500 #d92d20` · `600 #981a11` |
+| `--mw-orange-*` | `400 #f19249` · `500 #e06d10` · `600 #7c3b09` |
 | `--mw-yellow-*` | `300 #f4d84f` · `400 #f2c744` · `500 #e0a500` · `600 #a87c00` |
-| `--mw-green-*` | `300 #5bb392` · `500 #1f9254` · `600 #177542` |
-| `--mw-blue-*` | `300 #6ea8fe` · `500 #1d6fe0` · `600 #1558b5` |
+| `--mw-green-*` | `300 #67b89a` · `500 #1f9254` · `600 #115832` |
+| `--mw-blue-*` | `300 #72aafe` · `500 #1d6fe0` · `600 #124b99` |
 
 ### Sacred-geometry scales
 
@@ -166,9 +168,11 @@ Colour-agnostic, `calc()`-derived from ratio constants (no magic numbers).
 | Group | Tokens |
 | --- | --- |
 | Ratios | `--ratio-phi` (1.618) · `--ratio-phi-inv` (0.618) · `--ratio-phi-root` (√φ 1.272) · `--split-major` (61.8%) · `--split-minor` (38.2%) |
-| Type scale | `--font-size-xs … --font-size-3xl` (base 1rem, climbing by √φ; two steps = one φ octave) |
-| Leading / tracking | `--leading-tight/normal/loose` · `--tracking-tight/normal/wide` |
-| Spacing | `--space-3xs … --space-3xl` (Fibonacci ×0.25rem: 0.25·0.5·0.75·1.25·2·3.25·5.25·8.5·13.75) |
+| Type scale | `--font-size-xs … --font-size-3xl` (base 1rem, climbing by √φ; two steps = one φ octave), plus `--font-size-2xs` (≈ 0.702rem, midway between `xs` and `sm`: console density) |
+| Leading / tracking | `--leading-tight/normal/relaxed/loose` (1.25 · 1.55 · 1.6 · φ) · `--tracking-tight/normal/wide` |
+| Weights | `--font-weight-regular/medium/semibold/brand/bold` (400 · 500 · 600 · 650 · 700; `brand` is the wordmark weight) |
+| Spacing | `--space-3xs … --space-3xl` (Fibonacci ×0.25rem: 0.25·0.5·0.75·1.25·2·3.25·5.25·8.5·13.75), plus `--space-4xs` (0.125rem, half a unit, for hairline gaps) |
+| Content width | `--mw-tool-content-max` (45rem) · `--mw-content-narrow` (26rem, forms and dialogs) · `--mw-content-prose` (65ch, reading measure) |
 
 ### Chaos / motion tokens
 
@@ -176,7 +180,10 @@ Colour-agnostic, `calc()`-derived from ratio constants (no magic numbers).
 | --- | --- |
 | `--noise-overlay` / `--noise-opacity` | Subtle CSS-native SVG turbulence for backgrounds (see `.mw-noise` in `@meddleware/ui`) |
 | `--hero-offset` / `--gap-irregular` | φ-derived intentional-asymmetry hooks |
-| `--transition-base` / `--transition-slow` | Human easing (deliberately not "slick") |
+| `--duration-fast/base/slow` · `--ease-human` | 100 / 140 / 320ms and the curve, as separate tokens for a component that needs only one |
+| `--transition-base` / `--transition-slow` | Duration + curve together: human easing (deliberately not "slick") |
+| `--z-below` / `--z-raised` | Local stacking inside one component (-1 / 1) |
+| `--z-header` / `--z-popover` / `--z-dialog` / `--z-skip` | Page layers (50 / 60 / 70 / 100); a native `<dialog>` uses the top layer and needs none. These are the only `z-index` values a component may use |
 
 ### Legacy brand ramps + secondary palette (available swatches, not used by roles)
 
@@ -248,14 +255,14 @@ keep everything in lockstep:
 directly (no build step); consumers' bundlers process the CSS/TS/JSON. `check:sync`
 (`scripts/check-token-sync.mjs`, run in CI) guards that `tokens.css` ↔ `tokens.json` ↔ `index.ts`
 stay in sync and that every season overrides the same role set. `check:contrast` measures every
-role pairing in every theme × season against WCAG AA (4.5:1 text and labels, 3:1 focus ring), and
+role pairing in every theme × season against WCAG 2.2 AAA (7:1 text and labels; 3:1 for the focus ring and meter fills), and
 `check:css` asserts both CSS files contain custom properties only (no rules, at-rules or `url()` beyond the
 pinned noise overlay) — they are imported as global CSS by every app.
 
 ### Seasons and dark mode
 
 Each season has two blocks in `seasons.css`: darker stops for light canvases and lighter stops for dark
-canvases, because no single mid-tone reads at 4.5:1 on both. Set `data-season` on `<html>` together with
+canvases, because no single mid-tone reads at 7:1 on both. Set `data-season` on `<html>` together with
 `data-theme="dark"` (or `class="dark"` on `<html>`; the class form is honoured on the root element only).
 
 ## Publishing

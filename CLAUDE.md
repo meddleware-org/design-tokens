@@ -16,7 +16,7 @@ src/
   index.ts      TypeScript re-export of tokens.json with named exports and TSDoc
 scripts/
   check-token-sync.mjs   Validator (npm run check:sync) — CSS ↔ JSON ↔ index parity + season symmetry
-  check-contrast.mjs     npm run check:contrast — WCAG AA for every role pairing in every theme × season
+  check-contrast.mjs     npm run check:contrast — WCAG AAA (7:1) for every text and label pairing in every theme × season
   check-css-contract.mjs npm run check:css — the two CSS files hold custom properties only (see SECURITY.md)
   check-versions.mjs     npm run check:versions — jsr.json version == package.json version
   lib/css.mjs            Shared CSS parsing, cascade evaluation and contrast maths
@@ -52,9 +52,30 @@ There is no build step. The package ships `src/` directly; consumers' bundlers h
 5. Run `npm run check` (sync, contrast, CSS contract, tests). A new colour must pass the contrast gate in
    every theme × season; status text uses `--warning-text`, never `--warning` (a fill).
 
+### Seasons compatibility (every addition)
+
+`seasons.css` overrides only the accent-family keys (`--season-accent`, `-primary`, `-secondary`, `-highlight`, `-focus`
+and their contrasts) per season × theme. A new token is one of two kinds, and must be added accordingly:
+
+- **Theme-only** (shadows, backdrop, z-index, weights, spacing, radius, durations, content widths): define it in the light
+  block and, if it differs, the dark block; it must **never read a `--season-*` value**. Shadows are in `THEME_ONLY` in
+  `check-token-sync.mjs`, which requires them in both theme blocks and rejects a season reference. A new theme-varying
+  token of this kind joins that list.
+- **Accent-family** (a new role that should follow the season): read `var(--season-x, <fallback>)` in both theme blocks AND add
+  the `--season-x` key to **all 8 season blocks** (4 seasons × light/dark) in the same change; the sync check enforces the
+  same key set everywhere. Prefer a derived tint in the component (`color-mix(in srgb, var(--accent) 12%, var(--bg))`)
+  over a new season key.
+- `seasons.css` may declare `--season-*` properties only (also checked).
+- New foreground/background pairs go into `check-contrast.mjs`, which measures all 10 theme × season combinations.
+  WCAG 2.2 AAA is the gate for text and labels (7:1); non-text and graphics are 3:1 (AAA has no stricter level). A new
+  colour is placed by moving its HSL **lightness only** (hue and saturation stay), the least amount that reaches 7:1 on every
+  canvas it is drawn on, in every look it appears in.
+- Check the result **visually** in a season, not only by ratio: shoot the ui gallery in all 10 looks before releasing.
+
 CSS vars absent from `tokens.json` (`--mw-panel-*`, `--mw-font-*`, `--noise-*`, `--transition-*`,
-`--font-size-*`, `--leading-*`, `--tracking-*`) are intentionally CSS-only; the validator does not
-require them in JSON.
+`--font-size-*`, `--leading-*`, `--tracking-*`, `--font-weight-*`, `--duration-*`, `--ease-*`, `--z-*`, `--shadow-*`,
+`--backdrop`, `--mw-content-*`) are intentionally CSS-only; the validator does not require them in JSON. The radius scale
+(`xs`/`sm`/`md`/`lg`) and the spacing scale (including `4xs`) are mirrored and checked.
 
 ## Token architecture
 
@@ -70,7 +91,7 @@ require them in JSON.
 
 What components use. Defined in `:root` (light) and `:root[data-theme="dark"]`. Interactive
 roles use the seasonal-first fallback pattern; status roles (`--danger`, `--warning`, `--ok`,
-`--info`) do not — they are per-theme only and must keep ≥ 4.5:1 on that theme's `--bg` and
+`--info`) do not — they are per-theme only and must keep ≥ 7:1 (AAA) on that theme's `--bg` and
 `--surface`. When adding a semantic token, add it to **both**
 theme blocks (and, if seasonal, to all four seasons).
 

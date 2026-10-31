@@ -1,17 +1,20 @@
 #!/usr/bin/env node
-// Contrast gate: for every theme × season, the role pairings the components rely on must meet WCAG 2.2
-// AA. `npm run check:contrast` fails on any miss; `--table` prints every measured pairing.
+// Contrast gate: for every theme × season, the role pairings the components rely on must meet WCAG 2.2 AAA for
+// text (7:1). `npm run check:contrast` fails on any miss; `--table` prints every measured pairing.
 //
-//   text (4.5:1) on --bg, --surface and --lift: --text, --muted, --accent, --primary, --secondary, --danger,
+//   text (7:1) on --bg, --surface and --lift: --text, --muted, --accent, --primary, --secondary, --danger,
 //                --warning-text, --ok, --info (links, labels and status text are drawn in these)
-//   label (4.5:1) on its fill: --accent-contrast/--accent, --primary-contrast/--primary,
+//   label (7:1) on its fill: --accent-contrast/--accent, --primary-contrast/--primary,
 //                --secondary-contrast/--secondary, --highlight-contrast/--highlight,
 //                --warning-contrast/--warning
-//   panel palettes (theme-independent --mw-panel-{dark,light}-*): text, muted, ok, danger, info (4.5:1)
+//   panel palettes (theme-independent --mw-panel-{dark,light}-*): text, muted, ok, danger, info (7:1)
 //                on the panel's bg and surface
 //   non-text (3:1) on --bg and --surface: --focus-ring, which must also not read as an error (red hue)
+//   graphics (3:1) on --lift (a track) and --surface: --accent, --primary, --secondary, --ok, --info, --danger,
+//                --warning-text — the fills of a meter or progress bar, which WCAG 1.4.11 treats as graphical objects
 //
-// Seasons are composed with the dark theme exactly as the browser cascades them (see lib/css.mjs).
+// 7:1 is AAA for text; AA (4.5:1) is implied. Non-text has no stricter level than 3:1. Seasons are composed with the
+// dark theme exactly as the browser cascades them (see lib/css.mjs).
 
 import { SEASONS, THEMES, cascade, contrast, hexToRgb, hue, loadBlocks, resolve } from './lib/css.mjs'
 
@@ -25,6 +28,9 @@ const LABELS = [
   ['warning-contrast', 'warning'],
 ]
 
+const GRAPHIC_ROLES = ['accent', 'primary', 'secondary', 'ok', 'info', 'danger', 'warning-text']
+const GRAPHIC_CANVASES = ['lift', 'surface']
+
 const PANELS = ['dark', 'light']
 const PANEL_TEXT_ROLES = ['text', 'muted', 'ok', 'danger', 'info']
 const PANEL_CANVASES = ['bg', 'surface']
@@ -32,6 +38,8 @@ const PANEL_CANVASES = ['bg', 'surface']
 const blocks = loadBlocks()
 const rows = []
 const failures = []
+/** WCAG AAA for text and labels. */
+const TEXT_MIN = 7
 
 function check(env, fg, bg, min, scope = `${env.theme}${env.season ? ' · ' + env.season : ''}`) {
   const vars = cascade(blocks, env)
@@ -52,9 +60,10 @@ function check(env, fg, bg, min, scope = `${env.theme}${env.season ? ' · ' + en
 for (const theme of THEMES) {
   for (const season of SEASONS) {
     const env = { theme, season }
-    for (const fg of TEXT_ROLES) for (const bg of CANVASES) check(env, fg, bg, 4.5)
-    for (const [fg, bg] of LABELS) check(env, fg, bg, 4.5)
+    for (const fg of TEXT_ROLES) for (const bg of CANVASES) check(env, fg, bg, TEXT_MIN)
+    for (const [fg, bg] of LABELS) check(env, fg, bg, TEXT_MIN)
     for (const bg of CANVASES) check(env, 'focus-ring', bg, 3)
+    for (const fg of GRAPHIC_ROLES) for (const bg of GRAPHIC_CANVASES) check(env, fg, bg, 3)
     const ring = resolve('var(--focus-ring)', cascade(blocks, env))
     const rgb = ring && hexToRgb(ring)
     const h = rgb ? hue(rgb) : Number.NaN
@@ -67,7 +76,7 @@ for (const theme of THEMES) {
 // Panel palettes do not depend on the page theme or season; the base cascade holds them.
 for (const panel of PANELS) {
   for (const fg of PANEL_TEXT_ROLES) {
-    for (const bg of PANEL_CANVASES) check({ theme: 'light', season: null }, `mw-panel-${panel}-${fg}`, `mw-panel-${panel}-${bg}`, 4.5, `panel ${panel}`)
+    for (const bg of PANEL_CANVASES) check({ theme: 'light', season: null }, `mw-panel-${panel}-${fg}`, `mw-panel-${panel}-${bg}`, TEXT_MIN, `panel ${panel}`)
   }
 }
 

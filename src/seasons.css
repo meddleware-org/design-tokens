@@ -22,10 +22,10 @@
  * COMPOSES WITH DARK MODE
  *   Seasons set only the ACCENT roles; `data-theme="dark"` still owns the neutral
  *   canvas and the status roles (tuned per theme for legibility). `<html data-theme="dark" data-season="winter">` = winter accents
- *   on the dark canvas. No single mid-tone reads at 4.5:1 on both a near-white and a near-black canvas,
+ *   on the dark canvas. No single mid-tone reads at 7:1 on both a near-white and a near-black canvas,
  *   so EACH season has two blocks: dark stops for light canvases (labels white) and light stops for
  *   dark canvases (labels dark). `npm run check:contrast` measures every theme × season pairing and
- *   fails the build below WCAG AA (4.5:1 text and labels, 3:1 focus ring, focus never red).
+ *   fails the build below WCAG AAA (7:1 text and labels, 3:1 focus ring, focus never red).
  *
  * INVARIANT
  *   Every season MUST define the SAME `--season-*` key set, in both its light and its dark block

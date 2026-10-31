@@ -30,8 +30,8 @@
  * ```ts
  * import { semantic, neutral } from '@meddleware/design-tokens'
  *
- * console.log(semantic.light.accent) // '#b74427'
- * console.log(semantic.dark.accent)  // '#e07850'
+ * console.log(semantic.light.accent) // '#86321d'
+ * console.log(semantic.dark.accent)  // '#e79475'
  * ```
  *
  * ### Runtime support
@@ -125,7 +125,7 @@ export const primary = tokens.primary
 export const ratio = tokens.ratio
 
 /**
- * Spacing scale — Fibonacci multiples of a 0.25rem unit (`3xs`…`3xl`). Mirrors the `--space-*` CSS
+ * Spacing scale — Fibonacci multiples of a 0.25rem unit (`3xs`…`3xl`), plus `4xs`, a half-unit hairline. Mirrors the `--space-*` CSS
  * custom properties. Prefer the CSS tokens in styles; these are for tooling/JS-driven layout.
  */
 export const space = tokens.space
@@ -161,7 +161,7 @@ export const secondary = tokens.secondary
 export const status = tokens.status
 
 /**
- * Corner radii (`sm`, `md`, `lg`), mirroring `--mw-radius-sm`, `--mw-radius` and `--mw-radius-lg`
+ * Corner radii (`xs`, `sm`, `md`, `lg`), mirroring `--mw-radius-xs`, `--mw-radius-sm`, `--mw-radius` and `--mw-radius-lg`
  * (the `--radius-*` role aliases resolve to these).
  */
 export const radius = tokens.radius

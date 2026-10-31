@@ -3,6 +3,10 @@
 All notable changes to `@meddleware/design-tokens` are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versioning follows [Semantic Versioning](https://semver.org/).
 
+## [0.1.12] - 2026-10-31
+
+- AAA contrast gate, palette retuned to 7:1, and new tokens (type, weight, space, radius, duration, z-index, shadow, backdrop, content width).
+
 ## [0.1.11] - 2026-10-30
 
 - Node 26 baseline for CI and build images, dependency and advisory patches (postcss), workspace naming (ADR-0003). No change to the tokens.

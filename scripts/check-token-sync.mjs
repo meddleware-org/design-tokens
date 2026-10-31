@@ -14,6 +14,8 @@
 //   3. index.ts re-exports every subtree that tokens.json declares by name.
 //   4. The `semantic` mirror covers every colour role (no role may be silently absent).
 //   5. Every `[data-season]` block overrides the same --season-* key set.
+//   6. Theme-only tokens (shadows) exist in both themes and never read a --season-* value, and seasons.css declares
+//      only --season-* properties.
 //
 // It intentionally does NOT flag ramp stops or scales that are absent from tokens.json (e.g.
 // --mw-oxblood-050, --mw-panel-*, --mw-font-* are CSS-only by design); only the semantic colour roles
@@ -139,7 +141,7 @@ for (const [stop, value] of Object.entries(tokens.neutral)) {
 for (const [name, value] of Object.entries(tokens.status)) {
   expectMatch(`status.${name}`, value, `--mw-${name}-500`, rootDecls)
 }
-const radiusMap = { sm: '--mw-radius-sm', md: '--mw-radius', lg: '--mw-radius-lg' }
+const radiusMap = { xs: '--mw-radius-xs', sm: '--mw-radius-sm', md: '--mw-radius', lg: '--mw-radius-lg' }
 for (const [name, value] of Object.entries(tokens.radius)) {
   const cssVar = radiusMap[name]
   if (!cssVar) {
@@ -234,6 +236,26 @@ if (existsSync(seasonsPath)) {
         )
       }
     }
+  }
+}
+
+// 5. Theme-only tokens. Elevation (shadows) varies by theme and never by season, so a season cannot tint it:
+// each must be defined in BOTH theme blocks and must not read a --season-* value. (Accent-family roles are the opposite:
+// seasonal-first, with the --season-* key added to every season block, which check 4 enforces.)
+const THEME_ONLY = ['--shadow-1', '--shadow-2', '--shadow-3']
+for (const name of THEME_ONLY) {
+  for (const [theme, decls] of [['light', rootDecls], ['dark', darkDecls]]) {
+    const value = decls.get(name)
+    if (value === undefined) errors.push(`${name} is not defined in the ${theme} theme block (theme-only tokens need both)`)
+    else if (value.includes('--season-')) errors.push(`${name} (${theme}) reads a --season-* value; theme-only tokens must not vary by season`)
+  }
+}
+
+// 6. seasons.css overrides --season-* keys and nothing else: any other custom property there would bypass the role layer.
+if (existsSync(seasonsPath)) {
+  const seasonsText = stripComments(readFileSync(seasonsPath, 'utf8'))
+  for (const [, name] of seasonsText.matchAll(/(--[a-z0-9-]+)\s*:/gi)) {
+    if (!name.startsWith('--season-')) errors.push(`seasons.css declares ${name}; only --season-* properties are allowed there`)
   }
 }
 
