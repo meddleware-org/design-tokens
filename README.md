@@ -128,7 +128,8 @@ Values swap automatically between light and dark, and are overridable per season
 | `--bg` | `#f7f4f1` | `#120e10` | Page / window background |
 | `--surface` | `#ffffff` | `#1c1618` | Card, modal, elevated panel |
 | `--lift` | `#efeae6` | `#241c1f` | Hover / raised surface (text roles meet AAA on it) |
-| `--border` | `#ded6cf` | `#372b2e` | Dividers, outlines, borders |
+| `--border` | `#ded6cf` | `#372b2e` | Dividers and decorative outlines (1.3–1.4:1: never the only mark of a control) |
+| `--control-border` | `#80746d` | `#85777e` | The boundary of a form field (text input, select, textarea): 3:1 on every canvas, WCAG 1.4.11 |
 | `--text` | `#201b19` | `#f2eae6` | Primary body text |
 | `--muted` | `#544b46` | `#b7a9a3` | Secondary / helper text |
 | `--accent` | terracotta `#86321d` | terracotta `#e79475` | Primary interactive (links, CTAs, badges) |
@@ -255,7 +256,7 @@ keep everything in lockstep:
 directly (no build step); consumers' bundlers process the CSS/TS/JSON. `check:sync`
 (`scripts/check-token-sync.mjs`, run in CI) guards that `tokens.css` ↔ `tokens.json` ↔ `index.ts`
 stay in sync and that every season overrides the same role set. `check:contrast` measures every
-role pairing in every theme × season against WCAG 2.2 AAA (7:1 text and labels; 3:1 for the focus ring and meter fills), and
+role pairing in every theme × season against WCAG 2.2 AAA (7:1 text and labels; 3:1 for the focus ring, form-field boundaries and meter fills), and fails when a semantic role has no pairing and no stated exemption, and
 `check:css` asserts both CSS files contain custom properties only (no rules, at-rules or `url()` beyond the
 pinned noise overlay) — they are imported as global CSS by every app.
 

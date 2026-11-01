@@ -1,6 +1,6 @@
 {
   "name": "@meddleware/design-tokens",
-  "version": "0.1.12",
+  "version": "0.1.13",
   "description": "Framework-agnostic design tokens (warm-neutral canvas, functional accents) for @meddleware UIs — CSS custom properties + JS/JSON exports.",
   "license": "0BSD",
   "repository": {

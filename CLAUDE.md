@@ -49,7 +49,7 @@ There is no build step. The package ships `src/` directly; consumers' bundlers h
 3. **`src/index.ts`** — export any new subtree with TSDoc.
 4. **`src/seasons.css`** — if you add a seasonal role, add the `--season-*` var to ALL four seasons, in
    BOTH the light and the dark block of each.
-5. Run `npm run check` (sync, contrast, CSS contract, tests). A new colour must pass the contrast gate in
+5. Run `npm run check` (sync, contrast, CSS contract, tests). A new semantic colour role must also be measured in `scripts/check-contrast.mjs` (or listed in `EXEMPT` with the reason): the gate fails on a role nothing measures. A control identified only by its edge (a text field) draws that edge in `--control-border` (3:1), never `--border` (a divider, 1.3–1.4:1). A new colour must pass the contrast gate in
    every theme × season; status text uses `--warning-text`, never `--warning` (a fill).
 
 ### Seasons compatibility (every addition)

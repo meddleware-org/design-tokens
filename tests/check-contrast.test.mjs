@@ -11,13 +11,14 @@ import { spawnSync } from 'node:child_process'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
 
-function runContrast(editCss = (css) => css) {
+function runContrast(editCss = (css) => css, editJson = (json) => json) {
   const dir = mkdtempSync(join(tmpdir(), 'tokens-contrast-'))
   mkdirSync(join(dir, 'scripts', 'lib'), { recursive: true })
   mkdirSync(join(dir, 'src'))
   cpSync(join(root, 'scripts', 'check-contrast.mjs'), join(dir, 'scripts', 'check-contrast.mjs'))
   cpSync(join(root, 'scripts', 'lib', 'css.mjs'), join(dir, 'scripts', 'lib', 'css.mjs'))
   cpSync(join(root, 'src', 'seasons.css'), join(dir, 'src', 'seasons.css'))
+  writeFileSync(join(dir, 'src', 'tokens.json'), editJson(readFileSync(join(root, 'src', 'tokens.json'), 'utf8')))
   writeFileSync(join(dir, 'src', 'tokens.css'), editCss(readFileSync(join(root, 'src', 'tokens.css'), 'utf8')))
   return spawnSync(process.execPath, [join(dir, 'scripts', 'check-contrast.mjs')], { encoding: 'utf8' })
 }
@@ -80,4 +81,29 @@ test('the gate is AAA: a pairing that only meets AA (4.5:1) fails', () => {
   const r = runContrast((css) => mutate(css, '--mw-neutral-500: #544b46;', '--mw-neutral-500: #6e635c;'))
   assert.notEqual(r.status, 0)
   assert.match(r.stderr, /--muted .* is [4-6]\.\d\d:1, needs 7:1/)
+})
+
+test('a form-field boundary below 3:1 fails (WCAG 1.4.11)', () => {
+  // #c4b8ae is the old placeholder grey: 1.9:1 on --bg, far below the 3:1 a field edge needs.
+  const light = runContrast((css) => mutate(css, '--mw-neutral-400: #80746d;', '--mw-neutral-400: #c4b8ae;'))
+  assert.notEqual(light.status, 0)
+  assert.match(light.stderr, /--control-border .* on --bg/)
+  const dark = runContrast((css) => mutate(css, '--control-border: #85777e;', '--control-border: #372b2e;'))
+  assert.notEqual(dark.status, 0)
+  assert.match(dark.stderr, /--control-border .* on --lift/)
+})
+
+test('a semantic role that no pairing measures fails, so a new role cannot ship unchecked', () => {
+  const r = runContrast(
+    (css) => css,
+    (json) => mutate(json, '"focus-ring": "#3d4a7c"', '"focus-ring": "#3d4a7c", "brand-new": "#123456"'),
+  )
+  assert.notEqual(r.status, 0)
+  assert.match(r.stderr, /--brand-new is a semantic role that no contrast pairing measures/)
+})
+
+test('an exemption for a role that no longer exists fails', () => {
+  const r = runContrast((css) => css, (json) => mutate(json, '"border": "#ded6cf", ', ''))
+  assert.notEqual(r.status, 0)
+  assert.match(r.stderr, /EXEMPT names --border/)
 })

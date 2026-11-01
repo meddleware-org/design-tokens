@@ -3,6 +3,14 @@
 All notable changes to `@meddleware/design-tokens` are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versioning follows [Semantic Versioning](https://semver.org/).
 
+## [0.1.13] - 2026-11-01
+
+### Added
+
+- `--control-border` (and the ramp stop `--mw-neutral-400`): the boundary of a form field, 3:1 against `--bg`, `--surface` and `--lift` in
+  every theme × season (WCAG 1.4.11). `--border` is 1.3–1.4:1, which is right for a divider and too faint for the only mark of a text field.
+- The contrast gate fails on a semantic role that no pairing measures (and on a stale exemption), so a new role cannot ship unchecked.
+
 ## [0.1.12] - 2026-10-31
 
 - AAA contrast gate, palette retuned to 7:1, and new tokens (type, weight, space, radius, duration, z-index, shadow, backdrop, content width).

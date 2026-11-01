@@ -122,6 +122,7 @@
   --mw-neutral-100: #efeae6; /* lifted surface / subtle hover                    */
   --mw-neutral-200: #ded6cf; /* border / divider                                 */
   --mw-neutral-300: #c4b8ae; /* disabled text / placeholder                      */
+  --mw-neutral-400: #80746d; /* form-field boundary (light), 3:1 on every canvas  */
   --mw-neutral-500: #544b46; /* muted / secondary text                           */
   --mw-neutral-700: #332c29; /* high-contrast text on light                      */
   --mw-neutral-800: #201b19; /* body text (light mode)                           */
@@ -269,6 +270,7 @@
   --surface:         var(--mw-neutral-000); /* card / modal / elevated panel     */
   --lift:            var(--mw-neutral-100); /* hover / raised surface            */
   --border:          var(--mw-neutral-200); /* dividers, outlines                */
+  --control-border:  var(--mw-neutral-400); /* boundary of a form field: 3:1 (WCAG 1.4.11) */
   --text:            var(--mw-neutral-800); /* primary body text                 */
   --muted:           var(--mw-neutral-500); /* secondary / helper text           */
 
@@ -320,6 +322,7 @@
   --surface: #1c1618; /* warm dark surface, slightly lighter than --bg */
   --lift:    #241c1f; /* hover / raised surface                        */
   --border:  #372b2e; /* visible but not harsh border                  */
+  --control-border: #85777e; /* boundary of a form field: 3:1 (WCAG 1.4.11)   */
   --text:    #f2eae6; /* warm near-white body text                     */
   --muted:   #b7a9a3; /* secondary text, still legible                 */
 

@@ -12,8 +12,9 @@
 **Project type:** TS/CSS package; ships source with no build step; published to npm and JSR.
 **Template:**
 
-- AUDIT_TEMPLATE.md (2026-10-08)
-- AUDIT_TEMPLATE_TS.md (2026-10-08)
+- AUDIT_TEMPLATE.md (2026-11-01)
+- AUDIT_TEMPLATE_TS.md (2026-11-01)
+- AUDIT_TEMPLATE_A11Y.md (2026-11-01), partial: contrast and token rows
 
 Not triggered: SUI, SUI_CLIENT, SEAL, WALRUS, WORKERS, RUST, GO, AUTH, PROXY, OPS, PLATFORM, IMG (no
 Dockerfile), SITE. VUE is not triggered either (this is not a Vue app or component library), but its
@@ -52,7 +53,7 @@ CHANGELOG):
   dashboard, landing, sealed-storage-ui, status-ui, token-issuance-ui, treasury-ui and walrus-storage-ui. It is
   *autumn* at this review. Since 0.1.9 every season passes the contrast gate in both themes (F1).
 
-**Review date:** 2026-10-03 (first pass); re-verified 2026-10-09; fix wave 2026-10-10; release status 2026-10-18; 0.1.11 re-verified 2026-10-30 (Node 26 baseline for CI and build images, dependency and advisory patches (postcss), workspace naming (ADR-0003)); 0.1.12 re-verified 2026-10-31 (AAA contrast gate, palette retuned to 7:1, and new tokens (type, weight, space, radius, duration, z-index, shadow, backdrop, content width))
+**Review date:** 2026-10-03 (first pass); re-verified 2026-10-09; fix wave 2026-10-10; release status 2026-10-18; 0.1.11 released 2026-10-30 (Node 26 baseline for CI and build images, dependency and advisory patches (postcss), workspace naming (ADR-0003)); 0.1.12 released 2026-10-31 (AAA contrast gate, palette retuned to 7:1, and new tokens (type, weight, space, radius, duration, z-index, shadow, backdrop, content width)); frontend-wave delta review 2026-11-01 (real review of the 2026-10-19 → 2026-11-01 changes; see the delta section)
 **Reviewer:** Internal review
 **Severity ceiling:** Medium.
 
@@ -160,6 +161,8 @@ releases.
   cited per finding below.
 
 ---
+
+**2026-11-01 update.** Since 2026-10-18 the palette was retuned to 7:1 and the gate raised to WCAG AAA (0.1.12). This review found that form-field edges drew with a 1.3–1.4:1 colour (WCAG 1.4.11) which no gate measured, and that the gate could not notice an unmeasured role; both are fixed in 0.1.13 (F13, F14). Every other finding keeps its disposition; the only open gate is the external review.
 
 ## Threat model / trust boundaries
 
@@ -833,6 +836,33 @@ changes by this audit).
 
 ---
 
+### Frontend wave delta review (2026-11-01) — 0.1.11 and 0.1.12 reviewed, 0.1.13 prepared
+
+Scope: the changes since the 2026-10-18 review — `0.1.11` (Node 26 baseline, `postcss` patch, workspace naming, stale allowlist entry dropped), `0.1.12` (the AAA contrast gate, the retuned palette and the new token families) and the fix below. Read: the diff of `scripts/check-contrast.mjs`, `scripts/check-token-sync.mjs`, `src/tokens.css`, `src/seasons.css`, `src/tokens.json`, `src/index.ts`, the tests, CI and publish workflows, `.github/audit-allowlist.json`; ran `npm ci`, `npm run check` (sync, contrast, CSS contract, versions, tests), the audit gate (0 high/critical, allowlist empty) and `npm pack --dry-run` (7 files, 16.8 kB, no scripts or tests); checked the registries (npm 0.1.12 `latest` with SLSA v1 provenance; JSR 0.1.12 `latest`, 2026-11-01).
+
+### F13 — Form-field boundaries drew with `--border` (1.3–1.4:1), below WCAG 1.4.11
+**Severity:** Medium   **Disposition:** RESOLVED
+**Where:** `src/tokens.css` / `tokens.json` (the role was absent); consumers `@meddleware/ui` `UiInput`, `UiTextarea`, `UiSelect` (`border: 1px solid var(--border)`).
+**Issue:** WCAG 2.2 SC 1.4.11 (AA) requires the visual information needed to identify a user-interface component to reach 3:1 against adjacent colours. A text field, textarea or select is identified by its edge (and a near-white fill on the page colour). `--border` measures 1.31:1 on `--bg` (light) and 1.41:1 (dark) — right for a divider, too faint for a field. axe-core has no rule for it and the contrast gate measured text and focus only, so every sweep stayed green. Buttons are identified by their label and are not affected.
+**Impact:** every form in every app (price, name, amount, search fields): low-vision users and bright-glare conditions cannot find a field's edge. A conformance failure of the AA level the platform declares a hard gate (D100).
+**Remediation / evidence:** `--control-border` added for both themes (`#80746d` light via the new ramp stop `--mw-neutral-400`; `#85777e` dark): 4.13/4.53/3.79:1 on `--bg`/`--surface`/`--lift` (light) and 4.50/4.19/3.92:1 (dark), not seasonal (a structural neutral). The gate asserts 3:1 against all three canvases in every theme × season (`scripts/check-contrast.mjs`; 540 pairings, up from 510 at 0.1.12); tests mutate both themes' values and expect the failure. `@meddleware/ui` adopts it in its next release; until a consumer does, its fields keep the old edge (tracked in the ui audit). 0.1.13.
+
+### F14 — A new colour role could ship without any contrast pairing
+**Severity:** Low   **Disposition:** RESOLVED
+**Where:** `scripts/check-contrast.mjs` (pairing lists are static).
+**Issue:** the gate measures the roles named in its lists. CLAUDE.md said "a new colour must pass the contrast gate" but nothing failed when a role was added to the tokens and not to the lists — the way `--control-border`'s absence went unseen.
+**Impact:** a future role (for instance a second warning tone) could be used for text without ever being measured; the browser sweeps only catch pairings that appear on a swept page.
+**Remediation / evidence:** the gate now compares the semantic roles of `tokens.json` with the roles that took part in a measured pairing and fails on any other role, unless it is listed in `EXEMPT` with a reason (today only `--border`: a divider). It also fails on an exemption for a role that no longer exists. Tests: an unmeasured role fails; a stale exemption fails. 0.1.13.
+
+### F15 — Positive: the AAA gate and the new token families hold
+**Severity:** Positive
+**Evidence:** text and label pairings are measured at 7:1 on `--bg`, `--surface` and `--lift` in all ten theme × season looks and for both panel palettes; the focus ring and the graphical fills (meter and progress fills on `--lift` and `--surface`) at 3:1; the ring must also not read as an error (red hue). The new families (type, weight, space, radius, duration, z-index, shadow, backdrop, content widths) keep CSS ↔ JSON ↔ `index.ts` parity, shadows and the other theme-only tokens are rejected if they read a `--season-*` value, and a shadow missing from the dark theme fails (`tests/sync-mirror.test.mjs`). The CSS contract still holds: both files declare custom properties only; the sole `url()` is the `--noise-overlay` data SVG pinned by SHA-256.
+
+### Delta notes
+- Tests: 47 (46 pass, 1 skipped — the Deno import test; CI sets `REQUIRE_DENO=1`, the workstation has no Deno).
+- The `ui` audit records the two things only a component can get wrong that the tokens cannot see (tint backgrounds, `opacity`); F13 adds a third: *an edge that carries a control* must use `--control-border`.
+- Not covered by any automated gate and recorded for the A11Y lens: the 44 px enhanced target size, link purpose, reading order.
+
 ## Section A — Invariant verification matrix
 
 | # | Invariant (source) | Enforced at | Proven by | Status |
@@ -1177,6 +1207,7 @@ checked by the publish workflow's idempotency probes, not by a test.
     `ui` real-browser gate covers `@meddleware/ui` components, not these apps).
 - 2026-10-19 — dependency-bot status checked (read-only): `.github/dependabot.yml` carries the `ignore` rules and the repository has no open Dependabot pull requests (`gh pr list`, 2026-10-19). Versions, findings and gates were not re-examined in this pass.
   - Dependabot policy encoded in .github/dependabot.yml (majors declined); open PRs merged 2026-10-19
+- 2026-11-01 — frontend-wave delta review. Read the 0.1.11/0.1.12 diff, ran the full check (sync, contrast, CSS contract, versions, 47 tests), the audit gate and the pack contents; verified npm/JSR 0.1.12. Found and fixed F13 (field boundaries below WCAG 1.4.11: new `--control-border`) and F14 (the contrast gate now fails on an unmeasured role) in 0.1.13; F15 recorded as Positive. The release tool's bare "re-verified" marks for 0.1.11 and 0.1.12 were reworded to "released".
 
 ## Pre-save consistency checklist (this pass)
 
