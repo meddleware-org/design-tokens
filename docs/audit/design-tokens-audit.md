@@ -1207,7 +1207,7 @@ checked by the publish workflow's idempotency probes, not by a test.
     `ui` real-browser gate covers `@meddleware/ui` components, not these apps).
 - 2026-10-19 — dependency-bot status checked (read-only): `.github/dependabot.yml` carries the `ignore` rules and the repository has no open Dependabot pull requests (`gh pr list`, 2026-10-19). Versions, findings and gates were not re-examined in this pass.
   - Dependabot policy encoded in .github/dependabot.yml (majors declined); open PRs merged 2026-10-19
-- 2026-11-01 — frontend-wave delta review. Read the 0.1.11/0.1.12 diff, ran the full check (sync, contrast, CSS contract, versions, 47 tests), the audit gate and the pack contents; verified npm/JSR 0.1.12. Found and fixed F13 (field boundaries below WCAG 1.4.11: new `--control-border`) and F14 (the contrast gate now fails on an unmeasured role) in 0.1.13; F15 recorded as Positive. The release tool's bare "re-verified" marks for 0.1.11 and 0.1.12 were reworded to "released".
+- 2026-11-01 — frontend-wave delta review. Read the 0.1.11/0.1.12 diff, ran the full check (sync, contrast, CSS contract, versions, 47 tests), the audit gate and the pack contents; verified npm/JSR 0.1.12. Found and fixed F13 (field boundaries below WCAG 1.4.11: new `--control-border`) and F14 (the contrast gate now fails on an unmeasured role) in 0.1.13; F15 recorded as Positive. The release tool's bare "re-verified" marks for 0.1.11 and 0.1.12 were reworded to "released". `**Template:**` dates reconciled to the 2026-11-01 registry (the TS and base changes add rows and affect no disposition here) and the A11Y lens added (partial).
 
 ## Pre-save consistency checklist (this pass)
 
