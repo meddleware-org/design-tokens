@@ -836,7 +836,7 @@ changes by this audit).
 
 ---
 
-### Frontend wave delta review (2026-11-01) — 0.1.11 and 0.1.12 reviewed, 0.1.13 prepared
+### Frontend wave delta review (2026-11-01) — 0.1.11 and 0.1.12 reviewed, 0.1.13 released 2026-11-05
 
 Scope: the changes since the 2026-10-18 review — `0.1.11` (Node 26 baseline, `postcss` patch, workspace naming, stale allowlist entry dropped), `0.1.12` (the AAA contrast gate, the retuned palette and the new token families) and the fix below. Read: the diff of `scripts/check-contrast.mjs`, `scripts/check-token-sync.mjs`, `src/tokens.css`, `src/seasons.css`, `src/tokens.json`, `src/index.ts`, the tests, CI and publish workflows, `.github/audit-allowlist.json`; ran `npm ci`, `npm run check` (sync, contrast, CSS contract, versions, tests), the audit gate (0 high/critical, allowlist empty) and `npm pack --dry-run` (7 files, 16.8 kB, no scripts or tests); checked the registries (npm 0.1.12 `latest` with SLSA v1 provenance; JSR 0.1.12 `latest`, 2026-11-01).
 
