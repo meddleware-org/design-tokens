@@ -1008,7 +1008,7 @@ checked by the publish workflow's idempotency probes, not by a test.
 - [x] JSR entry verified under Deno — F5 (0.1.10: import attribute; `tests/entry-import.test.mjs` under Node and Deno, `REQUIRE_DENO=1` in CI; `jsr publish --dry-run` in CI; OQ4 decided: JSR kept; `commit `8dffe14``)
 - [x] docs corrected (residual items) — F12 (0.1.10; `commit `8dffe14``)
 - [x] consumers use `--warning-text` for text (access-gate-ui, dao-ui, treasury-ui) — F10 (2026-10-18: `grep -rn "color: var(--warning)" repos/*/src` empty; access-gate-ui 0.1.37 `GateCard.vue:112`, treasury-ui 0.0.18 and dao-ui 0.1.34 deleted the unused `.dao-notice`; `tests/design-tokens-used.test.ts` in each)
-- [ ] external review (maintainer item)
+- [ ] external review (ADR-0009 gate G4: not a launch gate; covered by redeploy and the audit pass) (maintainer item)
 
 ---
 
