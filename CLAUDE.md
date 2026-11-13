@@ -24,6 +24,7 @@ tests/                   node:test cases: the checks (payload rejection, comment
                          failing contrast) and the `.` entry imported under Node and Deno (REQUIRE_DENO=1 in CI)
 ```
 
+`jsr.json` and `package.json` are the JSR and npm registry configuration; their versions must always match.
 There is no build step. The package ships `src/` directly; consumers' bundlers handle processing.
 `index.ts` imports `tokens.json` with `with { type: 'json' }`: without the attribute `deno check` passes but
 `deno run` of the JSR entry fails. Keep it.
@@ -83,6 +84,7 @@ CSS vars absent from `tokens.json` (`--mw-panel-*`, `--mw-font-*`, `--noise-*`, 
 
 - Functional primaries: `--mw-red-*`, `--mw-orange-*`, `--mw-yellow-*`, `--mw-green-*`, `--mw-blue-*`
   (the human-universal accents the roles resolve to; derived + tunable).
+- Earth triad: `--mw-terracotta-*`, `--mw-moss-*`, `--mw-slate-*`.
 - Legacy brand + secondary swatches: `--mw-oxblood-*`, `--mw-indigo-*`, `--mw-gold-*`, `--mw-pine-*`,
   `--mw-plum-*`, `--mw-copper-*` — retained, **not** used by roles (no gold/purple as identity).
 - Warm neutrals: `--mw-neutral-000…950` (the canvas). Status ramps: `--mw-danger-*`, `--mw-ok-*`.
@@ -105,6 +107,9 @@ is a magic number. `@meddleware/ui` components consume these for all type/spacin
 Theme-independent by design (for `variant`-aware shell components). Do not put inside `[data-theme="dark"]`.
 Each variant carries `bg/surface/text/muted/border` plus the status roles `ok/danger/info`, so status
 text inside a panel stays legible whatever the page theme.
+`AppHeader`, `AppSidebar` and `AppFooter` in `@meddleware/ui` use them through their `variant` prop.
+Shape/type constants (`--mw-radius*`, `--mw-font-*`, `--mw-header-height`, `--mw-sidebar-width`) are fixed layout values that
+the same layout components reuse.
 
 ### Layer 5: Chaos / motion (`--noise-*`, `--hero-offset`, `--gap-irregular`, `--transition-*`)
 
@@ -143,6 +148,8 @@ Published to both **npmjs** and **JSR** on `v*` git tags using OIDC — no long-
 - **JSR**: the lockfile-pinned CLI, `npx --no-install jsr publish`, in its own job; it auto-detects the GitHub Actions OIDC environment. One-time setup: link the GitHub repository to the JSR package in the JSR dashboard. CI runs `npx --no-install jsr publish --dry-run` on every push. JSR carries only `.` and `./tokens.json` (the `publish.include` list in `jsr.json`).
 
 To release: bump `version` in both `package.json` **and** `jsr.json` (CI's `check:versions` fails when they differ — a stale `jsr.json` makes the JSR publish a silent no-op), add a CHANGELOG entry, commit, tag (`git tag v0.x.y`), push the tag.
+
+Licence: 0BSD (`LICENSE`).
 
 ## Relationship with `@meddleware/ui`
 
