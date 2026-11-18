@@ -14,8 +14,6 @@ export default {
     'no-descending-specificity': null,
     // BEM-style class names (block__element--modifier) are intentional.
     'selector-class-pattern': null,
-    // Some presentational SFCs use compact single-line multi-declaration rules.
-    'declaration-block-single-line-max-declarations': null,
     // Preserve camelCase CSS keyword values (e.g. text-rendering: optimizeLegibility).
     'value-keyword-case': null,
     // Vue SFC scoped-style pseudo-classes.
