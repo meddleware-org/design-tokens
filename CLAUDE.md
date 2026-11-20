@@ -167,3 +167,7 @@ Licence: 0BSD (`LICENSE`).
 - Do not add a build script — the no-build model is intentional and simplifies the publish pipeline.
 - Keep `tokens.json` a flat, human-readable snapshot mirrored by `check:sync` (the JSON records the
   no-season resolved values; the scales are computed by the validator).
+
+## Interoperability
+
+- [docs/INTEROP.md](docs/INTEROP.md): the standards this project speaks, what is planned, where to extend it, and what proves each claim.

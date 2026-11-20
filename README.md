@@ -274,3 +274,7 @@ CI publishes on `v*` git tags via `.github/workflows/npm-publish.yml` using **np
 ## License
 
 [0BSD](./LICENSE) — BSD Zero Clause License.
+
+## Open standards
+
+What this project speaks, what is planned and where you can extend it: [docs/INTEROP.md](docs/INTEROP.md).
