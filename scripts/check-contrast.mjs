@@ -21,8 +21,11 @@ import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { SEASONS, THEMES, cascade, contrast, hexToRgb, hue, loadBlocks, resolve, srcDir } from './lib/css.mjs'
 
+/** Roles drawn as text, link or status colour; each must reach 7:1 on every canvas. */
 const TEXT_ROLES = ['text', 'muted', 'accent', 'primary', 'secondary', 'danger', 'warning-text', 'ok', 'info']
+/** The three page backgrounds text sits on: the page, a card, a raised surface. */
 const CANVASES = ['bg', 'surface', 'lift']
+/** Each label colour paired with the fill it is drawn on (a button's text on its background). */
 const LABELS = [
   ['accent-contrast', 'accent'],
   ['primary-contrast', 'primary'],
@@ -31,21 +34,37 @@ const LABELS = [
   ['warning-contrast', 'warning'],
 ]
 
+/** Fills of meters and progress bars: graphical objects under WCAG 1.4.11, so 3:1 against their track and card. */
 const GRAPHIC_ROLES = ['accent', 'primary', 'secondary', 'ok', 'info', 'danger', 'warning-text']
+/** A meter's track (`--lift`) and the card it sits on (`--surface`). */
 const GRAPHIC_CANVASES = ['lift', 'surface']
 
+/** The fixed panel palettes (a code or terminal panel keeps its colours whatever the page theme). */
 const PANELS = ['dark', 'light']
+/** The text roles a panel draws. */
 const PANEL_TEXT_ROLES = ['text', 'muted', 'ok', 'danger', 'info']
+/** A panel's background and its inner surface. */
 const PANEL_CANVASES = ['bg', 'surface']
 
+/** Both stylesheets' blocks, read once. */
 const blocks = loadBlocks()
+/** Every measured pairing, for `--table`. */
 const rows = []
+/** One message per pairing below its minimum (or that does not resolve). */
 const failures = []
 /** Every role that takes part in a measured pairing. */
 const measured = new Set()
 /** WCAG AAA for text and labels. */
 const TEXT_MIN = 7
 
+/**
+ * Measure one pairing in one theme × season, and record a failure when it is below its minimum or does not resolve to two hex colours.
+ * @param {{ theme: string, season: string | null }} env - the theme and season
+ * @param {string} fg - the foreground role, without `--`
+ * @param {string} bg - the background role, without `--`
+ * @param {number} min - the ratio required (7 for text and labels, 3 for non-text and graphics)
+ * @param {string} [scope] - the label printed with the result; defaults to the theme and season
+ */
 function check(env, fg, bg, min, scope = `${env.theme}${env.season ? ' · ' + env.season : ''}`) {
   measured.add(fg)
   measured.add(bg)
@@ -55,6 +74,7 @@ function check(env, fg, bg, min, scope = `${env.theme}${env.season ? ' · ' + en
   const ra = a && hexToRgb(a)
   const rb = b && hexToRgb(b)
   const label = scope
+  // A role that does not resolve to a hex colour cannot be measured, and an unmeasured colour must not ship: it fails.
   if (!ra || !rb) {
     failures.push(`${label}: --${fg} on --${bg} does not resolve to a hex colour (${a} / ${b})`)
     return
@@ -72,6 +92,7 @@ for (const theme of THEMES) {
     for (const bg of CANVASES) check(env, 'focus-ring', bg, 3)
     for (const bg of CANVASES) check(env, 'control-border', bg, 3)
     for (const fg of GRAPHIC_ROLES) for (const bg of GRAPHIC_CANVASES) check(env, fg, bg, 3)
+    // The focus ring must also not look like an error: a red ring reads as "something is wrong" (hues 345° to 20°).
     const ring = resolve('var(--focus-ring)', cascade(blocks, env))
     const rgb = ring && hexToRgb(ring)
     const h = rgb ? hue(rgb) : Number.NaN
@@ -99,6 +120,7 @@ for (const role of Object.keys(EXEMPT)) {
   if (!roles.includes(role)) failures.push(`EXEMPT names --${role}, which is not a semantic role any more: remove it`)
 }
 
+// `--table` prints every pairing, for tuning a colour by eye; the exit code is the same with or without it.
 if (process.argv.includes('--table')) {
   for (const r of rows) console.log(`${r.ratio.toFixed(2).padStart(6)}  ${r.ratio < r.min ? 'FAIL' : 'ok  '}  ${r.label.padEnd(16)} ${r.pair.padEnd(40)} ${r.fg} / ${r.bg}`)
 }

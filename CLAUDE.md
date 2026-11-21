@@ -168,6 +168,21 @@ Licence: 0BSD (`LICENSE`).
 - Keep `tokens.json` a flat, human-readable snapshot mirrored by `check:sync` (the JSON records the
   no-season resolved values; the scales are computed by the validator).
 
+## Commands
+
+```bash
+npm ci && npm run check          # everything CI checks except type-check and lint
+npm run type-check && npm run lint
+npx --no-install jsr publish --dry-run   # add --allow-dirty with uncommitted changes
+node scripts/check-contrast.mjs --table  # every pairing and its ratio
+```
+
+## Related
+
+- The audit: [`docs/audit/design-tokens-audit.md`](docs/audit/design-tokens-audit.md).
+- Open standards and extension points: [`docs/INTEROP.md`](docs/INTEROP.md).
+- How to propose a change: [`CONTRIBUTING.md`](CONTRIBUTING.md).
+
 ## Interoperability
 
 - [docs/INTEROP.md](docs/INTEROP.md): the standards this project speaks, what is planned, where to extend it, and what proves each claim.

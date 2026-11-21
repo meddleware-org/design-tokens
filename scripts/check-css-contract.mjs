@@ -11,23 +11,29 @@
 //   4. the only `url(` is the `--noise-overlay` value, pinned by SHA-256 (an inline `data:` SVG filter);
 //   5. nothing outside well-formed flat blocks (no nesting, no stray text).
 //
-// Update NOISE_OVERLAY_SHA256 only after reviewing a deliberate change to that value.
+// Update NOISE_OVERLAY_SHA256 only after reviewing a deliberate change to that value. (A `content` property is refused by rule 2, which
+// allows nothing but custom properties and `color-scheme`.)
 
 import { createHash } from 'node:crypto'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { parseBlocks, srcDir, stripComments } from './lib/css.mjs'
 
+/** SHA-256 of the one value allowed to hold `url()`: the inline SVG noise filter. Pinned so a change to it is a reviewed change. */
 const NOISE_OVERLAY_SHA256 = '651aa5411e885078c92539d1a3b422cffba7e38fab3e3fad1f78f538b1219cc3'
+/** The four season names `seasons.css` may target. */
 const SEASON = '(?:spring|summer|autumn|winter)'
+/** The only selectors allowed: `:root`, optionally dark (attribute or class), optionally one season. Anything else could style app content. */
 const SELECTOR = new RegExp(
   `^:root(?:\\[data-theme="dark"\\]|\\.dark)?(?:\\[data-season="${SEASON}"\\])?$`,
 )
+/** The two files every UI imports globally. */
 const FILES = ['tokens.css', 'seasons.css']
 // `--src <dir>` points the check at another copy (the tests use it).
 const srcArg = process.argv.indexOf('--src')
 const dir = srcArg > 0 ? process.argv[srcArg + 1] : srcDir
 
+/** One message per violation, printed together so a single run shows every problem. */
 const errors = []
 
 /** Split a block body on top-level `;` (a `;` inside parentheses or quotes belongs to the value). */
@@ -56,6 +62,7 @@ for (const file of FILES) {
   const fail = (msg) => errors.push(`${file}: ${msg}`)
   const text = stripComments(raw)
 
+  // `/*!` comments survive minifiers, so they would ship to every page; refuse them before stripping comments.
   if (/\/\*!/.test(raw)) fail('contains a /*! comment')
   if (/@/.test(text)) fail('contains an at-rule (@import, @media, …)')
   if (/\\/.test(text)) fail('contains a backslash escape')
@@ -65,12 +72,14 @@ for (const file of FILES) {
   const leftover = text.replace(/([^{}]+)\{([^{}]*)\}/g, '').trim()
   if (leftover) fail(`text outside well-formed blocks: ${JSON.stringify(leftover.slice(0, 60))}`)
 
+  // Selectors: only the shapes in SELECTOR, so no rule can target an element of an app.
   for (const block of parseBlocks(raw)) {
     for (const selector of block.selectors) {
       if (!SELECTOR.test(selector)) fail(`selector not allowed: ${selector}`)
     }
   }
 
+  // Declarations: re-read every block with the quote- and bracket-aware splitter, so a `;` inside a value cannot hide a second property.
   const re = /([^{}]+)\{([^{}]*)\}/g
   let m
   while ((m = re.exec(text)) !== null) {

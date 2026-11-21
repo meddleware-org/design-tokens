@@ -10,16 +10,24 @@ import { join, dirname } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { spawnSync } from 'node:child_process'
 
+/** The package root, found from this file. */
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
+/** The published `.` entry. */
 const entry = join(root, 'src', 'index.ts')
+/** The JSON the entry re-exports, to compare values against. */
 const tokens = JSON.parse(readFileSync(join(root, 'src', 'tokens.json'), 'utf8'))
 
+/** A module that imports the entry the way a consumer would and prints what it saw, run under Node and under Deno. */
 const SNIPPET = `
 const m = await import(${JSON.stringify(pathToFileURL(entry).href)})
 const names = Object.keys(m).sort()
 console.log(JSON.stringify({ names, accent: m.semantic.light.accent, ok: m.semantic.dark.ok, same: m.default === m.designTokens }))
 `
 
+/**
+ * Check the printed result: the exact named exports, two sample values equal to the JSON, and `default` being the same object as `designTokens`.
+ * @param {string} out - the snippet's standard output
+ */
 function assertExports(out) {
   const got = JSON.parse(out.trim().split('\n').pop())
   assert.deepEqual(got.names, ['brand', 'default', 'designTokens', 'neutral', 'primary', 'radius', 'ratio', 'secondary', 'semantic', 'space', 'status'])
@@ -38,6 +46,7 @@ test('the entry imports under Node', { skip: !process.features.typescript && 'th
   assertExports(r.stdout)
 })
 
+// Deno is optional on a laptop and required in CI (REQUIRE_DENO=1), where the JSR runtime must be proven.
 const deno = spawnSync(process.env.DENO ?? 'deno', ['--version'], { encoding: 'utf8' })
 const hasDeno = deno.status === 0
 

@@ -1,17 +1,24 @@
+// TypeScript settings for `npm run type-check` (tsc --noEmit). The package ships its TypeScript source as is, with no build step, so this
+// file only proves src/index.ts type-checks; consumers compile it with their own settings.
 {
   "compilerOptions": {
+    // Modern output and modules: consumers' bundlers and Deno handle down-levelling.
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "lib": ["ESNext"],
+    // The strictest checks, so a type error in the published entry is caught here and not in a consumer.
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
+    // index.ts imports tokens.json (with an import attribute, see the entry-import test).
     "resolveJsonModule": true,
+    // Each file must compile on its own, as Node's type stripping and Deno compile it.
     "isolatedModules": true,
     "verbatimModuleSyntax": true,
+    // Type-check only: nothing is emitted, because nothing is built.
     "noEmit": true
   },
   "include": ["src/**/*.ts"]

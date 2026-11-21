@@ -8,8 +8,14 @@ import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { spawnSync } from 'node:child_process'
 
+/** The package root, found from this file. */
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
 
+/**
+ * Run the sync validator against a scratch copy of the package with tokens.css edited.
+ * @param {(css: string) => string} editCss - change applied to tokens.css
+ * @returns {import('node:child_process').SpawnSyncReturns<string>} the validator's exit status and output
+ */
 function runSync(editCss) {
   const dir = mkdtempSync(join(tmpdir(), 'tokens-sync-'))
   mkdirSync(join(dir, 'scripts', 'lib'), { recursive: true })

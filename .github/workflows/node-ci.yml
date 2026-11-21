@@ -1,3 +1,5 @@
+# Node CI: every check that decides whether @meddleware/design-tokens can be released, on every push and pull request to main.
+# The release workflow (npm-publish.yml) calls this file as its `verify` job, so a tag runs exactly these steps (D138).
 name: Node CI
 
 on:
@@ -8,9 +10,11 @@ on:
   # The release workflow runs the same checks on the tagged commit.
   workflow_call:
 
+# Least privilege: the checks only read the repository.
 permissions:
   contents: read
 
+# Tools that honour DO_NOT_TRACK send no usage data from CI (the platform's no-telemetry rule, PRIVACY_BY_DEFAULT).
 env:
   DO_NOT_TRACK: "1"
 
@@ -20,40 +24,50 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Actions are pinned by commit SHA, not tag, so a moved tag cannot change what runs; Dependabot proposes the updates.
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
+      # Node 26 is the fleet's baseline (D56).
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: '26'
 
+      # `npm ci` installs exactly the lockfile, so CI tests what was reviewed.
       - name: Install dependencies
         run: npm ci
 
+      # Fails on any high or critical advisory not allow-listed with a reason and an expiry (.github/audit-allowlist.json).
       - name: Audit dependencies
         run: node .github/audit-gate.mjs
 
+      # JSR reads its version from jsr.json; a stale value turned every JSR publish into a silent no-op once (0.1.2 through npm 0.1.7).
       - name: npm and JSR versions match
         run: npm run check:versions
 
+      # tokens.css is the source of truth; a JSON or TypeScript consumer must never read a stale colour.
       - name: Token sync check (tokens.css ↔ tokens.json ↔ index.ts)
         run: npm run check:sync
 
-      - name: Contrast (every theme × season meets WCAG AA)
+      - name: Contrast (every theme × season meets WCAG 2.2 AAA, 7:1 for text)
         run: npm run check:contrast
 
+      # Every UI imports these files globally, so a rule in them would run in every app: only custom properties are allowed.
       - name: CSS contract (custom properties only, no url() beyond the pinned noise overlay)
         run: npm run check:css
 
+      # Deno is the runtime JSR consumers use; the version is pinned so the entry-import test is reproducible.
       - name: Install Deno (the JSR runtime, for the entry-import test)
         uses: denoland/setup-deno@22d081ff2d3a40755e97629de92e3bcbfa7cf2ed # v2.0.5
         with:
           deno-version: 2.9.6
 
+      # REQUIRE_DENO turns the Deno half of the entry-import test from skippable into required (F5).
       - name: Check-script tests (including the built entry imported under Node and Deno)
         env:
           REQUIRE_DENO: '1'
         run: npm test
 
+      # The JSR checks (slow types, the file list) run on every push, not only when a tag is cut.
       - name: JSR dry run (type, slow-type and file checks; nothing is published)
         run: npx --no-install jsr publish --dry-run
 
@@ -63,6 +77,8 @@ jobs:
       - name: Lint CSS (stylelint)
         run: npm run lint:css
 
+      # The tarball holds the four source files and the documents, nothing else, and stays small: a test or a stray file shipping to every
+      # consumer is a defect, and 200 kB unpacked is about four times today's size, room to grow without hiding a mistake.
       - name: Package contents
         run: |
           npm pack --dry-run --json > pack.json

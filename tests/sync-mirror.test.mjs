@@ -7,8 +7,14 @@ import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { spawnSync } from 'node:child_process'
 
+/** The package root, found from this file. */
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
 
+/**
+ * Run the sync validator against a scratch copy of the package, each source edited by the caller.
+ * @param {{ editJson?: (json: object) => object, editIndex?: (ts: string) => string, editCss?: (css: string) => string, editSeasons?: (css: string) => string }} [edits]
+ * @returns {import('node:child_process').SpawnSyncReturns<string>} the validator's exit status and output
+ */
 function runSync({ editJson = (t) => t, editIndex = (t) => t, editCss = (t) => t, editSeasons = (t) => t } = {}) {
   const dir = mkdtempSync(join(tmpdir(), 'tokens-mirror-'))
   mkdirSync(join(dir, 'scripts', 'lib'), { recursive: true })
@@ -46,6 +52,13 @@ test('a subtree that index.ts does not export by name fails', () => {
   assert.match(r.stderr, /"status"/)
 })
 
+/**
+ * Replace one exact snippet, failing the test if it is gone (a drifted fixture must not let a failure test pass).
+ * @param {string} css - the text to change
+ * @param {string} from - the exact text that must be present
+ * @param {string} to - its replacement
+ * @returns {string} the changed text
+ */
 const mutate = (css, from, to) => {
   assert.ok(css.includes(from), `fixture drifted: ${from} not found`)
   return css.replace(from, to)

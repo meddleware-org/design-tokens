@@ -8,9 +8,16 @@ import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { spawnSync } from 'node:child_process'
 
+/** The package root, found from this file. */
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
+/** The gate under test. */
 const script = join(root, 'scripts', 'check-css-contract.mjs')
 
+/**
+ * Run the CSS contract gate against a scratch copy of the two stylesheets.
+ * @param {(dir: string, change: (file: string, fn: (text: string) => string) => void) => void} [edit] - edits to apply to the copy
+ * @returns {import('node:child_process').SpawnSyncReturns<string>} the gate's exit status and output
+ */
 function run(edit) {
   const dir = mkdtempSync(join(tmpdir(), 'tokens-'))
   for (const f of ['tokens.css', 'seasons.css']) cpSync(join(root, 'src', f), join(dir, f))
@@ -23,6 +30,7 @@ test('the shipped files pass', () => {
   assert.equal(r.status, 0, r.stderr)
 })
 
+/** Each payload the gate exists to stop, as an edit to a stylesheet: the attacks a compromised publish could ship to every app. */
 const BAD = {
   '@import': (t) => t + '\n@import url("https://evil.example/x.css");\n',
   'content rule on a page selector': (t) => t + '\n.wallet-address::after { content: "0xattacker"; }\n',

@@ -1,31 +1,16 @@
-// Stylelint over the library's CSS and the <style> blocks of its SFCs.
-// postcss-html provides the custom syntax needed to lint Vue single-file components.
+// Stylelint over the package's two stylesheets (src/tokens.css and src/seasons.css): `npm run lint:css`.
+// The files hold only custom properties (the CSS contract check enforces that), so the standard config applies with three
+// exceptions, each needed by how the tokens are laid out. The other overrides this file once copied from `@meddleware/ui`
+// (Vue single-file components, vendor prefixes, class patterns) were removed on 2026-11-21: nothing here uses them.
 export default {
   extends: ['stylelint-config-standard'],
-  overrides: [{ files: ['**/*.vue'], customSyntax: 'postcss-html' }],
   rules: {
-    // The design system leans heavily on custom properties and deliberate
-    // ordering; these standard rules are too noisy for a token-driven codebase.
+    // Tokens are grouped by role with a blank line between groups; the standard rule would forbid those blank lines.
     'custom-property-empty-line-before': null,
-    'declaration-empty-line-before': null,
+    // Each group opens with a comment directly under the previous group, which the standard rule would separate.
     'comment-empty-line-before': null,
-    'rule-empty-line-before': null,
-    'at-rule-empty-line-before': null,
-    'no-descending-specificity': null,
-    // BEM-style class names (block__element--modifier) are intentional.
-    'selector-class-pattern': null,
-    // Preserve camelCase CSS keyword values (e.g. text-rendering: optimizeLegibility).
+    // The font stacks name fonts unquoted (Roboto, SFMono-Regular, Menlo, Consolas), which the rule mistakes for keywords. Font names are
+    // matched case-insensitively, so this is about legibility: they stay written as their vendors write them.
     'value-keyword-case': null,
-    // Vue SFC scoped-style pseudo-classes.
-    'selector-pseudo-class-no-unknown': [
-      true,
-      { ignorePseudoClasses: ['deep', 'slotted', 'global'] },
-    ],
-    // Private panel vars use a leading-underscore convention (--_bg, --_text).
-    'custom-property-pattern': null,
-    // Vendor-prefixed properties are emitted by autoprefixer at build time; the
-    // hand-written -webkit-/-moz- font-smoothing pair is intentional.
-    'property-no-vendor-prefix': null,
-    'value-no-vendor-prefix': null,
   },
 }

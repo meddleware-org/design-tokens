@@ -9,8 +9,16 @@ import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { spawnSync } from 'node:child_process'
 
+/** The package root, found from this file. */
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
 
+/**
+ * Run the contrast gate against a scratch copy of the package, with the CSS and JSON edited by the caller.
+ * The gate reads files next to itself, so the script, its library and the sources are copied into one temporary tree.
+ * @param {(css: string) => string} [editCss] - change applied to tokens.css (none by default)
+ * @param {(json: string) => string} [editJson] - change applied to tokens.json (none by default)
+ * @returns {import('node:child_process').SpawnSyncReturns<string>} the gate's exit status and output
+ */
 function runContrast(editCss = (css) => css, editJson = (json) => json) {
   const dir = mkdtempSync(join(tmpdir(), 'tokens-contrast-'))
   mkdirSync(join(dir, 'scripts', 'lib'), { recursive: true })
@@ -23,6 +31,14 @@ function runContrast(editCss = (css) => css, editJson = (json) => json) {
   return spawnSync(process.execPath, [join(dir, 'scripts', 'check-contrast.mjs')], { encoding: 'utf8' })
 }
 
+/**
+ * Replace one exact snippet, failing the test if the snippet is gone: a fixture that silently stops matching would make a failure test pass for
+ * the wrong reason.
+ * @param {string} css - the text to change
+ * @param {string} from - the exact text that must be present
+ * @param {string} to - its replacement
+ * @returns {string} the changed text
+ */
 function mutate(css, from, to) {
   assert.ok(css.includes(from), `fixture drifted: ${from} not found in tokens.css`)
   return css.replace(from, to)
@@ -34,6 +50,7 @@ test('the shipped tokens pass', () => {
 })
 
 test('a text role below 7:1 on --bg fails', () => {
+  // #a39a94 is a light grey: as --muted text it is far under 7:1 on the light page.
   const r = runContrast((css) => mutate(css, '--mw-neutral-500: #544b46;', '--mw-neutral-500: #a39a94;'))
   assert.notEqual(r.status, 0)
   assert.match(r.stderr, /--muted/)
@@ -53,19 +70,23 @@ test('a panel palette pairing below 7:1 fails (F11)', () => {
 })
 
 test('an unresolvable role fails closed', () => {
+  // A typo in a ramp name leaves the role undefined; an unmeasurable colour must fail, never pass by default.
   const r = runContrast((css) => mutate(css, '--warning-text: var(--mw-yellow-700);', '--warning-text: var(--mw-yellow-799);'))
   assert.notEqual(r.status, 0)
   assert.match(r.stderr, /does not resolve/)
 })
 
 test('a graphic role below 3:1 on the --lift track fails (a meter fill)', () => {
-  const r = runSync_graphic()
+  const r = runContrastWithPaleBlue600()
   assert.notEqual(r.status, 0)
   assert.match(r.stderr, /on --lift/)
 })
 
-function runSync_graphic() {
-  // Lightening the stop far enough fails the text gate AND the 3:1 graphic pairing on the --lift track.
+/**
+ * Run the gate with the blue 600 stop lightened far enough to fail both the text gate and the 3:1 graphic pairing on the `--lift` track.
+ * @returns {import('node:child_process').SpawnSyncReturns<string>} the gate's exit status and output
+ */
+function runContrastWithPaleBlue600() {
   return runContrast((css) => mutate(css, '--mw-blue-600:   #124b99;', '--mw-blue-600:   #8fb4f0;'))
 }
 

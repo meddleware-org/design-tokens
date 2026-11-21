@@ -1,1 +1,2 @@
+# Not committed: installed dependencies (npm ci recreates them from the lockfile).
 node_modules/

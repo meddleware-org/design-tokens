@@ -3,6 +3,16 @@
 All notable changes to `@meddleware/design-tokens` are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versioning follows [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Changed
+- Documentation pass (line-level annotation): every script, test, workflow and configuration file explains itself; a Development section
+  in the README and Commands and Related sections in CLAUDE.md; a CONTRIBUTING.md.
+- The CI step that runs the contrast gate is named for what it checks (WCAG 2.2 AAA, 7:1 for text); it said "AA".
+- `stylelint.config.js` keeps only the three overrides the two stylesheets need; the Vue, vendor-prefix and class-pattern overrides copied from
+  `@meddleware/ui` applied to nothing here. `npm run lint:css` lints `src/**/*.css` (there are no `.vue` files).
+- A test helper named `runSync_graphic` is renamed `runContrastWithPaleBlue600`: it runs the contrast gate, not the sync check.
+
 ## [0.1.13] - 2026-11-01
 
 ### Added

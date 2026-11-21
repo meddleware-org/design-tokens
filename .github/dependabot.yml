@@ -1,16 +1,22 @@
+# Dependabot: weekly, grouped update pull requests for the npm dependencies and the GitHub Actions (the fleet policy, D41 and D52).
+# Grouped minor and patch updates are merged when CI is green; declined majors are ignored here so they are not reopened every week.
 version: 2
 updates:
   - package-ecosystem: npm
     directory: /
     schedule:
       interval: weekly
+    # Five open at a time keeps the queue reviewable.
     open-pull-requests-limit: 5
     ignore:
+      # TypeScript majors are adopted in one deliberate fleet-wide wave, never repository by repository (D52).
       - dependency-name: "typescript"
         update-types: ["version-update:semver-major"]
     groups:
+      # One pull request for all minor and patch updates.
       npm-minor-patch:
         update-types: [minor, patch]
+  # Actions are pinned by SHA; this keeps the pins current.
   - package-ecosystem: github-actions
     directory: /
     schedule:

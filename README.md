@@ -266,6 +266,22 @@ Each season has two blocks in `seasons.css`: darker stops for light canvases and
 canvases, because no single mid-tone reads at 7:1 on both. Set `data-season` on `<html>` together with
 `data-theme="dark"` (or `class="dark"` on `<html>`; the class form is honoured on the root element only).
 
+## Development
+
+There is no build step: the package ships `src/` as it is. The checks, all run in CI on every push:
+
+```bash
+npm ci                          # install exactly the lockfile
+npm run check                   # versions, token sync, contrast (WCAG 2.2 AAA), CSS contract, the check scripts' tests
+npm run type-check              # tsc --noEmit over src/index.ts
+npm run lint                    # stylelint over the two stylesheets
+npx --no-install jsr publish --dry-run   # the JSR checks; nothing is published
+node scripts/check-contrast.mjs --table  # every measured pairing, for tuning a colour by eye
+```
+
+How to add or change a token, and what each check guards, is in [`CLAUDE.md`](CLAUDE.md); how to propose a change is in
+[`CONTRIBUTING.md`](CONTRIBUTING.md).
+
 ## Publishing
 
 CI publishes on `v*` git tags via `.github/workflows/npm-publish.yml` using **npm trusted publishing**

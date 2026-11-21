@@ -12,13 +12,16 @@ on:
     tags:
       - 'v*'
 
+# Least privilege by default; each publish job adds only the `id-token` it needs.
 permissions:
   contents: read
 
+# Tools that honour DO_NOT_TRACK send no usage data (PRIVACY_BY_DEFAULT).
 env:
   DO_NOT_TRACK: "1"
 
 jobs:
+  # The tag must pass the whole CI workflow before either registry is touched.
   verify:
     name: Verify (CI checks)
     uses: ./.github/workflows/node-ci.yml
@@ -35,8 +38,10 @@ jobs:
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: '26'
+          # The registry URL makes setup-node write the .npmrc that npm's OIDC trusted publishing uses.
           registry-url: 'https://registry.npmjs.org'
 
+      # A tag that disagrees with package.json would publish the wrong version under the right tag.
       - name: Tag matches the package version
         env:
           TAG: ${{ github.ref_name }}
@@ -51,6 +56,7 @@ jobs:
         run: |
           VERSION=$(node -p "require('./package.json').version")
           NAME=$(node -p "require('./package.json').name")
+          # A scoped name's `/` is written %2f in the registry's URL.
           ENC=$(printf '%s' "$NAME" | sed 's#/#%2f#')
           # Check the registry directly — `npm view` can transiently miss a freshly
           # first-published version and then attempt a re-publish. A 200 means it's live.
@@ -59,6 +65,7 @@ jobs:
           else
             # Publish, but treat a "version already exists" error as success so a
             # manually-published version (or a registry race) leaves the job green.
+            # --provenance attaches a signed statement of which workflow built the tarball (npm verifies it against the OIDC identity).
             set +e; OUT=$(npm publish --provenance --access public 2>&1); RC=$?; set -e
             printf '%s\n' "$OUT"
             if [ "$RC" -ne 0 ]; then
@@ -70,6 +77,7 @@ jobs:
             fi
           fi
 
+  # JSR in its own job, so the npm job's OIDC token is never in scope of the JSR CLI (and the reverse).
   publish-jsr:
     name: JSR (@meddleware/design-tokens)
     needs: verify
@@ -84,6 +92,7 @@ jobs:
           node-version: '26'
       - name: Install dependencies (the JSR CLI is a pinned devDependency)
         run: npm ci
+      # Idempotent like the npm job: re-running a release never fails because a version is already live.
       - name: Publish to JSR (OIDC, idempotent)
         run: |
           VERSION=$(node -p 'require("./package.json").version')

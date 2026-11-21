@@ -15,6 +15,10 @@
 - AUDIT_TEMPLATE.md (2026-11-01)
 - AUDIT_TEMPLATE_TS.md (2026-11-01)
 - AUDIT_TEMPLATE_A11Y.md (2026-11-01), partial: contrast and token rows
+- AUDIT_TEMPLATE_DOCS.md (2026-11-20)
+- AUDIT_TEMPLATE_RFC.md (2026-11-19), partial: formats and identifiers
+- AUDIT_TEMPLATE_IOP.md (2026-11-19), partial: public API and versioning
+- AUDIT_TEMPLATE_PRIV.md (2026-11-20), partial: what the package stores, requests or logs on a consumer's behalf (nothing)
 
 Not triggered: SUI, SUI_CLIENT, SEAL, WALRUS, WORKERS, RUST, GO, AUTH, PROXY, OPS, PLATFORM, IMG (no
 Dockerfile), SITE. VUE is not triggered either (this is not a Vue app or component library), but its
@@ -31,6 +35,8 @@ CHANGELOG):
 
 **Deployment status:**
 
+- **Current (2026-11-21):** npm and JSR `@meddleware/design-tokens` **0.1.13** (`latest` on both; JSR lists 8 versions). Consumers: 23 workspace
+  packages, 22 on `^0.1.13` and dao-ui (retired, not deployed) on `^0.1.11`. The bullets below are the history of earlier passes.
 - npm `@meddleware/design-tokens` **0.1.10** (published 2026-10-10T19:07Z, `latest`, SLSA v1 provenance
   attestation, `dist.attestations` checked 2026-10-18). Tag `v0.1.10` = `90b2fbb` (code commit `8dffe14`; the
   later commit only records the hash in this audit); the `Publish (npm)` run for the tag succeeded.
@@ -81,9 +87,26 @@ external review (maintainer item) remains open.
 | Package manager / lockfile | npm; `package-lock.json` committed |
 | Module format | ESM (`"type": "module"`) |
 | Publish model | ships `src/` as-is (TypeScript source + CSS + JSON). `exports`: `.` (`types` and `default` → `src/index.ts`), `./tokens.css`, `./seasons.css`, `./tokens.json`. `sideEffects: ["*.css"]` |
-| Runtime targets | consumers' bundlers (Vite, VitePress); browsers load the CSS. CI and publish run on Node 24 (the only supported Node LTS) |
+| Runtime targets | consumers' bundlers (Vite, VitePress); browsers load the CSS. CI and publish run on Node 26 (the fleet baseline since 2026-10-19, D56; this line said Node 24 until the 2026-11-21 pass) |
 | Peer dependencies | none |
 | Runtime dependencies | none. Dev (locked): `jsr` 0.14.3 (pinned, the publish tool), `stylelint` ^17.16.0, `stylelint-config-standard` ^40.0.0, `postcss` ^8.5.29, `typescript` ~6.0.0 (TypeScript 7 deferred by decision) |
+
+**Front matter (DOCS, RFC, IOP and PRIV lenses, added 2026-11-21):**
+
+| Field | Value |
+| --- | --- |
+| Documentation status | ledger (workspace `docs/audit/DOCS_LEDGER.tsv`): 34 tracked files, 31 done, 3 excluded (the lockfile, `LICENSE`, the generated `docs/INTEROP.md`), 0 pending, 0 fu (2026-11-21 pass) |
+| Required documents | README, CHANGELOG, SECURITY, CONTRIBUTING (added 2026-11-21), LICENSE (0BSD), CLAUDE.md, AGENTS.md: all present |
+| Doc lints | `check-docs.mjs` (workspace) is the gate for the JavaScript and TypeScript files; the shared `eslint-plugin-jsdoc` fragment is turned on after the Phase 5 release of `@meddleware/eslint-config` (this package has no ESLint today) |
+| Standards spoken | CSS Custom Properties (W3C) — implements — `src/*.css`; WCAG 2.2 contrast (W3C) — implements the ratios — `scripts/check-contrast.mjs`; JSON (RFC 8259) — implements — `src/tokens.json`; ECMAScript modules with import attributes (ECMA-262) — implements — `src/index.ts`; SPDX licence id `0BSD` — `package.json`, `jsr.json`; Sigstore / SLSA provenance — consumes (npm `--provenance`, JSR OIDC) — `npm-publish.yml` |
+| Deviations | none |
+| Drafts relied on | none |
+| Data a person can take away | none: the package holds no data about anyone |
+| APIs others build on | the custom-property names and the `tokens.json` / `index.ts` exports (documented in the README's token reference and the JS API section); versioning: patch-only until mainnet; deprecation: ramps are never deleted, only kept as swatches (CLAUDE.md, "two-layer naming") |
+| Third-party dependencies | npm and JSR (registries; exit-register rows "npm", "JSR"); no run-time dependency |
+| Personal data | none |
+| Browser storage | none (CSS and JSON only; the colour-mode choice is `@meddleware/ui`'s, recorded in the storage ledger) |
+| Requests to other hosts | none (the one `url()` is an inline `data:` SVG, pinned by SHA-256) |
 
 **Location:** `design-tokens/docs/audit/design-tokens-audit.md` (the repo-local audit is canonical).
 
@@ -863,6 +886,27 @@ Scope: the changes since the 2026-10-18 review — `0.1.11` (Node 26 baseline, `
 - The `ui` audit records the two things only a component can get wrong that the tokens cannot see (tint backgrounds, `opacity`); F13 adds a third: *an edge that carries a control* must use `--control-border`.
 - Not covered by any automated gate and recorded for the A11Y lens: the 44 px enhanced target size, link purpose, reading order.
 
+### Part B documentation pass (2026-11-21)
+
+Scope: every tracked file read against `docs/operations/DOCUMENTATION_STANDARD.md` and annotated (Part B Phase 1, the first repository of the pass);
+the DOCS, RFC, IOP and PRIV lenses applied for the first time. Build, type-check, lint, the full `npm run check` (versions, sync, contrast, CSS contract,
+47 tests: 46 pass, 1 skipped without Deno) and the JSR dry run passed before and after; the code diff is comment-only apart from the changes in F16.
+
+### F16 — Documentation and configuration drift found by the documentation pass
+**Severity:** Low   **Disposition:** RESOLVED (2026-11-21, unreleased; ships with the Part B batch)
+**Where:** `.github/workflows/node-ci.yml`, `stylelint.config.js`, `package.json` (`lint:css`), `tests/check-contrast.test.mjs`, this audit's front matter.
+**Issue:** (1) the CI step that runs the AAA contrast gate was named "meets WCAG AA", understating the gate a reviewer relies on; (2) `stylelint.config.js`, copied
+from `@meddleware/ui`, configured Vue single-file components through `postcss-html` (not a dependency here), vendor prefixes added "at build time" (there is no
+build) and eight rule overrides that nothing in the two stylesheets needs, and its lint glob included `.vue` files that do not exist; (3) a test helper named
+`runSync_graphic` ran the contrast gate, not the sync check; (4) this audit said CI ran on Node 24, listed 0.1.10 as the deployed version and gave dev-dependency
+versions from before the Stylelint 18 move; (5) the README had no Development section and CLAUDE.md no Commands section.
+**Impact:** none on the shipped tokens. A reader of CI, the lint configuration or this audit would have been misled about what is checked and what is deployed.
+**Remediation / evidence:** the step is named for WCAG 2.2 AAA; the Stylelint configuration keeps only the three overrides the stylesheets need (each tested by
+removing it: 17, 2 and 4 problems) and `lint:css` lints `src/**/*.css`; the helper is `runContrastWithPaleBlue600`; the front matter is current; the README has a
+Development section and CLAUDE.md Commands and Related sections; `CONTRIBUTING.md` added. `npm run lint` and `npm run check` pass.
+
+Also recorded, outside this repository: the nine byte-identical copies of `.github/audit-gate.mjs` across the shared packages (FU-0196).
+
 ## Section A — Invariant verification matrix
 
 | # | Invariant (source) | Enforced at | Proven by | Status |
@@ -951,8 +995,53 @@ no `allowScripts`. The dev-dependency tree has none flagged.
 ### B.TS-3 Supply-chain gates
 
 Lockfile committed; both workflows install with `npm ci`; the publish-npm job uses the npm bundled
-with Node 24 (not `npm@latest`); the audit gate runs at high/critical with the expiring allowlist in CI
+with Node 26 (not `npm@latest`); the audit gate runs at high/critical with the expiring allowlist in CI
 and, through `verify`, before publish. Holds.
+
+---
+
+### B.DOCS-1 Ledger state
+
+34 tracked files: 31 done, 3 excluded (lockfile, licence text, generated `docs/INTEROP.md`), 0 pending, 0 `fu:` rows (2026-11-21, commit recorded in the ledger).
+
+### B.DOCS-2 Commands run
+
+Every command in the README's Development section and CLAUDE.md's Commands section was run on 2026-11-21 and gave what the documents say: `npm ci`,
+`npm run check`, `npm run type-check`, `npm run lint`, `npx --no-install jsr publish --dry-run` (with `--allow-dirty` before commit),
+`node scripts/check-contrast.mjs --table`, `node .github/audit-gate.mjs` (0 advisories).
+
+### B.DOCS-3 Generated documentation
+
+`docs/INTEROP.md` is generated by the workspace's `scripts/interop/gen-interop.py` from `config/interop.yaml` and checked there; nothing else is generated (no build step).
+
+### B.RFC-1 Standards inventory
+
+| Interface | Standard (and version) | Role | Where | Conformance evidence | Deviation |
+| --- | --- | --- | --- | --- | --- |
+| Theming | CSS Custom Properties for Cascading Variables (W3C) | implements | `src/tokens.css`, `src/seasons.css` | stylelint (standard config), the CSS contract check | — |
+| Contrast | WCAG 2.2 success criteria 1.4.3, 1.4.6, 1.4.11 (W3C) | implements the ratios (7:1 text and labels, 3:1 non-text) | `scripts/check-contrast.mjs`, `scripts/lib/css.mjs` | the gate over 10 looks and 2 panel palettes; the luminance threshold 0.03928 (WCAG 2.0) equals 0.04045 (WCAG 2.2) for every 8-bit channel (`lib/css.mjs`) | — |
+| Mirror | JSON (RFC 8259) | implements | `src/tokens.json` | parsed by the sync check and the entry-import test | — |
+| Entry | ECMAScript modules with import attributes (ECMA-262) | implements | `src/index.ts` | the entry-import test under Node and Deno | — |
+| Licence | SPDX identifier `0BSD` | implements | `package.json`, `jsr.json`, `LICENSE` | registry metadata | — |
+| Provenance | Sigstore / SLSA (npm provenance, JSR OIDC) | consumes | `npm-publish.yml` | `dist.attestations` on npm (checked 2026-10-18) | — |
+
+### B.IOP-1 Export and exit drill
+
+Not applicable: the package holds no data about anyone. A consumer leaves by copying the two stylesheets; everything is 0BSD.
+
+### B.IOP-2 Exit register entries
+
+npm and JSR (publication only). No run-time dependency.
+
+### B.IOP-3 API stability
+
+The public API is the custom-property names and the `tokens.json` / `index.ts` exports. Versioning is patch-only until mainnet (workspace policy); roles are never renamed
+after a colour, and ramps are kept as swatches rather than deleted (CLAUDE.md), so a consumer's variable keeps resolving across releases. Changes are announced in `CHANGELOG.md`.
+
+### B.PRIV-1 / B.PRIV-2 / B.PRIV-3 Privacy inventories
+
+Personal data: none. Client-side: the package stores nothing and requests nothing (CSS custom properties and JSON; the only `url()` is an inline `data:` SVG, pinned by
+SHA-256 in the CSS contract check). Logs: none (no runtime code). Recorded 2026-11-21.
 
 ---
 
@@ -1066,6 +1155,21 @@ checked by the publish workflow's idempotency probes, not by a test.
 | TS-M7 | yes (`files: ["src"]`; no install scripts; pack check in CI) | B.TS-1, B.TS-2 |
 | TS-M8 | yes (`npm ci` + audit gate in CI and publish; publish tooling pinned) | B.TS-3, F7 |
 | TS-M9 | N/A (no `@mysten/*` dependency) | B.1 |
+
+**Lens baselines (DOCS, RFC, IOP, PRIV), first recorded 2026-11-21:**
+
+| ID | Holds? | Evidence |
+| --- | --- | --- |
+| DOCS-M1 | yes (all seven documents; 0BSD; CHANGELOG per release with an Unreleased section) | B.DOCS-1 |
+| DOCS-M2 | yes (every file's header and every declaration documented; ledger rows done) | `check-docs.mjs --report design-tokens` |
+| DOCS-M3 | yes (no environment variables; the CSS, JSON and TypeScript interfaces in the README and CLAUDE.md) | README token reference, JS API |
+| DOCS-M4 | yes (commands run, links resolve, ids exist) | B.DOCS-2 |
+| DOCS-M5 | yes (no TODO, FIXME, XXX or HACK) | `check-docs.mjs` |
+| DOCS-M6 | yes (CLAUDE.md verified against the code in this pass; AGENTS.md points to it) | this pass |
+| DOCS-M7 | yes (no secrets or private data; nothing compiled, so comments ship in the source CSS, which consumers' bundlers strip) | F3, the CSS contract |
+| RFC-M1 to RFC-M7 | yes where they apply (B.RFC-1; no own format beyond the documented token names; M5 is the hosts', not a package's) | B.RFC-1 |
+| IOP-M3 | yes (B.IOP-3); IOP-M1, M2, M4 to M7: not applicable (no data, no service) | B.IOP-1 to 3 |
+| PRIV-M1 to PRIV-M8 | not applicable: nothing stored, requested, logged or put on-chain | B.PRIV |
 
 ## Implementation suggestions (SHOULD / MAY)
 
@@ -1209,7 +1313,18 @@ checked by the publish workflow's idempotency probes, not by a test.
   - Dependabot policy encoded in .github/dependabot.yml (majors declined); open PRs merged 2026-10-19
 - 2026-11-01 — frontend-wave delta review. Read the 0.1.11/0.1.12 diff, ran the full check (sync, contrast, CSS contract, versions, 47 tests), the audit gate and the pack contents; verified npm/JSR 0.1.12. Found and fixed F13 (field boundaries below WCAG 1.4.11: new `--control-border`) and F14 (the contrast gate now fails on an unmeasured role) in 0.1.13; F15 recorded as Positive. The release tool's bare "re-verified" marks for 0.1.11 and 0.1.12 were reworded to "released". `**Template:**` dates reconciled to the 2026-11-01 registry (the TS and base changes add rows and affect no disposition here) and the A11Y lens added (partial).
 
+- 2026-11-21 — Part B documentation pass and first application of the DOCS, RFC, IOP and PRIV lenses (above, "Part B documentation pass"). Baseline before
+  editing: `npm ci`, type-check, lint and `npm run check` (47 tests: 46 pass, 1 skipped without Deno) passed. Every tracked file annotated to the
+  documentation standard (headers, TSDoc on every declaration, comments on why); `CONTRIBUTING.md` added; README Development section; CLAUDE.md Commands and
+  Related sections. Found and fixed **F16** (documentation and configuration drift: the "AA" CI step name, the Stylelint configuration copied from ui, a
+  misnamed test helper, this audit's stale Node, version and dev-dependency facts). Verified live: npm and JSR at 0.1.13. Re-run after editing: the same
+  commands and the JSR dry run, all passing; `git diff` comment-only apart from F16. Recorded outside the repository: FU-0196 (copies of the audit gate).
+  Counts: 14 dispositioned findings + 2 Positive (F9, F15): 14 RESOLVED (F1–F8, F10–F14, F16).
+
 ## Pre-save consistency checklist (this pass)
+
+- [x] 2026-11-21: Template line cites DOCS, RFC, IOP and PRIV with their registry dates; their front-matter fields, Section B subsections and MUST rows added;
+  F16 recorded in the findings and the log; the deployment status and Node baseline current.
 
 - [x] Section A ↔ findings: every row HOLDS; no caveat is left (F10 resolved 2026-10-18).
 - [x] Finding header ↔ body: consistent; first-pass remediation text kept, with a dated re-verification
