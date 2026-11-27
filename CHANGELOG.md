@@ -5,6 +5,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); version
 
 ## [Unreleased]
 
+## [0.1.14] - 2026-11-27
+
 ### Changed
 - Documentation pass (line-level annotation): every script, test, workflow and configuration file explains itself; a Development section
   in the README and Commands and Related sections in CLAUDE.md; a CONTRIBUTING.md.
