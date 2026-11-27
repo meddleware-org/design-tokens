@@ -177,6 +177,10 @@ npx --no-install jsr publish --dry-run   # add --allow-dirty with uncommitted ch
 node scripts/check-contrast.mjs --table  # every pairing and its ratio
 ```
 
+## Documentation rules (workspace documentation standard, D144)
+
+Every file has a header and every declaration a TSDoc comment (private declarations included); comments say why. `node scripts/check-docs.mjs --report design-tokens` (in the workspace repository) is the gate. See [CONTRIBUTING.md](CONTRIBUTING.md).
+
 ## Related
 
 - The audit: [`docs/audit/design-tokens-audit.md`](docs/audit/design-tokens-audit.md).
